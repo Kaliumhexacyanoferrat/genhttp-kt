@@ -6,7 +6,7 @@ import com.github.luben.zstd.ZstdInputStream
 
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.ResponseStatus
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.testing.TestHost
 import org.genhttp.testing.acceptance.MultiEngineTest
 import org.genhttp.testing.acceptance.assertStatus

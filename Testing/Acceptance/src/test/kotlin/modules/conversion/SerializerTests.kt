@@ -3,7 +3,7 @@ package org.genhttp.testing.acceptance.modules.conversion
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.conversion.Serialization
 import org.genhttp.modules.conversion.serializers.json.JsonFormat
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.testing.TestHost
 import org.genhttp.testing.acceptance.AssertX
 import org.genhttp.testing.acceptance.assertStatus

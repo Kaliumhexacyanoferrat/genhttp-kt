@@ -58,21 +58,53 @@ class ConnectionTests {
             }
 
         TestHost.run(handler, engine = engine).use { runner ->
-            val response = runner.getResponse()
+            // the JDK client refuses 101 responses to requests that did not ask for an upgrade, so read the
+            // response header from a raw connection (see PORTING.md)
+            val response = rawHeader(runner.port)
 
-            response.assertStatus(ResponseStatus.SwitchingProtocols)
+            assertEquals(ResponseStatus.SwitchingProtocols.code, response.first)
 
             // upgrade responses must not have been chunked encoded
-            assertNull(response.getHeader("Transfer-Encoding"))
+            assertNull(response.second["transfer-encoding"])
 
             // upgrade responses do not have a content length
-            assertNull(response.getContentHeader("Content-Length"))
+            assertNull(response.second["content-length"])
 
             // upgrade responses cannot be compressed
-            assertNull(response.getContentHeader("Content-Encoding"))
+            assertNull(response.second["content-encoding"])
 
             // upgrade responses cannot have eTags
-            assertNull(response.getHeader("ETag"))
+            assertNull(response.second["etag"])
+        }
+    }
+
+    private fun rawHeader(port: Int): Pair<Int, Map<String, String>> {
+        java.net.Socket("localhost", port).use { socket ->
+            socket.soTimeout = 5000
+
+            val request = listOf("GET / HTTP/1.1", "Host: localhost:$port", "", "").joinToString(CRLF)
+
+            socket.getOutputStream().write(request.toByteArray(Charsets.US_ASCII))
+            socket.getOutputStream().flush()
+
+            val reader = socket.getInputStream().bufferedReader(Charsets.US_ASCII)
+
+            val status = reader.readLine().split(' ')[1].toInt()
+
+            val headers = mutableMapOf<String, String>()
+
+            while (true) {
+                val line = reader.readLine() ?: break
+
+                if (line.isEmpty()) {
+                    break
+                }
+
+                val separator = line.indexOf(':')
+                headers[line.substring(0, separator).trim().lowercase()] = line.substring(separator + 1).trim()
+            }
+
+            return status to headers
         }
     }
 
@@ -98,3 +130,5 @@ class ConnectionTests {
     // endregion
 
 }
+
+private const val CRLF = "\r\n"

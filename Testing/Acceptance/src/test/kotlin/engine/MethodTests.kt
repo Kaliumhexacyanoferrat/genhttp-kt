@@ -13,7 +13,7 @@ class MethodTests {
 
     @MultiEngineTest
     fun testCustomMethods(engine: ServerEngine) = test {
-        val result = Inline.create().on(setOf(RequestMethod("BREW"))) { "Hmm, Beer" }
+        val result = Inline.create().on(suspend { "Hmm, Beer" }, setOf(RequestMethod("BREW")))
 
         TestHost.run(result, engine = engine).use { host ->
             val request = host.getRequest(method = "BREW")

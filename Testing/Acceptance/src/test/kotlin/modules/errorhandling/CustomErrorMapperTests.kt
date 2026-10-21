@@ -8,7 +8,7 @@ import org.genhttp.api.protocol.Response
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.errorhandling.ErrorHandler
 import org.genhttp.modules.errorhandling.ErrorMapper
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.modules.io.strings.StringContent
 import org.genhttp.modules.layouting.Layout
 import org.genhttp.testing.TestHost

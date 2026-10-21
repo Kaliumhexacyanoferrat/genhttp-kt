@@ -18,6 +18,10 @@ public final class org/genhttp/modules/conversion/Serialization {
 	public final fun empty ()Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
 }
 
+public final class org/genhttp/modules/conversion/TypeExtensions {
+	public static final fun toJavaType (Lkotlin/reflect/KType;)Ljava/lang/reflect/Type;
+}
+
 public final class org/genhttp/modules/conversion/formatters/BoolFormatter : org/genhttp/modules/conversion/formatters/Formatter {
 	public fun <init> ()V
 	public fun canHandle (Lkotlin/reflect/KClass;)Z

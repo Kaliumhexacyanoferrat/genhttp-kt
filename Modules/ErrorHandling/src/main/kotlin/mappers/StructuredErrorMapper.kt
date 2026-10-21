@@ -1,6 +1,5 @@
 package org.genhttp.modules.errorhandling.mappers
 
-import com.fasterxml.jackson.annotation.JsonValue
 
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
@@ -87,19 +86,7 @@ public class StructuredErrorMapper(registry: SerializationRegistry? = null) : Er
 
     private companion object {
 
-        fun getDefaultSerialization(): SerializationRegistry {
-            // the status is sent as number (such as 404) in JSON, as the enum of GenHTTP is
-            val options = JsonFormat.getDefaultOptions().addMixIn(ResponseStatus::class.java, ResponseStatusMixIn::class.java)
-
-            return Serialization.default(options.build()).build()
-        }
-
-    }
-
-    private abstract class ResponseStatusMixIn {
-
-        @get:JsonValue
-        abstract val code: Int
+        fun getDefaultSerialization(): SerializationRegistry = Serialization.default().build()
 
     }
 

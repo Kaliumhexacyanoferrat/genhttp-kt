@@ -8,35 +8,6 @@ import java.nio.ByteBuffer
 import java.nio.channels.WritableByteChannel
 
 /**
- * Sink for content of known length, writing directly to the connection.
- */
-internal class RegularSink(private val context: ClientContext) : ResponseSink {
-
-    override val writer: WritableByteChannel
-        get() = context.writer
-
-    override val stream: OutputStream
-        get() = context.writer.stream
-
-}
-
-/**
- * Sink for content of unknown length, applying chunked transfer encoding.
- */
-internal class ChunkedSink(private val context: ClientContext) : ResponseSink {
-
-    private val chunkedWriter = ChunkedWriter(context)
-
-    override val writer: WritableByteChannel
-        get() = chunkedWriter
-
-    override val stream: OutputStream = ChunkedStream(chunkedWriter)
-
-    fun finish() = chunkedWriter.finish()
-
-}
-
-/**
  * Writes every block of data as a single chunk.
  */
 internal class ChunkedWriter(private val context: ClientContext) : WritableByteChannel {
@@ -103,23 +74,6 @@ internal class ChunkedWriter(private val context: ClientContext) : WritableByteC
 
         private fun org.genhttp.engine.shared.io.ConnectionWriter.write(bytes: ByteArray) = write(bytes, 0, bytes.size)
 
-    }
-
-}
-
-/**
- * Stream writing every block of data as a single chunk.
- */
-internal class ChunkedStream(private val writer: ChunkedWriter) : OutputStream() {
-
-    override fun write(b: Int) = writer.write(byteArrayOf(b.toByte()), 0, 1)
-
-    override fun write(b: ByteArray, off: Int, len: Int) = writer.write(b, off, len)
-
-    override fun flush() = writer.flush()
-
-    override fun close() {
-        // owned by the connection
     }
 
 }

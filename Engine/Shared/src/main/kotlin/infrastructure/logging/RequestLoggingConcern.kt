@@ -54,12 +54,3 @@ public class RequestLoggingConcern(override val content: Handler) : Concern {
     }
 
 }
-
-/**
- * Builds the request logging concern.
- */
-public class RequestLoggingConcernBuilder : ConcernBuilder {
-
-    override fun build(content: Handler): Concern = RequestLoggingConcern(content)
-
-}

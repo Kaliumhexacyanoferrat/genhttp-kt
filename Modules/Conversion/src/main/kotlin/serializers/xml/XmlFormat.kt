@@ -18,7 +18,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 
 import kotlin.reflect.KType
-import kotlin.reflect.jvm.javaType
+import org.genhttp.modules.conversion.toJavaType
 
 /**
  * Reads and writes objects as XML. The name of the root element is the simple name of the class
@@ -29,7 +29,7 @@ public class XmlFormat : SerializationFormat {
     override suspend fun deserialize(stream: InputStream, type: KType): Any? {
         val mapper = XmlSupport.Mapper
 
-        return mapper.readerFor(mapper.constructType(type.javaType))
+        return mapper.readerFor(mapper.constructType(type.toJavaType()))
             .without(StreamReadFeature.AUTO_CLOSE_SOURCE)
             .readValue(stream)
     }

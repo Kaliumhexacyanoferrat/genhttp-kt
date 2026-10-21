@@ -40,12 +40,3 @@ public class ComplianceConcern(override val content: Handler) : Concern {
     }
 
 }
-
-/**
- * Builds the compliance concern.
- */
-public class ComplianceConcernBuilder : ConcernBuilder {
-
-    override fun build(content: Handler): Concern = ComplianceConcern(content)
-
-}

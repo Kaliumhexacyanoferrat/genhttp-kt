@@ -2,7 +2,7 @@ package org.genhttp.testing.acceptance.modules.io
 
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.getEntry
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.modules.io.BodyArguments
 import org.genhttp.modules.reflection.ExecutionMode
 import org.genhttp.testing.TestHost

@@ -25,7 +25,8 @@ public fun HttpResponse<ByteArray>.getContent(): String {
         ?.let { runCatching { Charset.forName(it) }.getOrNull() }
         ?: Charsets.UTF_8
 
-    return String(body(), charset)
+    // a byte order mark is not part of the content (like HttpContent.ReadAsStringAsync in .NET)
+    return String(body(), charset).removePrefix("﻿")
 }
 
 /**

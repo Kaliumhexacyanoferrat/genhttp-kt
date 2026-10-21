@@ -2,7 +2,7 @@ package org.genhttp.testing.acceptance.modules.conversion
 
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.ResponseStatus
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.modules.functional.post
 import org.genhttp.testing.TestHost
 import org.genhttp.testing.acceptance.MultiEngineTest

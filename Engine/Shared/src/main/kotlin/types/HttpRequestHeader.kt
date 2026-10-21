@@ -59,32 +59,3 @@ public class HttpRequestHeader(private val request: HttpRequest) : RequestHeader
     }
 
 }
-
-/**
- * A copy of a request header that does no longer depend on the request buffer.
- */
-public class RetainedRequestHeader internal constructor(source: HttpRequestHeader) : RequestHeader {
-
-    override val path: ByteString = ByteString(copy(source.path.bytes))
-
-    override val protocol: HttpProtocol = HttpProtocol(copy(source.version))
-
-    override val method: RequestMethod = RequestMethod(copy(source.method.bytes))
-
-    override val target: RequestTarget = HttpRequestTarget().apply { apply(path) }
-
-    override val query: RequestQuery = RetainedKeyValueList(source.query)
-
-    override val headers: RequestHeaders = RetainedKeyValueList(source.headers)
-
-    private companion object {
-
-        fun copy(buffer: ByteBuffer): ByteArray {
-            val array = ByteArray(buffer.remaining())
-            buffer.get(buffer.position(), array)
-            return array
-        }
-
-    }
-
-}

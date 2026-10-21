@@ -8,7 +8,10 @@ import org.genhttp.modules.conversion.serializers.ByteStreamSerialization
 import org.genhttp.modules.conversion.serializers.CamelCaseNaming
 import org.genhttp.modules.conversion.serializers.SerializationFormat
 
+import tools.jackson.core.SerializableString
 import tools.jackson.core.StreamReadFeature
+import tools.jackson.core.io.CharacterEscapes
+import tools.jackson.core.json.JsonFactory
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.MapperFeature
 import tools.jackson.databind.cfg.EnumFeature
@@ -19,7 +22,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 
 import kotlin.reflect.KType
-import kotlin.reflect.jvm.javaType
+import org.genhttp.modules.conversion.toJavaType
 
 /**
  * Reads and writes objects as JSON.
@@ -44,7 +47,7 @@ public class JsonFormat(mapper: JsonMapper? = null) : SerializationFormat {
     // region Functionality
 
     override suspend fun deserialize(stream: InputStream, type: KType): Any? =
-        mapper.readerFor(mapper.constructType(type.javaType))
+        mapper.readerFor(mapper.constructType(type.toJavaType()))
             .without(StreamReadFeature.AUTO_CLOSE_SOURCE)
             .readValue(stream)
 
@@ -62,13 +65,39 @@ public class JsonFormat(mapper: JsonMapper? = null) : SerializationFormat {
         private val DefaultMapper: JsonMapper by lazy { getDefaultOptions().build() }
 
         /**
+         * Escapes like the default encoder of System.Text.Json: HTML-sensitive characters and everything outside
+         * of the ASCII range are written as unicode escape sequences (e.g. `<` for `<`).
+         */
+        private val DefaultFactory: JsonFactory by lazy {
+            JsonFactory.builder()
+                .characterEscapes(HtmlSafeEscapes)
+                .highestNonEscapedChar(127)
+                .build()
+        }
+
+        private object HtmlSafeEscapes : CharacterEscapes() {
+
+            private val codes: IntArray = standardAsciiEscapesForJSON().also {
+                for (c in "<>&'+`") {
+                    it[c.code] = ESCAPE_STANDARD
+                }
+            }
+
+            override fun getEscapeCodesForAscii(): IntArray = codes
+
+            override fun getEscapeSequence(ch: Int): SerializableString? = null
+
+        }
+
+        /**
          * Creates a builder for the default serializer settings that can be used
          * for further customization.
          *
          * @return A new builder configured with the default JSON options
          */
-        public fun getDefaultOptions(): JsonMapper.Builder = JsonMapper.builder()
+        public fun getDefaultOptions(): JsonMapper.Builder = JsonMapper.builder(DefaultFactory)
             .addModule(KotlinModule.Builder().build())
+            .addModule(ApiTypesModule)
             .propertyNamingStrategy(CamelCaseNaming)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

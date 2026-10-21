@@ -1,0 +1,349 @@
+public final class org/genhttp/modules/reflection/ExecutionMode : java/lang/Enum {
+	public static final field Auto Lorg/genhttp/modules/reflection/ExecutionMode;
+	public static final field Reflection Lorg/genhttp/modules/reflection/ExecutionMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/reflection/ExecutionMode;
+	public static fun values ()[Lorg/genhttp/modules/reflection/ExecutionMode;
+}
+
+public final class org/genhttp/modules/reflection/ExecutionSettings {
+	public fun <init> (Lorg/genhttp/modules/reflection/ExecutionMode;)V
+	public final fun component1 ()Lorg/genhttp/modules/reflection/ExecutionMode;
+	public final fun copy (Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/reflection/ExecutionSettings;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/ExecutionMode;ILjava/lang/Object;)Lorg/genhttp/modules/reflection/ExecutionSettings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMode ()Lorg/genhttp/modules/reflection/ExecutionMode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/genhttp/modules/reflection/ExecutionSettingsBuilder {
+	public abstract fun executionMode (Lorg/genhttp/modules/reflection/ExecutionMode;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reflection/Extensions {
+	public static final fun canFormat (Lkotlin/reflect/KParameter;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Z
+	public static final fun checkNullable (Lkotlin/reflect/KParameter;)Z
+	public static final fun toParameter (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/modules/reflection/FromBody : java/lang/annotation/Annotation {
+}
+
+public final class org/genhttp/modules/reflection/Injection {
+	public static final field INSTANCE Lorg/genhttp/modules/reflection/Injection;
+	public final fun default ()Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;
+	public final fun empty ()Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;
+}
+
+public abstract interface annotation class org/genhttp/modules/reflection/InterceptWith : java/lang/annotation/Annotation {
+	public abstract fun interceptor ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/modules/reflection/InterceptWith$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/modules/reflection/InterceptWith;
+}
+
+public final class org/genhttp/modules/reflection/InterceptionResult : org/genhttp/modules/reflection/Result {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Object;)V
+	public synthetic fun <init> (Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/genhttp/modules/reflection/Method : java/lang/Enum {
+	public static final field Connect Lorg/genhttp/modules/reflection/Method;
+	public static final field Delete Lorg/genhttp/modules/reflection/Method;
+	public static final field Get Lorg/genhttp/modules/reflection/Method;
+	public static final field Head Lorg/genhttp/modules/reflection/Method;
+	public static final field Options Lorg/genhttp/modules/reflection/Method;
+	public static final field Patch Lorg/genhttp/modules/reflection/Method;
+	public static final field Post Lorg/genhttp/modules/reflection/Method;
+	public static final field Put Lorg/genhttp/modules/reflection/Method;
+	public static final field Trace Lorg/genhttp/modules/reflection/Method;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/reflection/Method;
+	public static fun values ()[Lorg/genhttp/modules/reflection/Method;
+}
+
+public class org/genhttp/modules/reflection/MethodAttribute : org/genhttp/modules/reflection/MethodConfiguration {
+	public fun <init> ()V
+	public fun <init> ([Lorg/genhttp/modules/reflection/Method;)V
+	public final fun getSupportedMethods ()Ljava/util/Set;
+}
+
+public final class org/genhttp/modules/reflection/MethodCollection : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/lang/Iterable;)V
+	public final fun getMethods ()Ljava/util/List;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/reflection/MethodConfiguration {
+	public abstract fun getSupportedMethods ()Ljava/util/Set;
+}
+
+public final class org/genhttp/modules/reflection/MethodHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/modules/reflection/operations/Operation;Lkotlin/jvm/functions/Function2;Lorg/genhttp/modules/reflection/MethodRegistry;)V
+	public final fun getOperation ()Lorg/genhttp/modules/reflection/operations/Operation;
+	public final fun getRegistry ()Lorg/genhttp/modules/reflection/MethodRegistry;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun handle (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/routing/RoutingMatch;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reflection/MethodKt {
+	public static final fun toRequestMethod (Lorg/genhttp/modules/reflection/Method;)Lorg/genhttp/api/protocol/RequestMethod;
+}
+
+public final class org/genhttp/modules/reflection/MethodRegistry {
+	public fun <init> (Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public final fun component1 ()Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;
+	public final fun component2 ()Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;
+	public final fun component3 ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+	public final fun copy (Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Lorg/genhttp/modules/reflection/MethodRegistry;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/reflection/MethodRegistry;Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;ILjava/lang/Object;)Lorg/genhttp/modules/reflection/MethodRegistry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFormatting ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+	public final fun getInjection ()Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;
+	public final fun getSerialization ()Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/genhttp/modules/reflection/OperationInterceptor {
+	public abstract fun configure (Ljava/lang/annotation/Annotation;)V
+	public abstract fun intercept (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/Operation;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/reflection/ReflectionFrameworkBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns, org/genhttp/modules/reflection/ExecutionSettingsBuilder, org/genhttp/modules/reflection/RegistryBuilder {
+}
+
+public abstract interface class org/genhttp/modules/reflection/RegistryBuilder {
+	public abstract fun formatters (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public abstract fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public abstract fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/reflection/RequestInterception {
+	public abstract fun intercept (Lorg/genhttp/api/protocol/Request;Ljava/util/Map;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reflection/ResponseProvider {
+	public fun <init> (Lorg/genhttp/modules/reflection/MethodRegistry;)V
+	public final fun getResponse (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/Operation;Ljava/lang/Object;Lorg/genhttp/api/protocol/ByteString;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getResponse$default (Lorg/genhttp/modules/reflection/ResponseProvider;Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/Operation;Ljava/lang/Object;Lorg/genhttp/api/protocol/ByteString;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public class org/genhttp/modules/reflection/Result : org/genhttp/api/protocol/ResponseModification, org/genhttp/modules/reflection/ResultWrapper {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun apply (Lorg/genhttp/api/protocol/ResponseBuilder;)V
+	public synthetic fun connection (Lorg/genhttp/api/protocol/Connection;)Ljava/lang/Object;
+	public fun connection (Lorg/genhttp/api/protocol/Connection;)Lorg/genhttp/modules/reflection/Result;
+	public synthetic fun cookie (Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;)Ljava/lang/Object;
+	public fun cookie (Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;)Lorg/genhttp/modules/reflection/Result;
+	public fun getPayload ()Ljava/lang/Object;
+	public synthetic fun header (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun header (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/reflection/Result;
+	public synthetic fun status (Lorg/genhttp/api/protocol/ResponseStatus;)Ljava/lang/Object;
+	public fun status (Lorg/genhttp/api/protocol/ResponseStatus;)Lorg/genhttp/modules/reflection/Result;
+}
+
+public abstract interface class org/genhttp/modules/reflection/ResultWrapper {
+	public abstract fun apply (Lorg/genhttp/api/protocol/ResponseBuilder;)V
+	public abstract fun getPayload ()Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/reflection/ServiceMethodProvider {
+	public abstract fun getMethods ()Lorg/genhttp/modules/reflection/MethodCollection;
+}
+
+public final class org/genhttp/modules/reflection/injectors/BodyArgumentsInjector : org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public fun <init> ()V
+	public fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/reflection/injectors/HandlerInjector : org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public fun <init> ()V
+	public fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/reflection/injectors/InjectionRegistry : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (Ljava/lang/Iterable;)V
+	public synthetic fun add (ILjava/lang/Object;)V
+	public fun add (ILorg/genhttp/modules/reflection/injectors/ParameterInjector;)V
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public synthetic fun addFirst (Ljava/lang/Object;)V
+	public fun addFirst (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)V
+	public synthetic fun addLast (Ljava/lang/Object;)V
+	public fun addLast (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)V
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public synthetic fun get (I)Ljava/lang/Object;
+	public fun get (I)Lorg/genhttp/modules/reflection/injectors/ParameterInjector;
+	public fun getSize ()I
+	public final fun indexOf (Ljava/lang/Object;)I
+	public fun indexOf (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public final fun lastIndexOf (Ljava/lang/Object;)I
+	public fun lastIndexOf (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)I
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public synthetic fun remove (I)Ljava/lang/Object;
+	public fun remove (I)Lorg/genhttp/modules/reflection/injectors/ParameterInjector;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public synthetic fun removeFirst ()Ljava/lang/Object;
+	public fun removeFirst ()Lorg/genhttp/modules/reflection/injectors/ParameterInjector;
+	public synthetic fun removeLast ()Ljava/lang/Object;
+	public fun removeLast ()Lorg/genhttp/modules/reflection/injectors/ParameterInjector;
+	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
+	public fun retainAll (Ljava/util/Collection;)Z
+	public synthetic fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun set (ILorg/genhttp/modules/reflection/injectors/ParameterInjector;)Lorg/genhttp/modules/reflection/injectors/ParameterInjector;
+	public final fun size ()I
+	public fun sort (Ljava/util/Comparator;)V
+	public fun subList (II)Ljava/util/List;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reflection/injectors/InjectionRegistryBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/modules/reflection/injectors/ParameterInjector;)Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/modules/reflection/injectors/InjectionRegistry;
+}
+
+public abstract interface class org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public abstract fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/reflection/injectors/RequestInjector : org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public fun <init> ()V
+	public fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/reflection/injectors/UserInjector : org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public fun <init> (Lkotlin/reflect/KClass;)V
+	public fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/reflection/operations/ArgumentProvider {
+	public static final field INSTANCE Lorg/genhttp/modules/reflection/operations/ArgumentProvider;
+	public final fun getBodyArgument (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KType;Lorg/genhttp/modules/reflection/MethodRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getContent (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/OperationArgument;Lorg/genhttp/modules/reflection/MethodRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getInjectedArgument (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/reflection/operations/OperationArgument;Lorg/genhttp/modules/reflection/MethodRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPathArgument (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KType;Lorg/genhttp/modules/reflection/routing/RoutingMatch;Lorg/genhttp/modules/reflection/MethodRegistry;)Ljava/lang/Object;
+	public final fun getQueryArgument (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/OperationArgument;Lorg/genhttp/modules/reflection/MethodRegistry;)Ljava/lang/Object;
+	public final fun getQueryValue (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/api/protocol/ByteString;
+	public final fun getStream (Lorg/genhttp/api/protocol/Request;)Ljava/io/InputStream;
+}
+
+public final class org/genhttp/modules/reflection/operations/InterceptorAnalyzer {
+	public static final field INSTANCE Lorg/genhttp/modules/reflection/operations/InterceptorAnalyzer;
+	public final fun getInterceptors (Lkotlin/reflect/KFunction;)Ljava/util/List;
+}
+
+public final class org/genhttp/modules/reflection/operations/Operation {
+	public fun <init> (Lkotlin/reflect/KFunction;Lkotlin/Function;Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/MethodConfiguration;Lorg/genhttp/modules/reflection/routing/OperationRoute;Lorg/genhttp/modules/reflection/operations/OperationResult;Ljava/util/Map;Ljava/util/List;)V
+	public final fun getArguments ()Ljava/util/Map;
+	public final fun getConfiguration ()Lorg/genhttp/modules/reflection/MethodConfiguration;
+	public final fun getDelegate ()Lkotlin/Function;
+	public final fun getExecutionSettings ()Lorg/genhttp/modules/reflection/ExecutionSettings;
+	public final fun getInterceptors ()Ljava/util/List;
+	public final fun getMethod ()Lkotlin/reflect/KFunction;
+	public final fun getResult ()Lorg/genhttp/modules/reflection/operations/OperationResult;
+	public final fun getRoute ()Lorg/genhttp/modules/reflection/routing/OperationRoute;
+}
+
+public final class org/genhttp/modules/reflection/operations/OperationArgument {
+	public fun <init> (Ljava/lang/String;Lkotlin/reflect/KType;Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/reflect/KType;Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getName ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getSource ()Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public final fun getType ()Lkotlin/reflect/KType;
+	public final fun isOptional ()Z
+}
+
+public final class org/genhttp/modules/reflection/operations/OperationArgumentSource : java/lang/Enum {
+	public static final field Body Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static final field Content Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static final field Injected Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static final field Path Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static final field Query Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static final field Streamed Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+	public static fun values ()[Lorg/genhttp/modules/reflection/operations/OperationArgumentSource;
+}
+
+public final class org/genhttp/modules/reflection/operations/OperationBuilder {
+	public static final field INSTANCE Lorg/genhttp/modules/reflection/operations/OperationBuilder;
+	public final fun create (Lorg/genhttp/api/infrastructure/Server;Ljava/lang/String;Lkotlin/reflect/KFunction;Lkotlin/Function;Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/MethodConfiguration;Lorg/genhttp/modules/reflection/MethodRegistry;Z)Lorg/genhttp/modules/reflection/operations/Operation;
+	public static synthetic fun create$default (Lorg/genhttp/modules/reflection/operations/OperationBuilder;Lorg/genhttp/api/infrastructure/Server;Ljava/lang/String;Lkotlin/reflect/KFunction;Lkotlin/Function;Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/MethodConfiguration;Lorg/genhttp/modules/reflection/MethodRegistry;ZILjava/lang/Object;)Lorg/genhttp/modules/reflection/operations/Operation;
+}
+
+public final class org/genhttp/modules/reflection/operations/OperationResult {
+	public fun <init> (Lkotlin/reflect/KType;Lorg/genhttp/modules/reflection/operations/OperationResultSink;)V
+	public final fun getSink ()Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public final fun getType ()Lkotlin/reflect/KType;
+}
+
+public final class org/genhttp/modules/reflection/operations/OperationResultSink : java/lang/Enum {
+	public static final field Binary Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static final field Dynamic Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static final field Formatter Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static final field None Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static final field Serializer Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+	public static fun values ()[Lorg/genhttp/modules/reflection/operations/OperationResultSink;
+}
+
+public final class org/genhttp/modules/reflection/operations/SignatureAnalyzer {
+	public static final field INSTANCE Lorg/genhttp/modules/reflection/operations/SignatureAnalyzer;
+	public final fun getArguments (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KFunction;Ljava/util/Set;Lorg/genhttp/modules/reflection/MethodRegistry;)Ljava/util/Map;
+	public final fun getResult (Lkotlin/reflect/KFunction;Lorg/genhttp/modules/reflection/MethodRegistry;)Lorg/genhttp/modules/reflection/operations/OperationResult;
+	public final fun valueParameters (Lkotlin/reflect/KFunction;)Ljava/util/List;
+}
+
+public final class org/genhttp/modules/reflection/routing/OperationRoute {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Z)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getSegments ()Ljava/util/List;
+	public final fun isWildcard ()Z
+}
+
+public final class org/genhttp/modules/reflection/routing/PathArgumentSink {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;)V
+}
+
+public final class org/genhttp/modules/reflection/routing/RoutingMatch {
+	public fun <init> (ILjava/util/Map;)V
+	public final fun getOffset ()I
+	public final fun getPathArguments ()Ljava/util/Map;
+}
+
+public abstract interface class org/genhttp/modules/reflection/routing/RoutingSegment {
+	public abstract fun getProvidedArguments ()[Ljava/lang/String;
+	public abstract fun tryMatch (Lorg/genhttp/api/protocol/RequestTarget;ILorg/genhttp/modules/reflection/routing/PathArgumentSink;)Lkotlin/Pair;
+}
+
+public final class org/genhttp/modules/reflection/routing/segments/ClosingSegment : org/genhttp/modules/reflection/routing/RoutingSegment {
+	public fun <init> (ZZ)V
+	public fun getProvidedArguments ()[Ljava/lang/String;
+	public fun tryMatch (Lorg/genhttp/api/protocol/RequestTarget;ILorg/genhttp/modules/reflection/routing/PathArgumentSink;)Lkotlin/Pair;
+}
+

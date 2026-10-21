@@ -4,7 +4,7 @@ import org.genhttp.api.content.io.Resource
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.ResponseStatus
-import org.genhttp.modules.functional.Inline
+import org.genhttp.modules.functional.*
 import org.genhttp.modules.io.buildWithTracking
 import org.genhttp.modules.io.fromClasspath
 import org.genhttp.modules.io.fromFile

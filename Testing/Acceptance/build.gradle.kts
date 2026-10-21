@@ -26,7 +26,6 @@ dependencies {
 
 // tests that depend on modules which have not been ported yet (see STATUS.md)
 val pendingTests = listOf(
-    "modules/io/BodyArgumentsTests.kt",
     "modules/io/PathTraversalTests.kt",
     "modules/io/RangeTests.kt",
     "modules/io/VirtualTreeTests.kt",

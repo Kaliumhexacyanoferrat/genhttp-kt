@@ -194,6 +194,9 @@ The Reflection module analyzes signatures with **kotlin-reflect** and invokes th
   compiles plain lambdas through `invokedynamic` without metadata, but **suspend lambdas are compiled to classes that
   keep full metadata** (parameter names and nullable types via `reflect()`). Inline methods therefore take
   `suspend` lambdas (arity 0 as member, arity 1..N as extension overloads so that `{ "x" }` resolves to arity 0).
+- Overloads for lambdas with parameters are extension functions, so code using them imports the module package
+  (`import org.genhttp.modules.functional.*`, the counterpart of `using GenHTTP.Modules.Functional;`). Without the
+  import, the compiler only sees the member overloads and reports a type mismatch.
 - Kotlin does not allow annotations or default values on lambda parameters. Inline handlers that need them
   (`[FromBody]`, `[Summary]`, `int x = 42`) use **function references** (`post(::handler)`), which carry everything.
 - Default values cannot be read via kotlin-reflect. Optional parameters are omitted from the call so that Kotlin's own
@@ -275,6 +278,10 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
 | API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |
 | Engine | Endpoints with `dualStack = false` on IPv6 accept IPv4 connections at the TCP level but close them immediately | The JDK cannot set `IPV6_V6ONLY`; the binding tests therefore check that a request is answered instead of a bare TCP connect |
+| Tests | `ConnectionTests.testUpgrade` reads the 101 response from a raw socket | The JDK HTTP client rejects unexpected 101 responses |
+| Tests | `ResourceTreeTests.testByAssembly` checks that the classpath root contains the `Resources` folder instead of exactly one node | The classpath root merges all roots of the runtime, an assembly has a single root |
+| Conversion | JSON escapes HTML-sensitive and non-ASCII characters as unicode escapes, enums with explicit values (`ResponseStatus`, `Priority`) are written as their value | Mirrors the defaults of System.Text.Json |
+| Reflection | Kotlin types of lambda parameters are converted with `KType.toJavaType()` (Conversion) | kotlin-reflect cannot map types of lambdas to Java types |
 | IO | `FormattableContent<T>` merged into `FormattableContent(value: Any)` (formats via `toString()`, doubles like .NET) | No generic arity overloading, no `IUtf8SpanFormattable` |
 | IO | `WritingStream` is a write-only `OutputStream(WritableByteChannel, Flushable)` | JVM streams are not bidirectional |
 | IO | Stream checksums require `markSupported()`, `StreamContent.length` is only the known length | JVM streams are not seekable |

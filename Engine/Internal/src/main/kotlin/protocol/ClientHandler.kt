@@ -46,7 +46,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
 
         try {
             handleConnection()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             logUnlessGraceful(e, "Failed to handle client connection")
         } finally {
             try {
@@ -139,7 +139,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
             // client did something wrong
             sendError(e, ResponseStatus.fromCode(e.statusCode) ?: ResponseStatus.BadRequest)
             throw e
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             if (ConnectionExceptions.isGracefulDisconnect(e)) {
                 throw e
             }
@@ -182,7 +182,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
         return if (active && keepAliveRequested && !closeRequested) Connection.KeepAlive else Connection.Close
     }
 
-    private suspend fun sendError(e: Exception, status: ResponseStatus) {
+    private suspend fun sendError(e: Throwable, status: ResponseStatus) {
         try {
             val message = if (context.server.development) e.stackTraceToString() else (e.message ?: e.javaClass.name)
 
