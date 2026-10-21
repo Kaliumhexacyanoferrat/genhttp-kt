@@ -1,0 +1,9 @@
+public final class org/genhttp/engine/internal/Host {
+	public static final field INSTANCE Lorg/genhttp/engine/internal/Host;
+	public final fun create ()Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/engine/internal/infrastructure/endpoints/BindingException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
