@@ -78,7 +78,15 @@ Dropping the prefix makes some interfaces collide with GenHTTP's static factory 
    descriptive prefix, never an `Impl` suffix. The engine uses `Http*` (`HttpRequest`, `HttpResponse`,
    `HttpResponseBuilder`, `HttpRequestTarget`, ...). Elsewhere pick a prefix that describes the variant
    (`InlineMethodConfiguration` for Functional's `MethodConfiguration` record).
-3. Record each rename in the [deviation log](#deviation-log).
+3. **Annotation clashes**: when dropping the `Attribute` suffix makes an annotation collide with an API type, the
+   annotation gets an `Api` prefix (`ResponseAttribute` → `@ApiResponse`, as known from Swagger).
+4. Record each rename in the [deviation log](#deviation-log).
+
+### Files
+
+One Kotlin file per upstream C# file, named after the main declaration without the `I` prefix. Files that only
+contain extension functions (C# static extension classes) carry `@file:JvmName("<C# class name>")`, e.g.
+`RequestHeadersCookies.kt` with `@file:JvmName("CookieHeaderExtensions")`, so the ABI dump mirrors upstream names.
 
 ## Type mapping
 
@@ -255,3 +263,14 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | Resources | `FromAssembly` → `fromClasspath` | No assemblies on the JVM |
 | Templates | Cottle syntax replaced by Pebble syntax for `Renderer.from(...)` templates | No Cottle implementation on the JVM |
 | Glyph11 | Parses contiguous `ByteBuffer`s only (no `ReadOnlySequence` overloads) | The engine always provides a contiguous buffer |
+| API | `IHandlerBuilder<TBuilder>` → `HandlerBuilder.WithConcerns<TBuilder>` | Kotlin cannot overload an interface name by generic arity |
+| API | `Forwarding.For` → `Forwarding.forAddress` | `for` is a hard keyword in Kotlin |
+| API | `DocumentationAttribute` base class → `@Documentation` meta-annotation; `OperationDocumentation.entries` is a `List<Annotation>` | Kotlin annotations cannot inherit |
+| API | `RequestBodyAttribute`, `RequestHeaderAttribute`, `ResponseAttribute`, `ResponseHeaderAttribute` → `@ApiRequestBody`, `@ApiRequestHeader`, `@ApiResponse`, `@ApiResponseHeader` | Avoid clashes with `RequestBody`, `RequestHeader`, `Response` |
+| API | Optional annotation parameters use `""` / `Nothing::class` instead of `null`; `ResponseHeaderAttribute.Status` is an array with at most one entry | Annotation parameters cannot be nullable |
+| API | `SslProtocols`, `SslPolicyErrors`, `X509RevocationMode`, `CompressionLevel` are small enums in the API; flags become `Set<E>` | No JDK equivalents |
+| API | `HttpProtocols` keeps its combined members and gains `hasFlag`, `plus`, `minus` | Replaces `[Flags]` arithmetic |
+| API | `ResponseStatus` carries its numeric `code`, `ResponseStatus.fromCode(Int)` replaces casts | Kotlin enums have no implicit integer value |
+| API | `IServer.DisposeAsync()` → `suspend fun close()`; `IEndPoint : IDisposable` → `EndPoint : AutoCloseable` | Kotlin lifecycle conventions |
+| API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
+| API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |

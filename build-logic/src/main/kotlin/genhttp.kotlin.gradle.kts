@@ -23,6 +23,7 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_25)
         allWarningsAsErrors.set(true)
+        jvmDefault.set(org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode.NO_COMPATIBILITY)
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }

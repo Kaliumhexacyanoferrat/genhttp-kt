@@ -1,4 +1,780 @@
-public final class org/genhttp/api/Placeholder {
-	public static final field INSTANCE Lorg/genhttp/api/Placeholder;
+public abstract interface annotation class org/genhttp/api/GenHttpDsl : java/lang/annotation/Annotation {
+}
+
+public abstract class org/genhttp/api/MemoryView {
+	protected fun <init> (Ljava/lang/String;)V
+	protected fun <init> (Ljava/nio/ByteBuffer;)V
+	protected fun <init> ([B)V
+	public final fun contentEquals (Ljava/nio/ByteBuffer;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytes ()Ljava/nio/ByteBuffer;
+	public final fun getLength ()I
+	public fun hashCode ()I
+	public final fun isEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/genhttp/api/content/Concern : org/genhttp/api/content/Handler {
+	public static final field Companion Lorg/genhttp/api/content/Concern$Companion;
+	public abstract fun getContent ()Lorg/genhttp/api/content/Handler;
+}
+
+public final class org/genhttp/api/content/Concern$Companion {
+}
+
+public abstract interface class org/genhttp/api/content/ConcernBuilder {
+	public abstract fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+
+public final class org/genhttp/api/content/Concerns {
+	public static final field INSTANCE Lorg/genhttp/api/content/Concerns;
+	public final fun chain (Ljava/lang/Iterable;Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Handler;
+}
+
+public abstract interface class org/genhttp/api/content/Handler {
+	public static final field Companion Lorg/genhttp/api/content/Handler$Companion;
+	public abstract fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/api/content/Handler$Companion {
+}
+
+public abstract interface class org/genhttp/api/content/HandlerBuilder {
+	public abstract fun build ()Lorg/genhttp/api/content/Handler;
+}
+
+public abstract interface class org/genhttp/api/content/HandlerBuilder$WithConcerns : org/genhttp/api/content/HandlerBuilder {
+	public abstract fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+}
+
+public final class org/genhttp/api/content/ProviderException : java/lang/RuntimeException {
+	public fun <init> (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public final fun getModifications ()Lkotlin/jvm/functions/Function1;
+	public final fun getStatus ()Lorg/genhttp/api/protocol/ResponseStatus;
+}
+
+public abstract interface class org/genhttp/api/content/authentication/User {
+	public abstract fun getDisplayName ()Ljava/lang/String;
+	public fun getRoles ()Ljava/util/List;
+}
+
+public final class org/genhttp/api/content/io/AlgorithmName : org/genhttp/api/MemoryView {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+}
+
+public abstract interface class org/genhttp/api/content/io/CompressionAlgorithm {
+	public abstract fun compress (Lorg/genhttp/api/protocol/ResponseContent;Lorg/genhttp/api/content/io/CompressionLevel;)Lorg/genhttp/api/protocol/ResponseContent;
+	public abstract fun decompress (Ljava/io/InputStream;)Ljava/io/InputStream;
+	public abstract fun getFileExtension ()Ljava/lang/String;
+	public abstract fun getName ()Lorg/genhttp/api/content/io/AlgorithmName;
+	public abstract fun getPriority ()Lorg/genhttp/api/infrastructure/Priority;
+}
+
+public final class org/genhttp/api/content/io/CompressionLevel : java/lang/Enum {
+	public static final field Fastest Lorg/genhttp/api/content/io/CompressionLevel;
+	public static final field NoCompression Lorg/genhttp/api/content/io/CompressionLevel;
+	public static final field Optimal Lorg/genhttp/api/content/io/CompressionLevel;
+	public static final field SmallestSize Lorg/genhttp/api/content/io/CompressionLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/content/io/CompressionLevel;
+	public static fun values ()[Lorg/genhttp/api/content/io/CompressionLevel;
+}
+
+public abstract interface class org/genhttp/api/content/io/Resource {
+	public static final field Companion Lorg/genhttp/api/content/io/Resource$Companion;
+	public abstract fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public abstract fun getLength ()Ljava/lang/Long;
+	public abstract fun getModified ()Ljava/time/Instant;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/api/content/io/Resource$Companion {
+}
+
+public abstract interface class org/genhttp/api/content/io/ResourceBuilder : org/genhttp/api/infrastructure/Builder {
+	public abstract fun modified (Ljava/time/Instant;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public abstract fun name (Ljava/lang/String;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public abstract fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/content/io/ResourceBuilder;
+}
+
+public abstract interface class org/genhttp/api/content/io/ResourceContainer {
+	public abstract fun getModified ()Ljava/time/Instant;
+	public abstract fun getNodes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getResources (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun tryGetNode (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun tryGetResource (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/api/content/io/ResourceNode : org/genhttp/api/content/io/ResourceContainer {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getParent ()Lorg/genhttp/api/content/io/ResourceContainer;
+}
+
+public abstract interface class org/genhttp/api/content/io/ResourceTree : org/genhttp/api/content/io/ResourceContainer {
+	public static final field Companion Lorg/genhttp/api/content/io/ResourceTree$Companion;
+}
+
+public final class org/genhttp/api/content/io/ResourceTree$Companion {
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiRequestBody : java/lang/annotation/Annotation {
+	public abstract fun contentType ()Ljava/lang/String;
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiRequestBody$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiRequestBody;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiRequestHeader : java/lang/annotation/Annotation {
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun required ()Z
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiRequestHeader$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiRequestHeader;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiResponse : java/lang/annotation/Annotation {
+	public abstract fun contentType ()Ljava/lang/String;
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun status ()Lorg/genhttp/api/protocol/ResponseStatus;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiResponse$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiResponse;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiResponseHeader : java/lang/annotation/Annotation {
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun status ()[Lorg/genhttp/api/protocol/ResponseStatus;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/ApiResponseHeader$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiResponseHeader;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/Documentation : java/lang/annotation/Annotation {
+}
+
+public final class org/genhttp/api/content/services/DocumentationKt {
+	public static final fun isDocumentation (Ljava/lang/annotation/Annotation;)Z
+}
+
+public abstract interface class org/genhttp/api/content/services/DocumentedConcern : org/genhttp/api/content/Concern {
+	public abstract fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+}
+
+public final class org/genhttp/api/content/services/OperationDocumentation {
+	public fun <init> (Lorg/genhttp/api/protocol/RequestMethod;)V
+	public final fun add (Ljava/lang/annotation/Annotation;)Lorg/genhttp/api/content/services/OperationDocumentation;
+	public final fun getEntries ()Ljava/util/List;
+	public final fun getMethod ()Lorg/genhttp/api/protocol/RequestMethod;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/Remarks : java/lang/annotation/Annotation {
+	public abstract fun text ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/Summary : java/lang/annotation/Annotation {
+	public abstract fun text ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/api/content/services/Tag : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/infrastructure/BufferSize {
+	public static final field INSTANCE Lorg/genhttp/api/infrastructure/BufferSize;
+	public static final field Read I
+	public static final field Write I
+}
+
+public abstract interface class org/genhttp/api/infrastructure/Builder {
+	public abstract fun build ()Ljava/lang/Object;
+}
+
+public final class org/genhttp/api/infrastructure/BuilderMissingPropertyException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getProperty ()Ljava/lang/String;
+}
+
+public abstract interface class org/genhttp/api/infrastructure/CertificateProvider {
+	public static final field Companion Lorg/genhttp/api/infrastructure/CertificateProvider$Companion;
+	public abstract fun provide (Ljava/lang/String;)Ljava/security/KeyStore$PrivateKeyEntry;
+}
+
+public final class org/genhttp/api/infrastructure/CertificateProvider$Companion {
+	public final fun from (Ljava/security/KeyStore$PrivateKeyEntry;)Lorg/genhttp/api/infrastructure/CertificateProvider;
+}
+
+public abstract interface class org/genhttp/api/infrastructure/CertificateValidator {
+	public fun getRequireCertificate ()Z
+	public fun getRevocationCheck ()Lorg/genhttp/api/infrastructure/X509RevocationMode;
+	public abstract fun validate (Ljava/security/cert/X509Certificate;Ljava/util/List;Ljava/util/Set;)Z
+}
+
+public abstract interface class org/genhttp/api/infrastructure/ClientConnection {
+	public abstract fun getAddress ()Ljava/net/InetAddress;
+	public abstract fun getCertificate ()Ljava/security/cert/X509Certificate;
+	public abstract fun getProtocol ()Lorg/genhttp/api/protocol/ClientProtocol;
+}
+
+public final class org/genhttp/api/infrastructure/ConnectionClosedException : java/io/IOException {
+	public fun <init> ()V
+}
+
+public abstract interface class org/genhttp/api/infrastructure/EndPoint : java/lang/AutoCloseable {
+	public abstract fun getAddress ()Ljava/net/InetAddress;
+	public abstract fun getDualStack ()Z
+	public abstract fun getPort ()I
+	public abstract fun getProtocols ()Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public abstract fun getSecure ()Z
+}
+
+public abstract interface class org/genhttp/api/infrastructure/EndPointCollection : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+}
+
+public final class org/genhttp/api/infrastructure/HttpProtocols : java/lang/Enum {
+	public static final field All Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Companion Lorg/genhttp/api/infrastructure/HttpProtocols$Companion;
+	public static final field Http1 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Http1AndHttp2 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Http1AndHttp3 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Http2 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Http2AndHttp3 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field Http3 Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static final field None Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getFlags ()I
+	public final fun hasFlag (Lorg/genhttp/api/infrastructure/HttpProtocols;)Z
+	public final fun minus (Lorg/genhttp/api/infrastructure/HttpProtocols;)Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public final fun plus (Lorg/genhttp/api/infrastructure/HttpProtocols;)Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/HttpProtocols;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/HttpProtocols;
+}
+
+public final class org/genhttp/api/infrastructure/HttpProtocols$Companion {
+	public final fun fromFlags (I)Lorg/genhttp/api/infrastructure/HttpProtocols;
+}
+
+public final class org/genhttp/api/infrastructure/Priority : java/lang/Enum {
+	public static final field High Lorg/genhttp/api/infrastructure/Priority;
+	public static final field Low Lorg/genhttp/api/infrastructure/Priority;
+	public static final field Medium Lorg/genhttp/api/infrastructure/Priority;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/Priority;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/Priority;
+}
+
+public abstract interface class org/genhttp/api/infrastructure/PropertyBag {
+	public abstract fun clear (Ljava/lang/String;)V
+	public abstract fun get (Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun set (Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun tryGet (Ljava/lang/String;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/api/infrastructure/Server {
+	public abstract fun close (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getDevelopment ()Z
+	public abstract fun getEndPoints ()Lorg/genhttp/api/infrastructure/EndPointCollection;
+	public abstract fun getHandler ()Lorg/genhttp/api/content/Handler;
+	public abstract fun getLogging ()Lorg/slf4j/ILoggerFactory;
+	public abstract fun getProperties ()Lorg/genhttp/api/infrastructure/PropertyBag;
+	public abstract fun getRunning ()Z
+	public abstract fun getServerEngine ()Lorg/genhttp/api/infrastructure/ServerEngine;
+	public abstract fun getVersion ()Ljava/lang/String;
+	public abstract fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/api/infrastructure/ServerEngine : java/lang/Enum {
+	public static final field Custom Lorg/genhttp/api/infrastructure/ServerEngine;
+	public static final field Internal Lorg/genhttp/api/infrastructure/ServerEngine;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/ServerEngine;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/ServerEngine;
+}
+
+public abstract interface class org/genhttp/api/infrastructure/ServerHost {
+	public abstract fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun bind (Ljava/net/InetAddress;ILorg/genhttp/api/infrastructure/CertificateProvider;Ljava/util/Set;Lorg/genhttp/api/infrastructure/CertificateValidator;Lorg/genhttp/api/infrastructure/HttpProtocols;Z)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun bind (Ljava/net/InetAddress;ILorg/genhttp/api/infrastructure/HttpProtocols;Z)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun bind$default (Lorg/genhttp/api/infrastructure/ServerHost;Ljava/net/InetAddress;ILorg/genhttp/api/infrastructure/CertificateProvider;Ljava/util/Set;Lorg/genhttp/api/infrastructure/CertificateValidator;Lorg/genhttp/api/infrastructure/HttpProtocols;ZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun bind$default (Lorg/genhttp/api/infrastructure/ServerHost;Ljava/net/InetAddress;ILorg/genhttp/api/infrastructure/HttpProtocols;ZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun development (Z)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun development$default (Lorg/genhttp/api/infrastructure/ServerHost;ZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun getInstance ()Lorg/genhttp/api/infrastructure/Server;
+	public abstract fun handler (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public fun handler (Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun logging (Lorg/slf4j/ILoggerFactory;Z)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun logging$default (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/slf4j/ILoggerFactory;ZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun port (I)Lorg/genhttp/api/infrastructure/ServerHost;
+	public abstract fun restart (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/api/infrastructure/SslPolicyError : java/lang/Enum {
+	public static final field RemoteCertificateChainErrors Lorg/genhttp/api/infrastructure/SslPolicyError;
+	public static final field RemoteCertificateNameMismatch Lorg/genhttp/api/infrastructure/SslPolicyError;
+	public static final field RemoteCertificateNotAvailable Lorg/genhttp/api/infrastructure/SslPolicyError;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/SslPolicyError;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/SslPolicyError;
+}
+
+public final class org/genhttp/api/infrastructure/SslProtocol : java/lang/Enum {
+	public static final field Tls12 Lorg/genhttp/api/infrastructure/SslProtocol;
+	public static final field Tls13 Lorg/genhttp/api/infrastructure/SslProtocol;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getProtocolName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/SslProtocol;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/SslProtocol;
+}
+
+public final class org/genhttp/api/infrastructure/X509RevocationMode : java/lang/Enum {
+	public static final field NoCheck Lorg/genhttp/api/infrastructure/X509RevocationMode;
+	public static final field Offline Lorg/genhttp/api/infrastructure/X509RevocationMode;
+	public static final field Online Lorg/genhttp/api/infrastructure/X509RevocationMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/X509RevocationMode;
+	public static fun values ()[Lorg/genhttp/api/infrastructure/X509RevocationMode;
+}
+
+public class org/genhttp/api/infrastructure/certificates/ObjectCertificateProvider : org/genhttp/api/infrastructure/CertificateProvider {
+	public fun <init> (Ljava/security/KeyStore$PrivateKeyEntry;)V
+	public fun provide (Ljava/lang/String;)Ljava/security/KeyStore$PrivateKeyEntry;
+}
+
+public final class org/genhttp/api/protocol/ByteString : org/genhttp/api/MemoryView {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+}
+
+public final class org/genhttp/api/protocol/ByteStringPreAllocationExtensions {
+	public static final fun preAllocate (Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/Request;)Lorg/genhttp/api/protocol/ByteString;
+}
+
+public final class org/genhttp/api/protocol/ClientProtocol : java/lang/Enum {
+	public static final field Http Lorg/genhttp/api/protocol/ClientProtocol;
+	public static final field Https Lorg/genhttp/api/protocol/ClientProtocol;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/protocol/ClientProtocol;
+	public static fun values ()[Lorg/genhttp/api/protocol/ClientProtocol;
+}
+
+public final class org/genhttp/api/protocol/Connection : java/lang/Enum {
+	public static final field Close Lorg/genhttp/api/protocol/Connection;
+	public static final field KeepAlive Lorg/genhttp/api/protocol/Connection;
+	public static final field Upgrade Lorg/genhttp/api/protocol/Connection;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/protocol/Connection;
+	public static fun values ()[Lorg/genhttp/api/protocol/Connection;
+}
+
+public final class org/genhttp/api/protocol/ContentType : org/genhttp/api/MemoryView {
+	public static final field Companion Lorg/genhttp/api/protocol/ContentType$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+	public final fun withoutOptions ()Lorg/genhttp/api/protocol/ContentType;
+}
+
+public final class org/genhttp/api/protocol/ContentType$Companion {
+	public final fun getApplicationForceDownload ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationJavaScript ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationJson ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOctetStream ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOfficeDocumentPresentation ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOfficeDocumentSheet ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOfficeDocumentSlideshow ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOfficeDocumentWordProcessing ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationPdf ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationProtobuf ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationRtf ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationWwwFormUrlEncoded ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationXml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationYaml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getAudioMp4 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getAudioMpeg ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getAudioOgg ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getAudioWav ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFontEmbeddedOpenTypeFont ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFontOpenTypeFont ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFontTrueTypeFont ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFontWoff ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFontWoff2 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageAvif ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageBmp ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageGif ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageIcon ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageJpeg ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageJpg ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImagePng ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageScalableVectorGraphics ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageScalableVectorGraphicsCompressed ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageScalableVectorGraphicsXml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageTiff ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getImageWebp ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextCss ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextCsv ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextEventStream ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextHtml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextJavaScript ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextPlain ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextRichText ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextXml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getTextYaml ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideo3Gpp ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideo3Gpp2 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoAV1 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoAvc ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoDV ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoH261 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoH263 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoH264 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoH265 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoH266 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMJ2 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMP4 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMatroska ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMatroska3D ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMpeg ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMpeg4Generic ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoMpv ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoQuicktime ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoRaw ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoVC1 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoVC2 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoVP8 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoVP9 ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getVideoWebM ()Lorg/genhttp/api/protocol/ContentType;
+}
+
+public final class org/genhttp/api/protocol/CookieHeaderExtensions {
+	public static final fun getCookie (Lorg/genhttp/api/protocol/RequestHeaders;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun getCookie (Lorg/genhttp/api/protocol/RequestHeaders;Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/api/protocol/ByteString;
+	public static final fun getCookies (Lorg/genhttp/api/protocol/RequestHeaders;)Lorg/genhttp/api/protocol/KeyValueList;
+}
+
+public final class org/genhttp/api/protocol/CookieOptions {
+	public fun <init> ()V
+	public synthetic fun <init> (Lkotlin/time/Duration;Ljava/time/Instant;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;ZZLorg/genhttp/api/protocol/SameSite;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lkotlin/time/Duration;Ljava/time/Instant;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;ZZLorg/genhttp/api/protocol/SameSite;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-FghU774 ()Lkotlin/time/Duration;
+	public final fun component2 ()Ljava/time/Instant;
+	public final fun component3 ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun component4 ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun component7 ()Lorg/genhttp/api/protocol/SameSite;
+	public final fun copy-aIb_HTI (Lkotlin/time/Duration;Ljava/time/Instant;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;ZZLorg/genhttp/api/protocol/SameSite;)Lorg/genhttp/api/protocol/CookieOptions;
+	public static synthetic fun copy-aIb_HTI$default (Lorg/genhttp/api/protocol/CookieOptions;Lkotlin/time/Duration;Ljava/time/Instant;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;ZZLorg/genhttp/api/protocol/SameSite;ILjava/lang/Object;)Lorg/genhttp/api/protocol/CookieOptions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDomain ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getExpires ()Ljava/time/Instant;
+	public final fun getHttpOnly ()Z
+	public final fun getMaxAge-FghU774 ()Lkotlin/time/Duration;
+	public final fun getPath ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getSameSite ()Lorg/genhttp/api/protocol/SameSite;
+	public final fun getSecure ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/protocol/CookieResponseExtensions {
+	public static final fun cookie (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static final fun cookie (Lorg/genhttp/api/protocol/ResponseBuilder;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/CookieOptions;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun cookie$default (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun cookie$default (Lorg/genhttp/api/protocol/ResponseBuilder;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/CookieOptions;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public final class org/genhttp/api/protocol/Forwarding {
+	public fun <init> (Ljava/net/InetAddress;Ljava/net/InetAddress;Ljava/lang/String;Lorg/genhttp/api/protocol/ClientProtocol;)V
+	public final fun component1 ()Ljava/net/InetAddress;
+	public final fun component2 ()Ljava/net/InetAddress;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lorg/genhttp/api/protocol/ClientProtocol;
+	public final fun copy (Ljava/net/InetAddress;Ljava/net/InetAddress;Ljava/lang/String;Lorg/genhttp/api/protocol/ClientProtocol;)Lorg/genhttp/api/protocol/Forwarding;
+	public static synthetic fun copy$default (Lorg/genhttp/api/protocol/Forwarding;Ljava/net/InetAddress;Ljava/net/InetAddress;Ljava/lang/String;Lorg/genhttp/api/protocol/ClientProtocol;ILjava/lang/Object;)Lorg/genhttp/api/protocol/Forwarding;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBy ()Ljava/net/InetAddress;
+	public final fun getForAddress ()Ljava/net/InetAddress;
+	public final fun getHost ()Ljava/lang/String;
+	public final fun getProtocol ()Lorg/genhttp/api/protocol/ClientProtocol;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/protocol/ForwardingHeaderExtensions {
+	public static final fun getForwardings (Lorg/genhttp/api/protocol/RequestHeaders;)Ljava/util/List;
+}
+
+public final class org/genhttp/api/protocol/HeaderAccess : java/lang/Enum {
+	public static final field Release Lorg/genhttp/api/protocol/HeaderAccess;
+	public static final field Retain Lorg/genhttp/api/protocol/HeaderAccess;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/protocol/HeaderAccess;
+	public static fun values ()[Lorg/genhttp/api/protocol/HeaderAccess;
+}
+
+public final class org/genhttp/api/protocol/HttpProtocol : org/genhttp/api/MemoryView {
+	public static final field Companion Lorg/genhttp/api/protocol/HttpProtocol$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+}
+
+public final class org/genhttp/api/protocol/HttpProtocol$Companion {
+	public final fun getHttp10 ()Lorg/genhttp/api/protocol/HttpProtocol;
+	public final fun getHttp11 ()Lorg/genhttp/api/protocol/HttpProtocol;
+	public final fun getHttp2 ()Lorg/genhttp/api/protocol/HttpProtocol;
+	public final fun getHttp3 ()Lorg/genhttp/api/protocol/HttpProtocol;
+}
+
+public abstract interface class org/genhttp/api/protocol/KeyValueList {
+	public abstract fun getCount ()I
+	public abstract fun getMemoryEntry (I)Lkotlin/Pair;
+}
+
+public final class org/genhttp/api/protocol/KeyValueListExtensions {
+	public static final fun containsKey (Lorg/genhttp/api/protocol/KeyValueList;Ljava/lang/String;)Z
+	public static final fun containsKey (Lorg/genhttp/api/protocol/KeyValueList;Lorg/genhttp/api/protocol/ByteString;)Z
+	public static final fun getEntry (Lorg/genhttp/api/protocol/KeyValueList;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun getEntry (Lorg/genhttp/api/protocol/KeyValueList;Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/api/protocol/ByteString;
+	public static final fun getStringEntry (Lorg/genhttp/api/protocol/KeyValueList;I)Lkotlin/Pair;
+}
+
+public final class org/genhttp/api/protocol/KnownHeaders {
+	public static final field INSTANCE Lorg/genhttp/api/protocol/KnownHeaders;
+	public final fun getAccept ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getAcceptEncoding ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getConnection ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getContentEncoding ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getContentLength ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getContentType ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getCookie ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getDate ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getETag ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getExpires ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getForwarded ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getForwardedFor ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getForwardedHost ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getForwardedProto ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getHost ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getIfNoneMatch ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getServer ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getSetCookie ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getTransferEncoding ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getVary ()Lorg/genhttp/api/protocol/ByteString;
+}
+
+public final class org/genhttp/api/protocol/PathSegment : org/genhttp/api/MemoryView {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+	public final fun decode ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/protocol/PercentEncoding {
+	public static final field INSTANCE Lorg/genhttp/api/protocol/PercentEncoding;
+	public final fun decode (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;Z)I
+	public final fun decode (Ljava/nio/ByteBuffer;Z)Ljava/nio/ByteBuffer;
+	public static synthetic fun decode$default (Lorg/genhttp/api/protocol/PercentEncoding;Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;ZILjava/lang/Object;)I
+	public static synthetic fun decode$default (Lorg/genhttp/api/protocol/PercentEncoding;Ljava/nio/ByteBuffer;ZILjava/lang/Object;)Ljava/nio/ByteBuffer;
+	public final fun hexValue (B)I
+	public final fun isHexDigit (B)Z
+	public final fun tryDecode (BB)Ljava/lang/Byte;
+}
+
+public abstract interface class org/genhttp/api/protocol/Request {
+	public abstract fun getBody (Lorg/genhttp/api/protocol/HeaderAccess;)Lorg/genhttp/api/protocol/RequestBody;
+	public static synthetic fun getBody$default (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/HeaderAccess;ILjava/lang/Object;)Lorg/genhttp/api/protocol/RequestBody;
+	public abstract fun getClient ()Lorg/genhttp/api/infrastructure/ClientConnection;
+	public abstract fun getEndPoint ()Lorg/genhttp/api/infrastructure/EndPoint;
+	public abstract fun getHasBody ()Z
+	public abstract fun getHeader ()Lorg/genhttp/api/protocol/RequestHeader;
+	public abstract fun getProperties ()Lorg/genhttp/api/infrastructure/PropertyBag;
+	public abstract fun getServer ()Lorg/genhttp/api/infrastructure/Server;
+	public abstract fun respond ()Lorg/genhttp/api/protocol/ResponseBuilder;
+	public abstract fun upgrade ()Ljava/io/InputStream;
+	public abstract fun wrapBody (Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class org/genhttp/api/protocol/RequestBody {
+	public abstract fun asMemory (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun asStream ()Ljava/io/InputStream;
+}
+
+public abstract interface class org/genhttp/api/protocol/RequestHeader {
+	public abstract fun getHeaders ()Lorg/genhttp/api/protocol/RequestHeaders;
+	public abstract fun getMethod ()Lorg/genhttp/api/protocol/RequestMethod;
+	public abstract fun getPath ()Lorg/genhttp/api/protocol/ByteString;
+	public abstract fun getProtocol ()Lorg/genhttp/api/protocol/HttpProtocol;
+	public abstract fun getQuery ()Lorg/genhttp/api/protocol/RequestQuery;
+	public abstract fun getTarget ()Lorg/genhttp/api/protocol/RequestTarget;
+}
+
+public abstract interface class org/genhttp/api/protocol/RequestHeaders : org/genhttp/api/protocol/KeyValueList {
+}
+
+public final class org/genhttp/api/protocol/RequestMethod : org/genhttp/api/MemoryView {
+	public static final field Companion Lorg/genhttp/api/protocol/RequestMethod$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/ByteBuffer;)V
+	public fun <init> ([B)V
+}
+
+public final class org/genhttp/api/protocol/RequestMethod$Companion {
+	public final fun getConnect ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getDelete ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getGet ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getHead ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getOptions ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getPatch ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getPost ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getPut ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun getTrace ()Lorg/genhttp/api/protocol/RequestMethod;
+}
+
+public abstract interface class org/genhttp/api/protocol/RequestQuery : org/genhttp/api/protocol/KeyValueList {
+}
+
+public abstract interface class org/genhttp/api/protocol/RequestTarget {
+	public abstract fun advance (I)V
+	public static synthetic fun advance$default (Lorg/genhttp/api/protocol/RequestTarget;IILjava/lang/Object;)V
+	public abstract fun asString (ZZ)Ljava/lang/String;
+	public static synthetic fun asString$default (Lorg/genhttp/api/protocol/RequestTarget;ZZILjava/lang/Object;)Ljava/lang/String;
+	public abstract fun copyAndAppend (Ljava/nio/ByteBuffer;)Lorg/genhttp/api/protocol/RequestTarget;
+	public abstract fun getCurrent ()Lorg/genhttp/api/protocol/PathSegment;
+	public abstract fun getHasTrailingSlash ()Z
+	public abstract fun isLast ()Z
+	public abstract fun next (I)Lorg/genhttp/api/protocol/PathSegment;
+}
+
+public abstract interface class org/genhttp/api/protocol/Response {
+	public abstract fun getContent ()Lorg/genhttp/api/protocol/ResponseContent;
+	public abstract fun getHeaders ()Lorg/genhttp/api/protocol/KeyValueList;
+	public abstract fun getMode ()Lorg/genhttp/api/protocol/Connection;
+	public abstract fun getStatus ()Lorg/genhttp/api/protocol/ResponseStatus;
+	public abstract fun rebuild ()Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public abstract interface class org/genhttp/api/protocol/ResponseBuilder : org/genhttp/api/infrastructure/Builder {
+	public abstract fun connection (Lorg/genhttp/api/protocol/Connection;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public abstract fun content (Lorg/genhttp/api/protocol/ResponseContent;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public abstract fun header (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public abstract fun header (Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public abstract fun status (Lorg/genhttp/api/protocol/ResponseStatus;)Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public abstract interface class org/genhttp/api/protocol/ResponseContent {
+	public abstract fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getEncoding ()Ljava/nio/ByteBuffer;
+	public abstract fun getLength ()Ljava/lang/Long;
+	public abstract fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public abstract fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/api/protocol/ResponseModification {
+	public abstract fun connection (Lorg/genhttp/api/protocol/Connection;)Ljava/lang/Object;
+	public abstract fun cookie (Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;)Ljava/lang/Object;
+	public static synthetic fun cookie$default (Lorg/genhttp/api/protocol/ResponseModification;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/CookieOptions;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun header (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun status (Lorg/genhttp/api/protocol/ResponseStatus;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/api/protocol/ResponseSink {
+	public abstract fun getStream ()Ljava/io/OutputStream;
+	public abstract fun getWriter ()Ljava/nio/channels/WritableByteChannel;
+}
+
+public final class org/genhttp/api/protocol/ResponseStatus : java/lang/Enum {
+	public static final field Accepted Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field AlreadyReported Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field BadGateway Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field BadRequest Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Companion Lorg/genhttp/api/protocol/ResponseStatus$Companion;
+	public static final field Conflict Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Continue Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Created Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field ExpectationFailed Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field FailedDependency Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Forbidden Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Found Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field GatewayTimeout Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Gone Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field HttpVersionNotSupported Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field InsufficientStorage Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field InternalServerError Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field LengthRequired Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Locked Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field LoopDetected Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field MethodNotAllowed Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field MovedPermanently Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field MultiStatus Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NetworkAuthenticationRequired Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NoContent Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NotAcceptable Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NotExtended Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NotFound Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NotImplemented Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field NotModified Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Ok Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field PartialContent Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field PermanentRedirect Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field PreconditionFailed Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field PreconditionRequired Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Processing Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field ProxyAuthenticationRequired Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field RequestEntityTooLarge Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field RequestHeaderFieldsTooLarge Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field RequestUriTooLong Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field RequestedRangeNotSatisfiable Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field ReservedForWebDav Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field SeeOther Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field ServiceUnavailable Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field SwitchingProtocols Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field TemporaryRedirect Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field TooManyRequests Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field Unauthorized Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field UnavailableForLegalReasons Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field UnprocessableEntity Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field UnsupportedMediaType Lorg/genhttp/api/protocol/ResponseStatus;
+	public static final field UpgradeRequired Lorg/genhttp/api/protocol/ResponseStatus;
+	public final fun getCode ()I
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/protocol/ResponseStatus;
+	public static fun values ()[Lorg/genhttp/api/protocol/ResponseStatus;
+}
+
+public final class org/genhttp/api/protocol/ResponseStatus$Companion {
+	public final fun fromCode (I)Lorg/genhttp/api/protocol/ResponseStatus;
+}
+
+public final class org/genhttp/api/protocol/SameSite : java/lang/Enum {
+	public static final field Lax Lorg/genhttp/api/protocol/SameSite;
+	public static final field None Lorg/genhttp/api/protocol/SameSite;
+	public static final field Strict Lorg/genhttp/api/protocol/SameSite;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/protocol/SameSite;
+	public static fun values ()[Lorg/genhttp/api/protocol/SameSite;
 }
 
