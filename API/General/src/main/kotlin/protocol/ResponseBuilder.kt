@@ -1,12 +1,10 @@
 package org.genhttp.api.protocol
 
-import org.genhttp.api.GenHttpDsl
 import org.genhttp.api.infrastructure.Builder
 
 /**
  * Allows to create and modify responses.
  */
-@GenHttpDsl
 public interface ResponseBuilder : Builder<Response> {
 
     /**

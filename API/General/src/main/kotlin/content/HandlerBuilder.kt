@@ -1,11 +1,8 @@
 package org.genhttp.api.content
 
-import org.genhttp.api.GenHttpDsl
-
 /**
  * Allows to create a handler instance.
  */
-@GenHttpDsl
 public interface HandlerBuilder {
 
     /**

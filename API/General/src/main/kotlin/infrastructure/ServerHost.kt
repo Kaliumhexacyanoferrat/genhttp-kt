@@ -1,6 +1,5 @@
 package org.genhttp.api.infrastructure
 
-import org.genhttp.api.GenHttpDsl
 import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.HandlerBuilder
@@ -12,7 +11,6 @@ import java.net.InetAddress
 /**
  * Allows to configure, build and manage the lifecycle of a server instance.
  */
-@GenHttpDsl
 public interface ServerHost {
 
     // region Get-/Setters

@@ -165,23 +165,23 @@ infix helpers instead of operators.
 - Handlers must not assume a specific dispatcher. Blocking calls inside handlers are allowed (they run on virtual
   threads), long CPU work should use `Dispatchers.Default`.
 
-## DSL instead of builders
+## Builders
 
-GenHTTP's builders remain (they are API: `HandlerBuilder`, `ConcernBuilder`, `Builder<T>` are part of the model and
-are reusable). On top, every factory accepts an optional configuration lambda, every builder is marked with the
-`@GenHttpDsl` `@DslMarker`, and builder functions return the builder so that chaining still works:
+GenHTTP's fluent builders are kept as they are (decided by the maintainer): factories return builders, builder
+functions return the builder, `build()` creates the instance. Fluent builders are idiomatic in Kotlin as well, and
+keeping them makes code read exactly like GenHTTP. No DSL configuration lambdas or `@DslMarker` are added; users may
+still use Kotlin's `apply { }` on any builder.
 
 ```kotlin
 // GenHTTP:  var app = Layout.Create().Add("api", api).Index(index);
-val app = Layout.create {
-    add("api", api)
-    index(index)
-}
+val app = Layout.create()
+    .add("api", api)
+    .index(index)
 
-Host.create {
-    handler(app)
-    defaults()
-}.run()
+Host.create()
+    .handler(app)
+    .defaults()
+    .run()
 ```
 
 ## Reflection

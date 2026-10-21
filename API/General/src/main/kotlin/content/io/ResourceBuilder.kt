@@ -1,6 +1,5 @@
 package org.genhttp.api.content.io
 
-import org.genhttp.api.GenHttpDsl
 import org.genhttp.api.infrastructure.Builder
 import org.genhttp.api.protocol.ContentType
 
@@ -10,7 +9,6 @@ import java.time.Instant
  * When implemented by builders providing resource instances, this interface allows to configure common
  * properties of resources in a unified way.
  */
-@GenHttpDsl
 public interface ResourceBuilder<out T : ResourceBuilder<T>> : Builder<Resource> {
 
     /**

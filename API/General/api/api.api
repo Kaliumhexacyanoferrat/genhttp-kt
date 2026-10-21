@@ -1,6 +1,3 @@
-public abstract interface annotation class org/genhttp/api/GenHttpDsl : java/lang/annotation/Annotation {
-}
-
 public abstract class org/genhttp/api/MemoryView {
 	protected fun <init> (Ljava/lang/String;)V
 	protected fun <init> (Ljava/nio/ByteBuffer;)V

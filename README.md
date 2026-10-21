@@ -35,20 +35,18 @@ import org.genhttp.modules.practices.*
 
 suspend fun main() {
     // use a handler of your choice (see the samples below)
-    val api = Inline.create {
-        get { a: Int, b: Int -> a + b }
-    }
+    val api = Inline.create()
+        .get { a: Int, b: Int -> a + b }
 
-    val app = Layout.create {
-        add(api)
-        addOpenApi()
-        addScalar()
-    }
+    val app = Layout.create()
+        .add(api)
+        .addOpenApi()
+        .addScalar()
 
-    Host.create {
-        handler(app)
-        defaults()
-    }.run() // or .start() to return immediately
+    Host.create()
+        .handler(app)
+        .defaults()
+        .run() // or .start() to return immediately
 }
 ```
 
@@ -71,7 +69,7 @@ Code written for GenHTTP translates mechanically:
 |------------------------------------------------|-----------------------------------------------------|
 | `IHandler`, `IRequest`, `IResponseBuilder`     | `Handler`, `Request`, `ResponseBuilder`             |
 | `ValueTask<IResponse?> HandleAsync(...)`       | `suspend fun handle(...): Response?`                |
-| `Layout.Create().Add("api", api)`              | `Layout.create { add("api", api) }`                 |
+| `Layout.Create().Add("api", api)`              | `Layout.create().add("api", api)`                   |
 | `.Get((int a, int b) => a + b)`                | `get { a: Int, b: Int -> a + b }`                   |
 | `[ResourceMethod(RequestMethod.Post)]`         | `@ResourceMethod(Method.Post)`                      |
 | `Resource.FromAssembly("index.html")`          | `Resource.fromClasspath("index.html")`              |

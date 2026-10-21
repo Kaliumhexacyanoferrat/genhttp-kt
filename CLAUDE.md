@@ -10,7 +10,7 @@ mandatory), [SYNC.md](SYNC.md) (how upstream changes are ported). The initial po
 genhttp-kt is an automated port of GenHTTP to Kotlin, created by Claude as a proof of concept. It answers the question
 whether a framework can be kept in sync across ecosystems by agents: GenHTTP stays the source of truth, genhttp-kt
 follows it commit by commit. The port keeps GenHTTP's public API and behavior 1:1 while being idiomatic, modern Kotlin
-(coroutines, NIO, virtual threads, DSLs). See the philosophy section of PORTING.md.
+(coroutines, NIO, virtual threads). See the philosophy section of PORTING.md.
 
 ## Commands
 
@@ -39,7 +39,7 @@ Same layering as GenHTTP, enforced by Gradle dependencies:
 
 ## Rules
 
-- **Follow PORTING.md.** Naming (no `I` prefix, no `Async` suffix), type mapping, DSL style, reflection approach.
+- **Follow PORTING.md.** Naming (no `I` prefix, no `Async` suffix), type mapping, fluent builders, reflection approach.
 - **API parity is the top priority.** Every public type and member of upstream exists here with the translated name,
   same parameters, defaults and nullability. When unsure, read the upstream source.
 - **Tests mirror upstream 1:1** (same class and method names, same assertions). Never weaken, skip or delete a test to
