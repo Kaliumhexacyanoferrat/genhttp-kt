@@ -1,0 +1,455 @@
+public final class org/genhttp/modules/io/BodyArguments : org/genhttp/api/protocol/KeyValueList {
+	public static final field Companion Lorg/genhttp/modules/io/BodyArguments$Companion;
+	public fun getCount ()I
+	public fun getMemoryEntry (I)Lkotlin/Pair;
+}
+
+public final class org/genhttp/modules/io/BodyArguments$Companion {
+	public final fun create (Lorg/genhttp/api/protocol/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getEmpty ()Lorg/genhttp/modules/io/BodyArguments;
+}
+
+public final class org/genhttp/modules/io/ChangeTracking {
+	public static final fun buildWithTracking (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;
+	public static final fun track (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;
+}
+
+public final class org/genhttp/modules/io/Checksum {
+	public static final field INSTANCE Lorg/genhttp/modules/io/Checksum;
+	public final fun calculate (Lorg/genhttp/api/content/io/Resource;)J
+}
+
+public final class org/genhttp/modules/io/Concern {
+	public static final fun from (Lorg/genhttp/api/content/Concern$Companion;Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/io/providers/InlineConcernBuilder;
+}
+
+public final class org/genhttp/modules/io/Content {
+	public static final field INSTANCE Lorg/genhttp/modules/io/Content;
+	public final fun from (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/io/providers/ContentProviderBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/io/providers/ContentProviderBuilder;
+}
+
+public final class org/genhttp/modules/io/ContentTypeGuessingExtensions {
+	public static final fun guessContentType (Ljava/lang/String;)Lorg/genhttp/api/protocol/ContentType;
+	public static final fun guessContentType (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/api/protocol/ContentType;
+}
+
+public final class org/genhttp/modules/io/Handler {
+	public static final fun from (Lorg/genhttp/api/content/Handler$Companion;Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/io/providers/InlineHandlerBuilder;
+}
+
+public final class org/genhttp/modules/io/RangeSupport {
+	public static final field INSTANCE Lorg/genhttp/modules/io/RangeSupport;
+	public final fun create ()Lorg/genhttp/modules/io/ranges/RangeSupportConcernBuilder;
+}
+
+public final class org/genhttp/modules/io/RangeSupportExtensions {
+	public static final fun addRangeSupport (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static final fun rangeSupport (Lorg/genhttp/api/infrastructure/ServerHost;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/modules/io/RequestBodyExtensions {
+	public static final fun asBodyArguments (Lorg/genhttp/api/protocol/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/RequestExtensions {
+	public static final fun getHostWithoutPort (Lorg/genhttp/api/protocol/Request;)Lorg/genhttp/api/protocol/ByteString;
+	public static final fun hasType (Lorg/genhttp/api/protocol/Request;[Lorg/genhttp/api/protocol/RequestMethod;)Z
+}
+
+public final class org/genhttp/modules/io/RequestSecurityExtensions {
+	public static final fun denyPathTraversal (Lorg/genhttp/api/protocol/RequestTarget;)V
+}
+
+public final class org/genhttp/modules/io/Resource {
+	public static final fun fromClasspath (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/lang/String;Ljava/lang/ClassLoader;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public static final fun fromClasspath (Lorg/genhttp/api/content/io/Resource$Companion;Lkotlin/reflect/KClass;Ljava/lang/String;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public static synthetic fun fromClasspath$default (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public static final fun fromFile (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/lang/String;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+	public static final fun fromFile (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/nio/file/Path;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+	public static final fun fromString (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/lang/String;)Lorg/genhttp/modules/io/strings/StringResourceBuilder;
+	public static final fun fromWeb (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/lang/String;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+	public static final fun fromWeb (Lorg/genhttp/api/content/io/Resource$Companion;Ljava/net/URI;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+}
+
+public final class org/genhttp/modules/io/ResourceTree {
+	public static final fun fromClasspath (Lorg/genhttp/api/content/io/ResourceTree$Companion;Ljava/lang/String;Ljava/lang/ClassLoader;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+	public static final fun fromClasspath (Lorg/genhttp/api/content/io/ResourceTree$Companion;Lkotlin/reflect/KClass;Ljava/lang/String;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+	public static synthetic fun fromClasspath$default (Lorg/genhttp/api/content/io/ResourceTree$Companion;Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+	public static synthetic fun fromClasspath$default (Lorg/genhttp/api/content/io/ResourceTree$Companion;Lkotlin/reflect/KClass;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+	public static final fun fromDirectory (Lorg/genhttp/api/content/io/ResourceTree$Companion;Ljava/lang/String;)Lorg/genhttp/modules/io/filesystem/DirectoryTreeBuilder;
+	public static final fun fromDirectory (Lorg/genhttp/api/content/io/ResourceTree$Companion;Ljava/nio/file/Path;)Lorg/genhttp/modules/io/filesystem/DirectoryTreeBuilder;
+}
+
+public final class org/genhttp/modules/io/ResourceTreeExtensions {
+	public static final fun find (Lorg/genhttp/api/content/io/ResourceContainer;Lorg/genhttp/api/protocol/RequestTarget;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/ResponseContentExtensions {
+	public static final fun content (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/io/InputStream;Lorg/genhttp/api/protocol/ContentType;Ljava/lang/Long;Ljava/nio/ByteBuffer;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static final fun content (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static final fun content (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/nio/ByteBuffer;Lorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static final fun content (Lorg/genhttp/api/protocol/ResponseBuilder;Lorg/genhttp/api/content/io/Resource;Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static final fun content (Lorg/genhttp/api/protocol/ResponseBuilder;[BLorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun content$default (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/io/InputStream;Lorg/genhttp/api/protocol/ContentType;Ljava/lang/Long;Ljava/nio/ByteBuffer;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun content$default (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun content$default (Lorg/genhttp/api/protocol/ResponseBuilder;Ljava/nio/ByteBuffer;Lorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun content$default (Lorg/genhttp/api/protocol/ResponseBuilder;Lorg/genhttp/api/content/io/Resource;Lorg/genhttp/api/protocol/ContentType;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+	public static synthetic fun content$default (Lorg/genhttp/api/protocol/ResponseBuilder;[BLorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public final class org/genhttp/modules/io/ResponseModificationExtensions {
+	public static final fun apply (Lorg/genhttp/api/protocol/ResponseBuilder;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public final class org/genhttp/modules/io/VirtualTree {
+	public static final field INSTANCE Lorg/genhttp/modules/io/VirtualTree;
+	public final fun create ()Lorg/genhttp/modules/io/virtualtrees/VirtualTreeBuilder;
+}
+
+public final class org/genhttp/modules/io/classpath/ClasspathResource : org/genhttp/api/content/io/Resource {
+	public fun <init> (Ljava/lang/ClassLoader;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;Ljava/time/Instant;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public final fun getQualifiedName ()Ljava/lang/String;
+	public final fun getSource ()Ljava/lang/ClassLoader;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/classpath/ClasspathResourceBuilder : org/genhttp/api/content/io/ResourceBuilder {
+	public fun <init> ()V
+	public final fun anchor (Lkotlin/reflect/KClass;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/Resource;
+	public final fun loader (Ljava/lang/ClassLoader;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public synthetic fun modified (Ljava/time/Instant;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun modified (Ljava/time/Instant;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public synthetic fun name (Ljava/lang/String;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun name (Ljava/lang/String;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public final fun path (Ljava/lang/String;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+	public synthetic fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/io/classpath/ClasspathResourceBuilder;
+}
+
+public final class org/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/ResourceTree;
+	public final fun loader (Ljava/lang/ClassLoader;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+	public final fun root (Ljava/lang/String;)Lorg/genhttp/modules/io/classpath/ClasspathResourceTreeBuilder;
+}
+
+public final class org/genhttp/modules/io/filesystem/DirectoryTreeBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/ResourceTree;
+	public final fun directory (Ljava/nio/file/Path;)Lorg/genhttp/modules/io/filesystem/DirectoryTreeBuilder;
+}
+
+public final class org/genhttp/modules/io/filesystem/FileResource : org/genhttp/api/content/io/Resource {
+	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getFile ()Ljava/nio/file/Path;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/filesystem/FileResourceBuilder : org/genhttp/api/content/io/ResourceBuilder {
+	public fun <init> ()V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/Resource;
+	public final fun file (Ljava/nio/file/Path;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+	public synthetic fun modified (Ljava/time/Instant;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun modified (Ljava/time/Instant;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+	public synthetic fun name (Ljava/lang/String;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun name (Ljava/lang/String;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+	public synthetic fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/io/filesystem/FileResourceBuilder;
+}
+
+public final class org/genhttp/modules/io/formattable/FormattableContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/providers/ContentProvider : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/Resource;)V
+	public final fun getResource ()Lorg/genhttp/api/content/io/Resource;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/providers/ContentProviderBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/io/providers/ContentProviderBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun resource (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/io/providers/ContentProviderBuilder;
+}
+
+public final class org/genhttp/modules/io/providers/InlineConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lkotlin/jvm/functions/Function3;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/providers/InlineConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun logic (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/io/providers/InlineConcernBuilder;
+}
+
+public final class org/genhttp/modules/io/providers/InlineHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lkotlin/jvm/functions/Function2;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/providers/InlineHandlerBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/io/providers/InlineHandlerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun logic (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/io/providers/InlineHandlerBuilder;
+}
+
+public final class org/genhttp/modules/io/ranges/RangeSupportConcern : org/genhttp/api/content/services/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/ranges/RangeSupportConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+
+public final class org/genhttp/modules/io/ranges/RangedContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/api/protocol/ResponseContent;JJ)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/ranges/RangedSink : org/genhttp/api/protocol/ResponseSink {
+	public fun <init> (Lorg/genhttp/modules/io/ranges/RangedStream;)V
+	public fun getStream ()Ljava/io/OutputStream;
+	public fun getWriter ()Ljava/nio/channels/WritableByteChannel;
+}
+
+public final class org/genhttp/modules/io/ranges/RangedStream : java/io/OutputStream {
+	public fun <init> (Ljava/io/OutputStream;JJ)V
+	public fun flush ()V
+	public final fun getLength ()J
+	public final fun getPosition ()J
+	public final fun setPosition (J)V
+	public fun write (I)V
+	public fun write ([BII)V
+}
+
+public final class org/genhttp/modules/io/streaming/ByteArrayContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> ([BLorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/ChecksumProvider {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final fun compute (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/MemoryContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/nio/ByteBuffer;Lorg/genhttp/api/protocol/ContentType;Lkotlin/jvm/functions/Function1;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/ResourceContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/api/content/io/Resource;Lorg/genhttp/api/protocol/ContentType;Ljava/nio/ByteBuffer;)V
+	public synthetic fun <init> (Lorg/genhttp/api/content/io/Resource;Lorg/genhttp/api/protocol/ContentType;Ljava/nio/ByteBuffer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/StreamBufferWriter : java/nio/channels/WritableByteChannel {
+	public fun <init> (Ljava/io/OutputStream;I)V
+	public synthetic fun <init> (Ljava/io/OutputStream;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public fun isOpen ()Z
+	public fun write (Ljava/nio/ByteBuffer;)I
+}
+
+public final class org/genhttp/modules/io/streaming/StreamContent : java/lang/AutoCloseable, org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/io/InputStream;Lorg/genhttp/api/protocol/ContentType;Ljava/lang/Long;Ljava/nio/ByteBuffer;Lkotlin/jvm/functions/Function1;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/StreamExtensions {
+	public static final fun calculateChecksum (Ljava/io/InputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun copyPooled (Ljava/io/InputStream;Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun write (Ljava/io/InputStream;Ljava/nio/channels/WritableByteChannel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/streaming/StreamWithDependency : java/io/InputStream {
+	public fun <init> (Ljava/io/InputStream;Ljava/lang/AutoCloseable;)V
+	public fun available ()I
+	public fun close ()V
+	public fun mark (I)V
+	public fun markSupported ()Z
+	public fun read ()I
+	public fun read ([BII)I
+	public fun reset ()V
+	public fun skip (J)J
+}
+
+public final class org/genhttp/modules/io/streaming/WriterStreamAdapter : java/io/OutputStream {
+	public fun <init> (Ljava/nio/channels/WritableByteChannel;)V
+	public fun flush ()V
+	public fun write (I)V
+	public fun write ([BII)V
+}
+
+public final class org/genhttp/modules/io/streaming/WritingStream : java/io/OutputStream {
+	public fun <init> (Ljava/nio/channels/WritableByteChannel;Ljava/io/Flushable;)V
+	public fun flush ()V
+	public fun write (I)V
+	public fun write ([BII)V
+}
+
+public final class org/genhttp/modules/io/strings/StringContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/strings/StringResource : org/genhttp/api/content/io/Resource {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/ContentType;Ljava/time/Instant;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getContent ()[B
+	public fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public final fun write (Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/strings/StringResourceBuilder : org/genhttp/api/content/io/ResourceBuilder {
+	public fun <init> ()V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/Resource;
+	public final fun content (Ljava/lang/String;)Lorg/genhttp/modules/io/strings/StringResourceBuilder;
+	public synthetic fun modified (Ljava/time/Instant;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun modified (Ljava/time/Instant;)Lorg/genhttp/modules/io/strings/StringResourceBuilder;
+	public synthetic fun name (Ljava/lang/String;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun name (Ljava/lang/String;)Lorg/genhttp/modules/io/strings/StringResourceBuilder;
+	public synthetic fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/io/strings/StringResourceBuilder;
+}
+
+public final class org/genhttp/modules/io/tracking/ChangeTrackingResource : org/genhttp/api/content/io/Resource {
+	public fun <init> (Lorg/genhttp/api/content/io/Resource;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun checkChanged (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/virtualtrees/VirtualNode : org/genhttp/api/content/io/ResourceNode {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceContainer;Ljava/lang/String;Lorg/genhttp/api/content/io/ResourceContainer;)V
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public fun getNodes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getParent ()Lorg/genhttp/api/content/io/ResourceContainer;
+	public fun getResources (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetNode (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetResource (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/virtualtrees/VirtualTree : org/genhttp/api/content/io/ResourceTree {
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
+	public fun getModified ()Ljava/time/Instant;
+	public fun getNodes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getResources (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetNode (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetResource (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/virtualtrees/VirtualTreeBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/io/virtualtrees/VirtualTreeBuilder;
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/content/io/ResourceContainer;)Lorg/genhttp/modules/io/virtualtrees/VirtualTreeBuilder;
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/io/virtualtrees/VirtualTreeBuilder;
+	public final fun addResourceBuilder (Ljava/lang/String;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/io/virtualtrees/VirtualTreeBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/ResourceTree;
+}
+
+public final class org/genhttp/modules/io/web/WebResource : org/genhttp/api/content/io/Resource {
+	public fun <init> (Ljava/net/URI;Ljava/lang/String;Ljava/time/Instant;Lorg/genhttp/api/protocol/ContentType;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContent (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getContentType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public final fun getSource ()Ljava/net/URI;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/io/web/WebResourceBuilder : org/genhttp/api/content/io/ResourceBuilder {
+	public fun <init> ()V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/Resource;
+	public synthetic fun modified (Ljava/time/Instant;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun modified (Ljava/time/Instant;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+	public synthetic fun name (Ljava/lang/String;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun name (Ljava/lang/String;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+	public final fun source (Ljava/lang/String;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+	public final fun source (Ljava/net/URI;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+	public synthetic fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/api/content/io/ResourceBuilder;
+	public fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/io/web/WebResourceBuilder;
+}
+

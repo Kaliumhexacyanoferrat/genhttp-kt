@@ -274,3 +274,9 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `IServer.DisposeAsync()` → `suspend fun close()`; `IEndPoint : IDisposable` → `EndPoint : AutoCloseable` | Kotlin lifecycle conventions |
 | API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
 | API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |
+| IO | `FormattableContent<T>` merged into `FormattableContent(value: Any)` (formats via `toString()`, doubles like .NET) | No generic arity overloading, no `IUtf8SpanFormattable` |
+| IO | `WritingStream` is a write-only `OutputStream(WritableByteChannel, Flushable)` | JVM streams are not bidirectional |
+| IO | Stream checksums require `markSupported()`, `StreamContent.length` is only the known length | JVM streams are not seekable |
+| IO | `Handler.From` / `Concern.From` sync and async overloads merged into one suspend lambda | A suspend lambda accepts both |
+| IO | `DirectoryContainer` rejects paths that escape the directory (e.g. via `%2F`) | Hardening |
+| IO | `ResponseBuilder.apply(modifications)` shadows the stdlib `apply` for response builders | Upstream name kept |
