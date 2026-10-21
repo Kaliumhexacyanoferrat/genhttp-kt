@@ -9,8 +9,11 @@ plugins {
 kotlin {
     explicitApi()
 
-    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation()
+    // projects that have not been ported yet have no public surface to validate
+    if (!fileTree("src/main/kotlin") { include("**/*.kt") }.isEmpty) {
+        @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+        abiValidation()
+    }
 }
 
 val artifact = (findProperty("genhttp.artifact") as String?) ?: "genhttp-${project.name}"
