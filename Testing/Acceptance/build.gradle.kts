@@ -19,25 +19,19 @@ dependencies {
     testImplementation(project(":modules-security"))
     testImplementation(project(":modules-client-caching"))
     testImplementation(project(":modules-practices"))
+    testImplementation(project(":modules-reflection"))
+    testImplementation(project(":modules-functional"))
     testImplementation(libs.coroutines.test)
 }
 
 // tests that depend on modules which have not been ported yet (see STATUS.md)
 val pendingTests = listOf(
-    "engine/ChunkedContentTest.kt",
-    "engine/ClientConnectionTests.kt",
-    "engine/compliance/ComplianceTests.kt",
-    "engine/ConcernTests.kt",
-    "engine/ConnectionTests.kt",
-    "engine/MethodTests.kt",
-    "engine/RequestPropertyTest.kt",
-    "engine/SecurityTests.kt",
-    "modules/compression/GeneratedContentTests.kt",
-    "modules/conversion/ErrorHandlingTests.kt",
-    "modules/conversion/SerializerTests.kt",
-    "modules/errorhandling/CustomErrorMapperTests.kt",
-    "modules/errorhandling/HtmlErrorMapperTest.kt",
-    "modules/errorhandling/StructuredErrorMapperTests.kt",
+    "modules/io/BodyArgumentsTests.kt",
+    "modules/io/PathTraversalTests.kt",
+    "modules/io/RangeTests.kt",
+    "modules/io/VirtualTreeTests.kt",
+    "modules/io/WebResourceTests.kt",
+    "modules/layouting/LayoutTests.kt",
     "modules/protobuf/ProtobufTests.kt"
 )
 
