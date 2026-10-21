@@ -1,0 +1,45 @@
+public final class org/genhttp/modules/controllers/Controller {
+	public static final field INSTANCE Lorg/genhttp/modules/controllers/Controller;
+	public final fun from (Ljava/lang/Object;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+}
+
+public abstract interface annotation class org/genhttp/modules/controllers/ControllerAction : java/lang/annotation/Annotation {
+	public abstract fun methods ()[Lorg/genhttp/modules/reflection/Method;
+}
+
+public final class org/genhttp/modules/controllers/ControllerActionConfiguration : org/genhttp/modules/reflection/MethodAttribute {
+	public fun <init> (Lorg/genhttp/modules/controllers/ControllerAction;)V
+}
+
+public final class org/genhttp/modules/controllers/Extensions {
+	public static final fun configured (Lorg/genhttp/modules/controllers/provider/ControllerBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+}
+
+public abstract interface annotation class org/genhttp/modules/controllers/FromPath : java/lang/annotation/Annotation {
+}
+
+public final class org/genhttp/modules/controllers/provider/ControllerBuilder : org/genhttp/modules/reflection/ReflectionFrameworkBuilder {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public synthetic fun executionMode (Lorg/genhttp/modules/reflection/ExecutionMode;)Ljava/lang/Object;
+	public fun executionMode (Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public synthetic fun formatters (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun formatters (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public synthetic fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public final fun instance (Ljava/lang/Object;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public final fun instanceProvider (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public synthetic fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public final fun type (Lkotlin/reflect/KClass;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+}
+
+public final class org/genhttp/modules/controllers/provider/ControllerHandler : org/genhttp/api/content/Handler, org/genhttp/modules/reflection/ServiceMethodProvider {
+	public fun <init> (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function2;Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/MethodRegistry;)V
+	public fun getMethods ()Lorg/genhttp/modules/reflection/MethodCollection;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

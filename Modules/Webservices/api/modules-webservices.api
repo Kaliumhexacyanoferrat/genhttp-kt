@@ -1,0 +1,46 @@
+public final class org/genhttp/modules/webservices/Extensions {
+	public static final fun addService (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/Object;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static synthetic fun addService$default (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/Object;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/modules/reflection/ExecutionMode;ILjava/lang/Object;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static final fun configured (Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+}
+
+public abstract interface annotation class org/genhttp/modules/webservices/ResourceMethod : java/lang/annotation/Annotation {
+	public abstract fun path ()Ljava/lang/String;
+	public abstract fun requestMethod ()Lorg/genhttp/modules/reflection/Method;
+}
+
+public final class org/genhttp/modules/webservices/ResourceMethodConfiguration : org/genhttp/modules/reflection/MethodAttribute {
+	public fun <init> (Lorg/genhttp/modules/webservices/ResourceMethod;)V
+	public final fun getPath ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/webservices/ServiceResource {
+	public static final field INSTANCE Lorg/genhttp/modules/webservices/ServiceResource;
+	public final fun from (Ljava/lang/Object;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+}
+
+public final class org/genhttp/modules/webservices/provider/ServiceResourceBuilder : org/genhttp/modules/reflection/ReflectionFrameworkBuilder {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public synthetic fun executionMode (Lorg/genhttp/modules/reflection/ExecutionMode;)Ljava/lang/Object;
+	public fun executionMode (Lorg/genhttp/modules/reflection/ExecutionMode;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public synthetic fun formatters (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun formatters (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public synthetic fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public final fun instance (Ljava/lang/Object;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public final fun instanceProvider (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public synthetic fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
+	public fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+	public final fun type (Lkotlin/reflect/KClass;)Lorg/genhttp/modules/webservices/provider/ServiceResourceBuilder;
+}
+
+public final class org/genhttp/modules/webservices/provider/ServiceResourceRouter : org/genhttp/api/content/Handler, org/genhttp/modules/reflection/ServiceMethodProvider {
+	public fun <init> (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function2;Lorg/genhttp/modules/reflection/ExecutionSettings;Lorg/genhttp/modules/reflection/MethodRegistry;)V
+	public fun getMethods ()Lorg/genhttp/modules/reflection/MethodCollection;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

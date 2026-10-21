@@ -21,6 +21,8 @@ dependencies {
     testImplementation(project(":modules-practices"))
     testImplementation(project(":modules-reflection"))
     testImplementation(project(":modules-functional"))
+    testImplementation(project(":modules-webservices"))
+    testImplementation(project(":modules-controllers"))
     testImplementation(libs.coroutines.test)
 }
 
