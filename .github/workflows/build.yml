@@ -1,0 +1,153 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+  push:
+    branches:
+      - main
+      - 'release/*'
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+
+    name: Test & Coverage
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build & test
+        run: ./gradlew check koverXmlReport --console=plain
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: '**/build/reports/tests/'
+
+  parity:
+
+    name: Upstream Parity
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          path: genhttp-kt
+
+      - name: Read upstream state
+        id: upstream
+        working-directory: genhttp-kt
+        run: |
+          echo "genhttp=$(grep '^genhttp.commit=' upstream.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+          echo "glyph11=$(grep '^glyph11.commit=' upstream.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout GenHTTP
+        uses: actions/checkout@v7
+        with:
+          repository: Kaliumhexacyanoferrat/GenHTTP
+          ref: ${{ steps.upstream.outputs.genhttp }}
+          path: GenHTTP
+
+      - name: Checkout Glyph11
+        uses: actions/checkout@v7
+        with:
+          repository: dotnet-web-stack/Glyph11
+          ref: ${{ steps.upstream.outputs.glyph11 }}
+          path: Glyph11
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Test parity
+        # informational until the initial port is complete (see STATUS.md)
+        continue-on-error: true
+        working-directory: genhttp-kt
+        run: python tools/test_parity.py
+
+  verify:
+
+    name: ${{ matrix.os.name }} ${{ matrix.arch }}
+
+    needs: build
+
+    runs-on: ${{ matrix.os.runs-on }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+
+          - os:
+              name: 🐧
+              runs-on: ubuntu-latest
+            arch: x64
+
+          - os:
+              name: 🐧
+              runs-on: ubuntu-24.04-arm
+            arch: arm64
+
+          - os:
+              name: 🪟
+              runs-on: windows-latest
+            arch: x64
+
+          - os:
+              name: 🪟
+              runs-on: windows-11-arm
+            arch: arm64
+
+          - os:
+              name: 🍎
+              runs-on: macos-26-intel
+            arch: x64
+
+          - os:
+              name: 🍎
+              runs-on: macos-26
+            arch: arm64
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build & test
+        run: ./gradlew test --console=plain

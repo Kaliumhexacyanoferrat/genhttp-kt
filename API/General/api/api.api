@@ -1,0 +1,4 @@
+public final class org/genhttp/api/Placeholder {
+	public static final field INSTANCE Lorg/genhttp/api/Placeholder;
+}
+
