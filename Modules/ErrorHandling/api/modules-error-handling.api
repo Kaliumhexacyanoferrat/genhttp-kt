@@ -1,0 +1,59 @@
+public final class org/genhttp/modules/errorhandling/ErrorHandler {
+	public static final field INSTANCE Lorg/genhttp/modules/errorhandling/ErrorHandler;
+	public final fun default ()Lorg/genhttp/modules/errorhandling/provider/ErrorSentryBuilder;
+	public final fun from (Lorg/genhttp/modules/errorhandling/ErrorMapper;Lkotlin/reflect/KClass;)Lorg/genhttp/modules/errorhandling/provider/ErrorSentryBuilder;
+	public final fun html ()Lorg/genhttp/modules/errorhandling/provider/ErrorSentryBuilder;
+	public final fun structured (Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;)Lorg/genhttp/modules/errorhandling/provider/ErrorSentryBuilder;
+	public static synthetic fun structured$default (Lorg/genhttp/modules/errorhandling/ErrorHandler;Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;ILjava/lang/Object;)Lorg/genhttp/modules/errorhandling/provider/ErrorSentryBuilder;
+}
+
+public abstract interface class org/genhttp/modules/errorhandling/ErrorMapper {
+	public abstract fun getNotFound (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun map (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/lang/Throwable;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/errorhandling/mappers/HtmlErrorMapper : org/genhttp/modules/errorhandling/ErrorMapper {
+	public fun <init> ()V
+	public fun getNotFound (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun map (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/lang/Exception;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun map (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/lang/Throwable;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/errorhandling/mappers/StructuredErrorMapper : org/genhttp/modules/errorhandling/ErrorMapper {
+	public fun <init> ()V
+	public fun <init> (Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;)V
+	public synthetic fun <init> (Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getNotFound (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getRegistry ()Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;
+	public fun map (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/lang/Exception;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun map (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/lang/Throwable;Lorg/genhttp/api/protocol/ByteString;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/errorhandling/mappers/StructuredErrorMapper$ErrorModel {
+	public fun <init> (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/genhttp/api/protocol/ResponseStatus;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/errorhandling/mappers/StructuredErrorMapper$ErrorModel;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/errorhandling/mappers/StructuredErrorMapper$ErrorModel;Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/errorhandling/mappers/StructuredErrorMapper$ErrorModel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getStackTrace ()Ljava/lang/String;
+	public final fun getStatus ()Lorg/genhttp/api/protocol/ResponseStatus;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/errorhandling/provider/ErrorSentry : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/errorhandling/ErrorMapper;Lkotlin/reflect/KClass;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/errorhandling/provider/ErrorSentryBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> (Lorg/genhttp/modules/errorhandling/ErrorMapper;Lkotlin/reflect/KClass;)V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+

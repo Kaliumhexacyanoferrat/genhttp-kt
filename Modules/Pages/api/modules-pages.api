@@ -1,0 +1,23 @@
+public final class org/genhttp/modules/pages/Extensions {
+	public static final fun escaped (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun getPage (Lorg/genhttp/api/protocol/Request;Ljava/lang/String;)Lorg/genhttp/api/protocol/ResponseBuilder;
+}
+
+public final class org/genhttp/modules/pages/Renderer {
+	public static final field INSTANCE Lorg/genhttp/modules/pages/Renderer;
+	public final fun from (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/pages/rendering/TemplateRenderer;
+	public final fun getServer ()Lorg/genhttp/modules/pages/rendering/ServerRenderer;
+}
+
+public final class org/genhttp/modules/pages/rendering/ServerRenderer {
+	public fun <init> ()V
+	public final fun render (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun render (Ljava/lang/String;Ljava/lang/Throwable;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/pages/rendering/TemplateRenderer {
+	public fun <init> (Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;)V
+	public final fun getTemplate ()Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;
+	public final fun render (Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

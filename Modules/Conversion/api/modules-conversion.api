@@ -1,0 +1,187 @@
+public final class org/genhttp/modules/conversion/Extensions {
+	public static final fun convertNullableTo (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Ljava/lang/Object;
+	public static final fun convertNullableTo (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KType;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Ljava/lang/Object;
+	public static final fun convertTo (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Ljava/lang/Object;
+	public static final fun convertTo (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KType;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/Formatting {
+	public static final field INSTANCE Lorg/genhttp/modules/conversion/Formatting;
+	public final fun default ()Lorg/genhttp/modules/conversion/formatters/FormatterBuilder;
+	public final fun empty ()Lorg/genhttp/modules/conversion/formatters/FormatterBuilder;
+}
+
+public final class org/genhttp/modules/conversion/Serialization {
+	public static final field INSTANCE Lorg/genhttp/modules/conversion/Serialization;
+	public final fun default (Ltools/jackson/databind/json/JsonMapper;)Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+	public static synthetic fun default$default (Lorg/genhttp/modules/conversion/Serialization;Ltools/jackson/databind/json/JsonMapper;ILjava/lang/Object;)Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+	public final fun empty ()Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+}
+
+public final class org/genhttp/modules/conversion/formatters/BoolFormatter : org/genhttp/modules/conversion/formatters/Formatter {
+	public fun <init> ()V
+	public fun canHandle (Lkotlin/reflect/KClass;)Z
+	public fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/formatters/DateFormatter : org/genhttp/modules/conversion/formatters/Formatter {
+	public fun <init> ()V
+	public fun canHandle (Lkotlin/reflect/KClass;)Z
+	public fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/formatters/EnumFormatter : org/genhttp/modules/conversion/formatters/Formatter {
+	public fun <init> ()V
+	public fun canHandle (Lkotlin/reflect/KClass;)Z
+	public fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/formatters/FormattableFormatter : org/genhttp/modules/conversion/formatters/Formatter {
+	public fun <init> ()V
+	public fun canHandle (Lkotlin/reflect/KClass;)Z
+	public fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public abstract interface class org/genhttp/modules/conversion/formatters/Formatter {
+	public abstract fun canHandle (Lkotlin/reflect/KClass;)Z
+	public abstract fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public abstract fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public abstract fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/formatters/FormatterBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/modules/conversion/formatters/Formatter;)Lorg/genhttp/modules/conversion/formatters/FormatterBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+}
+
+public final class org/genhttp/modules/conversion/formatters/FormatterRegistry {
+	public fun <init> (Ljava/util/List;)V
+	public final fun canHandle (Lkotlin/reflect/KClass;)Z
+	public final fun getContent (Ljava/lang/Object;Lkotlin/reflect/KClass;)Lorg/genhttp/api/protocol/ResponseContent;
+	public final fun getFormatters ()Ljava/util/List;
+	public final fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/formatters/StringFormatter : org/genhttp/modules/conversion/formatters/Formatter {
+	public fun <init> ()V
+	public fun canHandle (Lkotlin/reflect/KClass;)Z
+	public fun getContent (Ljava/lang/Object;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun read (Lorg/genhttp/api/protocol/ByteString;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun write (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/conversion/serializers/ByteStreamSerialization {
+	public static final field INSTANCE Lorg/genhttp/modules/conversion/serializers/ByteStreamSerialization;
+	public final fun serialize (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/SerializationBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/api/protocol/ContentType;Lorg/genhttp/modules/conversion/serializers/SerializationFormat;)Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;
+	public final fun default (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+}
+
+public abstract interface class org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public abstract fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/SerializationRegistry {
+	public fun <init> (Lorg/genhttp/api/protocol/ContentType;Ljava/util/Map;)V
+	public final fun getDeserialization (Lorg/genhttp/api/protocol/Request;)Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+	public final fun getFormat (Ljava/lang/String;)Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+	public final fun getFormats ()Ljava/util/Map;
+	public final fun getSerialization (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+}
+
+public final class org/genhttp/modules/conversion/serializers/forms/FormContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lkotlin/reflect/KClass;Ljava/lang/Object;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/forms/FormFormat : org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public fun <init> ()V
+	public fun <init> (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/json/JsonContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/Object;Ltools/jackson/databind/json/JsonMapper;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/json/JsonFormat : org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public static final field Companion Lorg/genhttp/modules/conversion/serializers/json/JsonFormat$Companion;
+	public fun <init> ()V
+	public fun <init> (Ltools/jackson/databind/json/JsonMapper;)V
+	public synthetic fun <init> (Ltools/jackson/databind/json/JsonMapper;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getMapper ()Ltools/jackson/databind/json/JsonMapper;
+	public fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/json/JsonFormat$Companion {
+	public final fun getDefaultOptions ()Ltools/jackson/databind/json/JsonMapper$Builder;
+}
+
+public final class org/genhttp/modules/conversion/serializers/xml/XmlContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/xml/XmlFormat : org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public fun <init> ()V
+	public fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/yaml/YamlContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getData ()Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/conversion/serializers/yaml/YamlFormat : org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public fun <init> ()V
+	public fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

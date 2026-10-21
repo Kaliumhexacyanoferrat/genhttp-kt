@@ -1,0 +1,21 @@
+public final class org/genhttp/modules/protobuf/SerializationExtensions {
+	public static final fun addProtobuf (Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;)Lorg/genhttp/modules/conversion/serializers/SerializationBuilder;
+}
+
+public final class org/genhttp/modules/protobuf/providers/ProtobufContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Ljava/lang/Object;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun write (Ljava/io/OutputStream;)V
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/protobuf/providers/ProtobufFormat : org/genhttp/modules/conversion/serializers/SerializationFormat {
+	public fun <init> ()V
+	public fun deserialize (Ljava/io/InputStream;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun serialize (Lorg/genhttp/api/protocol/Request;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
