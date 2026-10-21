@@ -142,7 +142,8 @@ public open class TestHost(
 
         private val ClientTimeout = Duration.ofSeconds(15)
 
-        private val nextPort = AtomicInteger(22010)
+        // can be moved with GENHTTP_TEST_PORT_BASE, e.g. to run several test suites in parallel
+        private val nextPort = AtomicInteger(System.getenv("GENHTTP_TEST_PORT_BASE")?.toIntOrNull() ?: 22010)
 
         init {
             // allows tests to send headers the JDK client restricts by default (e.g. "Host" for virtual hosting)
