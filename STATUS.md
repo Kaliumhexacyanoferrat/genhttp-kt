@@ -8,8 +8,8 @@ done.
 | 0  | Scaffolding                   | done        | Gradle 9.8.2, Kotlin 2.4.21, JDK 25, conventions in `build-logic`, test parity tool, CI skeleton |
 | 1  | Glyph11                       | done        | 197/200 upstream tests (3 ReadOnlySequence tests excluded), all green |
 | 2  | API                           | done        | Complete port, ABI dump in `API/General/api/api.api`; API tests are ported with the acceptance suite in stage 4 |
-| 3  | Engine core                   | in progress | IO, Redirects, Layouting, ClientCaching, Security, Compression ported and committed. Engine Shared/Internal written (uncommitted until it compiles). Pages/Conversion/ErrorHandling were being ported by an agent when the session ended |
-| 4  | Testing & engine acceptance   | in progress | Testing module (TestHost) and acceptance infra written; an agent was porting Engine/Api/Generators tests |
+| 3  | Engine core                   | done        | Engine (NIO + virtual threads + coroutines, SSLEngine TLS), IO, Pages (Pebble), Conversion (Jackson 3), ErrorHandling, Redirects, Layouting |
+| 4  | Testing & engine acceptance   | in progress | TestHost, acceptance infra; Engine/Api/Generators tests ported and green (111 run, 8 files pending on Inline); Practices, Security, ClientCaching, Compression, Protobuf ported; module tests being ported by agents in worktrees |
 | 5  | Reflection frameworks         | open        | |
 | 6  | API documentation             | open        | |
 | 7  | Cross-cutting modules         | open        | |
@@ -38,16 +38,7 @@ done.
 
 ## Next steps
 
-1. Check the state of `Modules/Pages`, `Modules/Conversion`, `Modules/ErrorHandling` (an agent was porting them,
-   see `docs/specs/module-agent-brief.md`): build `:modules-pages`, `:modules-conversion`, `:modules-error-handling`,
-   finish missing parts, `updateKotlinAbi`, commit.
-2. Port Practices (`ServerHost.defaults(...)`, uses `strictTransport`, `compression`, `decompression`, `rangeSupport`,
-   `clientCaching`, `secureUpgrade`, `preventSniffing`) and Protobuf (kotlinx-serialization-protobuf,
-   `SerializationBuilder.addProtobuf()`).
-3. Compile `:engine-shared`, `:engine-internal`, `:testing`; fix; commit the engine.
-4. Check the ported Engine/Api/Generators acceptance tests (`Testing/Acceptance/src/test/kotlin`, written by an agent
-   without compiling), run `python tools/test_parity.py --suite acceptance --filter Engine`, run the tests and fix the
-   engine (never the tests, unless a translation error is verified against upstream).
-5. Known issue: `Redirect.to("{sitemap}")` fails because `java.net.URI` rejects it (.NET accepts) — keep the location
-   as a string and only detect absolute URIs.
-6. Then continue with stage 4 module tests and stage 5 (see `docs/specs/reflection.md`).
+1. Merge the module test ports of the three worktree agents (IO/Layouting/Redirects, Conversion/Protobuf/ErrorHandling,
+   Compression/Security/ClientCaching), fix production code for failing tests, commit.
+2. Stage 5: Reflection, Functional, Webservices, Controllers (design in `docs/specs/reflection.md`); then remove the
+   now-portable files from `pendingTests` in `Testing/Acceptance/build.gradle.kts`.
