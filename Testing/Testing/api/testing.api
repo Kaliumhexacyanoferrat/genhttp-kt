@@ -1,0 +1,40 @@
+public final class org/genhttp/testing/ContentExtensions {
+	public static final fun getContent (Ljava/net/http/HttpResponse;)Ljava/lang/String;
+	public static final fun getOptionalContent (Ljava/net/http/HttpResponse;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/testing/HeaderExtensions {
+	public static final fun getContentHeader (Ljava/net/http/HttpResponse;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun getHeader (Ljava/net/http/HttpResponse;Ljava/lang/String;)Ljava/lang/String;
+}
+
+public class org/genhttp/testing/TestHost : java/lang/AutoCloseable {
+	public static final field Companion Lorg/genhttp/testing/TestHost$Companion;
+	public fun <init> (Lorg/genhttp/api/content/Handler;ZZLorg/genhttp/api/infrastructure/ServerEngine;)V
+	public synthetic fun <init> (Lorg/genhttp/api/content/Handler;ZZLorg/genhttp/api/infrastructure/ServerEngine;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun getHost ()Lorg/genhttp/api/infrastructure/ServerHost;
+	public final fun getPort ()I
+	public final fun getRequest (Ljava/lang/String;Ljava/lang/String;)Ljava/net/http/HttpRequest$Builder;
+	public static synthetic fun getRequest$default (Lorg/genhttp/testing/TestHost;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/net/http/HttpRequest$Builder;
+	public final fun getResponse (Ljava/lang/String;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getResponse (Ljava/net/http/HttpRequest$Builder;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getResponse (Ljava/net/http/HttpRequest;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getResponse$default (Lorg/genhttp/testing/TestHost;Ljava/lang/String;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun getResponse$default (Lorg/genhttp/testing/TestHost;Ljava/net/http/HttpRequest$Builder;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun getResponse$default (Lorg/genhttp/testing/TestHost;Ljava/net/http/HttpRequest;Ljava/net/http/HttpClient;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getUrl (Ljava/lang/String;)Ljava/lang/String;
+	public static synthetic fun getUrl$default (Lorg/genhttp/testing/TestHost;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
+	public final fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/testing/TestHost$Companion {
+	public final fun getClient (ZZLjava/net/http/HttpClient$Version;Ljava/net/PasswordAuthentication;Ljava/net/CookieHandler;)Ljava/net/http/HttpClient;
+	public static synthetic fun getClient$default (Lorg/genhttp/testing/TestHost$Companion;ZZLjava/net/http/HttpClient$Version;Ljava/net/PasswordAuthentication;Ljava/net/CookieHandler;ILjava/lang/Object;)Ljava/net/http/HttpClient;
+	public final fun nextPort ()I
+	public final fun run (Lorg/genhttp/api/content/Handler;ZZLorg/genhttp/api/infrastructure/ServerEngine;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun run (Lorg/genhttp/api/content/HandlerBuilder;ZZLorg/genhttp/api/infrastructure/ServerEngine;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun run$default (Lorg/genhttp/testing/TestHost$Companion;Lorg/genhttp/api/content/Handler;ZZLorg/genhttp/api/infrastructure/ServerEngine;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun run$default (Lorg/genhttp/testing/TestHost$Companion;Lorg/genhttp/api/content/HandlerBuilder;ZZLorg/genhttp/api/infrastructure/ServerEngine;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+

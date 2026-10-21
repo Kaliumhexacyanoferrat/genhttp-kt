@@ -274,6 +274,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `IServer.DisposeAsync()` → `suspend fun close()`; `IEndPoint : IDisposable` → `EndPoint : AutoCloseable` | Kotlin lifecycle conventions |
 | API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
 | API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |
+| Engine | Endpoints with `dualStack = false` on IPv6 accept IPv4 connections at the TCP level but close them immediately | The JDK cannot set `IPV6_V6ONLY`; the binding tests therefore check that a request is answered instead of a bare TCP connect |
 | IO | `FormattableContent<T>` merged into `FormattableContent(value: Any)` (formats via `toString()`, doubles like .NET) | No generic arity overloading, no `IUtf8SpanFormattable` |
 | IO | `WritingStream` is a write-only `OutputStream(WritableByteChannel, Flushable)` | JVM streams are not bidirectional |
 | IO | Stream checksums require `markSupported()`, `StreamContent.length` is only the known length | JVM streams are not seekable |
