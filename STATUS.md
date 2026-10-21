@@ -9,8 +9,8 @@ done.
 | 1  | Glyph11                       | done        | 197/200 upstream tests (3 ReadOnlySequence tests excluded), all green |
 | 2  | API                           | done        | Complete port, ABI dump in `API/General/api/api.api`; API tests are ported with the acceptance suite in stage 4 |
 | 3  | Engine core                   | done        | Engine (NIO + virtual threads + coroutines, SSLEngine TLS), IO, Pages (Pebble), Conversion (Jackson 3), ErrorHandling, Redirects, Layouting |
-| 4  | Testing & engine acceptance   | in progress | TestHost, acceptance infra; Engine/Api/Generators tests ported and green (111 run, 8 files pending on Inline); Practices, Security, ClientCaching, Compression, Protobuf ported; module tests being ported by agents in worktrees |
-| 5  | Reflection frameworks         | open        | |
+| 4  | Testing & engine acceptance   | done        | 313 acceptance tests green (Engine, Api, IO, Layouting, Redirects, Conversion, ErrorHandling, Compression, Security, ClientCaching); a few IO/Layouting test files wait for unported modules (`pendingTests`) |
+| 5  | Reflection frameworks         | in progress | Reflection, Functional, Webservices, Controllers ported; their tests are being ported by agents in worktrees |
 | 6  | API documentation             | open        | |
 | 7  | Cross-cutting modules         | open        | |
 | 8  | Content modules               | open        | |
@@ -38,7 +38,12 @@ done.
 
 ## Next steps
 
-1. Merge the module test ports of the three worktree agents (IO/Layouting/Redirects, Conversion/Protobuf/ErrorHandling,
-   Compression/Security/ClientCaching), fix production code for failing tests, commit.
-2. Stage 5: Reflection, Functional, Webservices, Controllers (design in `docs/specs/reflection.md`); then remove the
-   now-portable files from `pendingTests` in `Testing/Acceptance/build.gradle.kts`.
+Agents work in git worktrees (`.claude/worktrees/*`, branches `worktree-agent-*`); merge their branches when done.
+Running when the session ended (check `git branch` for unmerged `worktree-agent-*` branches):
+
+- Tests: Reflection + Functional, Webservices + Controllers (+ enabling ProtobufTests).
+- Modules: Websockets; OpenApi; Files + Archives + DirectoryBrowsing + VirtualHosting; I18n + Inspection +
+  ServerSentEvents + Authentication.
+
+Then: ApiBrowsing, SinglePageApplications, StaticWebsites, ReverseProxy, DependencyInjection, LoadBalancing (Gradle
+projects already exist), the tests of all these modules, then stage 10 (packages, playground, benchmarks, release).
