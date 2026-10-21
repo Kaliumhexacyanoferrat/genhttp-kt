@@ -1,0 +1,103 @@
+public final class org/genhttp/modules/compression/CompressedContent {
+	public static final field INSTANCE Lorg/genhttp/modules/compression/CompressedContent;
+	public final fun default ()Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+	public final fun empty ()Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+}
+
+public final class org/genhttp/modules/compression/CompressedContentExtensions {
+	public static final fun compression (Lorg/genhttp/api/infrastructure/ServerHost;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun compression (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/modules/compression/DecompressedContent {
+	public static final field INSTANCE Lorg/genhttp/modules/compression/DecompressedContent;
+	public final fun default ()Lorg/genhttp/modules/compression/providers/DecompressionConcernBuilder;
+	public final fun empty ()Lorg/genhttp/modules/compression/providers/DecompressionConcernBuilder;
+}
+
+public final class org/genhttp/modules/compression/DecompressedContentExtensions {
+	public static final fun decompression (Lorg/genhttp/api/infrastructure/ServerHost;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun decompression (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/genhttp/modules/compression/providers/DecompressionConcernBuilder;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/modules/compression/algorithms/BrotliAlgorithm : org/genhttp/api/content/io/CompressionAlgorithm {
+	public fun <init> ()V
+	public fun compress (Lorg/genhttp/api/protocol/ResponseContent;Lorg/genhttp/api/content/io/CompressionLevel;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun decompress (Ljava/io/InputStream;)Ljava/io/InputStream;
+	public fun getFileExtension ()Ljava/lang/String;
+	public fun getName ()Lorg/genhttp/api/content/io/AlgorithmName;
+	public fun getPriority ()Lorg/genhttp/api/infrastructure/Priority;
+}
+
+public final class org/genhttp/modules/compression/algorithms/GzipAlgorithm : org/genhttp/api/content/io/CompressionAlgorithm {
+	public fun <init> ()V
+	public fun compress (Lorg/genhttp/api/protocol/ResponseContent;Lorg/genhttp/api/content/io/CompressionLevel;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun decompress (Ljava/io/InputStream;)Ljava/io/InputStream;
+	public fun getFileExtension ()Ljava/lang/String;
+	public fun getName ()Lorg/genhttp/api/content/io/AlgorithmName;
+	public fun getPriority ()Lorg/genhttp/api/infrastructure/Priority;
+}
+
+public final class org/genhttp/modules/compression/algorithms/ZstdAlgorithm : org/genhttp/api/content/io/CompressionAlgorithm {
+	public fun <init> ()V
+	public fun compress (Lorg/genhttp/api/protocol/ResponseContent;Lorg/genhttp/api/content/io/CompressionLevel;)Lorg/genhttp/api/protocol/ResponseContent;
+	public fun decompress (Ljava/io/InputStream;)Ljava/io/InputStream;
+	public fun getFileExtension ()Ljava/lang/String;
+	public fun getName ()Lorg/genhttp/api/content/io/AlgorithmName;
+	public fun getPriority ()Lorg/genhttp/api/infrastructure/Priority;
+}
+
+public final class org/genhttp/modules/compression/providers/AcceptEncodingHeader {
+	public static final field INSTANCE Lorg/genhttp/modules/compression/providers/AcceptEncodingHeader;
+	public final fun isSupported (Lorg/genhttp/api/protocol/ByteString;Lorg/genhttp/api/content/io/AlgorithmName;)Z
+	public final fun parseSupported (Lorg/genhttp/api/protocol/ByteString;)Ljava/util/Set;
+}
+
+public final class org/genhttp/modules/compression/providers/CompressedResponseContent : java/lang/AutoCloseable, org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/api/protocol/ResponseContent;Lkotlin/jvm/functions/Function1;Lorg/genhttp/api/content/io/AlgorithmName;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/compression/providers/CompressionConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/List;Lorg/genhttp/api/content/io/CompressionLevel;Ljava/lang/Long;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/compression/providers/CompressionConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/api/content/io/CompressionAlgorithm;)Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+	public final fun add (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun level (Lorg/genhttp/api/content/io/CompressionLevel;)Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+	public final fun minimumSize (Ljava/lang/Long;)Lorg/genhttp/modules/compression/providers/CompressionConcernBuilder;
+}
+
+public final class org/genhttp/modules/compression/providers/DecompressedBody : java/lang/AutoCloseable, org/genhttp/api/protocol/RequestBody {
+	public fun <init> (Lorg/genhttp/api/protocol/RequestBody;Lorg/genhttp/api/content/io/CompressionAlgorithm;)V
+	public fun asMemory (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun asStream ()Ljava/io/InputStream;
+	public fun close ()V
+}
+
+public final class org/genhttp/modules/compression/providers/DecompressionConcern : org/genhttp/api/content/services/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/Map;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/compression/providers/DecompressionConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/api/content/io/CompressionAlgorithm;)Lorg/genhttp/modules/compression/providers/DecompressionConcernBuilder;
+	public final fun add (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/compression/providers/DecompressionConcernBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+

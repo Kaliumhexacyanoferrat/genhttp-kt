@@ -1,0 +1,113 @@
+public final class org/genhttp/modules/security/CorsPolicy {
+	public static final field INSTANCE Lorg/genhttp/modules/security/CorsPolicy;
+	public final fun permissive (Z)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+	public static synthetic fun permissive$default (Lorg/genhttp/modules/security/CorsPolicy;ZILjava/lang/Object;)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+	public final fun restrictive ()Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+}
+
+public final class org/genhttp/modules/security/Extensions {
+	public static final fun harden (Lorg/genhttp/api/infrastructure/ServerHost;ZZZ)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun harden$default (Lorg/genhttp/api/infrastructure/ServerHost;ZZZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun preventSniffing (Lorg/genhttp/api/infrastructure/ServerHost;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun secureUpgrade (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/genhttp/modules/security/SecureUpgrade;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun strictTransport (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/genhttp/modules/security/providers/StrictTransportPolicy;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/modules/security/SecureUpgrade : java/lang/Enum {
+	public static final field Allow Lorg/genhttp/modules/security/SecureUpgrade;
+	public static final field Force Lorg/genhttp/modules/security/SecureUpgrade;
+	public static final field None Lorg/genhttp/modules/security/SecureUpgrade;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/security/SecureUpgrade;
+	public static fun values ()[Lorg/genhttp/modules/security/SecureUpgrade;
+}
+
+public final class org/genhttp/modules/security/cors/CorsPolicyBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZJ)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+	public final fun add (Ljava/lang/String;Lorg/genhttp/modules/security/cors/OriginPolicy;)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+	public static synthetic fun add$default (Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZJILjava/lang/Object;)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun default (Lorg/genhttp/modules/security/cors/OriginPolicy;)Lorg/genhttp/modules/security/cors/CorsPolicyBuilder;
+}
+
+public final class org/genhttp/modules/security/cors/CorsPolicyHandler : org/genhttp/api/content/Concern {
+	public static final field Companion Lorg/genhttp/modules/security/cors/CorsPolicyHandler$Companion;
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/security/cors/OriginPolicy;Ljava/util/Map;)V
+	public final fun getAdditionalPolicies ()Ljava/util/Map;
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public final fun getDefaultPolicy ()Lorg/genhttp/modules/security/cors/OriginPolicy;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/security/cors/CorsPolicyHandler$Companion {
+	public final fun getAllowAny ()Lorg/genhttp/api/protocol/ByteString;
+}
+
+public final class org/genhttp/modules/security/cors/OriginPolicy {
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZJ)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Z
+	public final fun component5 ()J
+	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZJ)Lorg/genhttp/modules/security/cors/OriginPolicy;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/security/cors/OriginPolicy;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZJILjava/lang/Object;)Lorg/genhttp/modules/security/cors/OriginPolicy;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAllowCredentials ()Z
+	public final fun getAllowedHeaders ()Ljava/util/List;
+	public final fun getAllowedMethods ()Ljava/util/List;
+	public final fun getExposedHeaders ()Ljava/util/List;
+	public final fun getMaxAge ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/security/providers/SecureUpgradeConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/security/SecureUpgrade;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public final fun getMode ()Lorg/genhttp/modules/security/SecureUpgrade;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/security/providers/SecureUpgradeConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun mode (Lorg/genhttp/modules/security/SecureUpgrade;)Lorg/genhttp/modules/security/providers/SecureUpgradeConcernBuilder;
+}
+
+public final class org/genhttp/modules/security/providers/SnifferPreventionConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/security/providers/SnifferPreventionConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+
+public final class org/genhttp/modules/security/providers/StrictTransportConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/security/providers/StrictTransportPolicy;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public final fun getPolicy ()Lorg/genhttp/modules/security/providers/StrictTransportPolicy;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/security/providers/StrictTransportConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun policy (Lorg/genhttp/modules/security/providers/StrictTransportPolicy;)Lorg/genhttp/modules/security/providers/StrictTransportConcernBuilder;
+}
+
+public final class org/genhttp/modules/security/providers/StrictTransportPolicy {
+	public synthetic fun <init> (JZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getIncludeSubdomains ()Z
+	public final fun getMaximumAge-UwyO8pc ()J
+	public final fun getPreload ()Z
+}
+

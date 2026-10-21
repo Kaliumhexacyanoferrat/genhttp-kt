@@ -1,0 +1,39 @@
+public final class org/genhttp/modules/clientcaching/ClientCache {
+	public static final field INSTANCE Lorg/genhttp/modules/clientcaching/ClientCache;
+	public final fun policy ()Lorg/genhttp/modules/clientcaching/policy/CachePolicyBuilder;
+	public final fun validation ()Lorg/genhttp/modules/clientcaching/validation/CacheValidationBuilder;
+}
+
+public final class org/genhttp/modules/clientcaching/Extensions {
+	public static final fun clientCaching (Lorg/genhttp/api/infrastructure/ServerHost;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+
+public final class org/genhttp/modules/clientcaching/policy/CachePolicyBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun duration (I)Lorg/genhttp/modules/clientcaching/policy/CachePolicyBuilder;
+	public final fun duration-LRDsOJo (J)Lorg/genhttp/modules/clientcaching/policy/CachePolicyBuilder;
+	public final fun predicate (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/clientcaching/policy/CachePolicyBuilder;
+}
+
+public final class org/genhttp/modules/clientcaching/policy/CachePolicyConcern : org/genhttp/api/content/services/DocumentedConcern {
+	public synthetic fun <init> (Lorg/genhttp/api/content/Handler;JLkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/clientcaching/validation/CacheValidationBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+
+public final class org/genhttp/modules/clientcaching/validation/CacheValidationHandler : org/genhttp/api/content/services/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

@@ -1,0 +1,33 @@
+public final class org/genhttp/modules/layouting/Layout {
+	public static final field INSTANCE Lorg/genhttp/modules/layouting/Layout;
+	public final fun create ()Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public final class org/genhttp/modules/layouting/MultiSegmentSupport {
+	public static final fun add (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;[Ljava/lang/String;Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static final fun addSegments (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;[Ljava/lang/String;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public final class org/genhttp/modules/layouting/provider/LayoutBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/content/Handler;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public final fun add (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public final fun add (Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public final fun addSegment (Ljava/lang/String;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun index (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public final fun index (Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public final class org/genhttp/modules/layouting/provider/LayoutHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/util/Map;Ljava/util/List;Lorg/genhttp/api/content/Handler;)V
+	public final fun getIndex ()Lorg/genhttp/api/content/Handler;
+	public final fun getRootHandlers ()[Lorg/genhttp/api/content/Handler;
+	public final fun getRoutedHandlers ()Ljava/util/Map;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

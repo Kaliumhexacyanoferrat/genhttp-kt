@@ -1,0 +1,23 @@
+public final class org/genhttp/modules/redirects/Redirect {
+	public static final field INSTANCE Lorg/genhttp/modules/redirects/Redirect;
+	public final fun to (Ljava/lang/String;Z)Lorg/genhttp/modules/redirects/provider/RedirectProviderBuilder;
+	public static synthetic fun to$default (Lorg/genhttp/modules/redirects/Redirect;Ljava/lang/String;ZILjava/lang/Object;)Lorg/genhttp/modules/redirects/provider/RedirectProviderBuilder;
+}
+
+public final class org/genhttp/modules/redirects/provider/RedirectProvider : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/net/URI;Z)V
+	public final fun getTarget ()Ljava/net/URI;
+	public final fun getTemporary ()Z
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/redirects/provider/RedirectProviderBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/redirects/provider/RedirectProviderBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun location (Ljava/lang/String;)Lorg/genhttp/modules/redirects/provider/RedirectProviderBuilder;
+	public final fun mode (Z)Lorg/genhttp/modules/redirects/provider/RedirectProviderBuilder;
+}
+
