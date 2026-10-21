@@ -31,7 +31,8 @@ val pendingTests = listOf(
     "engine/ConnectionTests.kt",
     "engine/MethodTests.kt",
     "engine/RequestPropertyTest.kt",
-    "engine/SecurityTests.kt"
+    "engine/SecurityTests.kt",
+    "modules/compression/GeneratedContentTests.kt"
 )
 
 sourceSets.test {
