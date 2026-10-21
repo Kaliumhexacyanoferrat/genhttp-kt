@@ -1,2 +1,5 @@
 # Upstream tests that are intentionally not ported.
 # Format: Class.Method <reason>
+ChunkedBodyStreamSequenceTests.Sequence_MatchesSpan_AcrossSegmentations Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
+ChunkedBodyStreamSequenceTests.Sequence_ChunkDataSpanningSegmentBoundary Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
+ChunkedBodyStreamSequenceTests.Sequence_NeedMoreData_RollsBack_ThenCompletes Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)

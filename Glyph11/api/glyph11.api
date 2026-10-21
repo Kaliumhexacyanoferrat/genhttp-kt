@@ -1,4 +1,168 @@
-public final class org/genhttp/glyph11/Placeholder {
-	public static final field INSTANCE Lorg/genhttp/glyph11/Placeholder;
+public class org/genhttp/glyph11/HttpParseException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;I)V
+	public synthetic fun <init> (Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getStatusCode ()I
+	public final fun isLimitViolation ()Z
+}
+
+public final class org/genhttp/glyph11/parser/ChunkResult : java/lang/Enum {
+	public static final field Chunk Lorg/genhttp/glyph11/parser/ChunkResult;
+	public static final field Completed Lorg/genhttp/glyph11/parser/ChunkResult;
+	public static final field NeedMoreData Lorg/genhttp/glyph11/parser/ChunkResult;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/glyph11/parser/ChunkResult;
+	public static fun values ()[Lorg/genhttp/glyph11/parser/ChunkResult;
+}
+
+public final class org/genhttp/glyph11/parser/ChunkedBodyStream {
+	public fun <init> ()V
+	public final fun copy ()Lorg/genhttp/glyph11/parser/ChunkedBodyStream;
+	public final fun getBytesConsumed ()I
+	public final fun getDataLength ()I
+	public final fun getDataOffset ()I
+	public final fun tryReadChunk (Ljava/nio/ByteBuffer;)Lorg/genhttp/glyph11/parser/ChunkResult;
+}
+
+public final class org/genhttp/glyph11/parser/ParserConstants {
+	public static final field Colon B
+	public static final field Equal B
+	public static final field INSTANCE Lorg/genhttp/glyph11/parser/ParserConstants;
+	public static final field QuerySeparator B
+	public static final field Question B
+	public static final field Space B
+	public final fun asciiEqualsIgnoreCase (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)Z
+	public final fun buildFieldValueBytes ()[B
+	public final fun buildRequestTargetBytes ()[B
+	public final fun getChunkedValue ()[B
+	public final fun getCrlf ()[B
+	public final fun getCrlfCrlf ()[B
+	public final fun getFieldValueSearchValues ()[Z
+	public final fun getRequestTargetSearchValues ()[Z
+	public final fun getTokenSearchValues ()[Z
+	public final fun getTransferEncodingName ()[B
+	public final fun isDigit (B)Z
+	public final fun isValidFieldValue (Ljava/nio/ByteBuffer;)Z
+	public final fun isValidHttpVersion (Ljava/nio/ByteBuffer;)Z
+	public final fun isValidRequestTarget (Ljava/nio/ByteBuffer;)Z
+	public final fun isValidToken (Ljava/nio/ByteBuffer;)Z
+}
+
+public final class org/genhttp/glyph11/parser/ParserLimits {
+	public static final field Companion Lorg/genhttp/glyph11/parser/ParserLimits$Companion;
+	public fun <init> ()V
+	public fun <init> (IIIIIIII)V
+	public synthetic fun <init> (IIIIIIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun copy (IIIIIIII)Lorg/genhttp/glyph11/parser/ParserLimits;
+	public static synthetic fun copy$default (Lorg/genhttp/glyph11/parser/ParserLimits;IIIIIIIIILjava/lang/Object;)Lorg/genhttp/glyph11/parser/ParserLimits;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxHeaderCount ()I
+	public final fun getMaxHeaderNameLength ()I
+	public final fun getMaxHeaderValueLength ()I
+	public final fun getMaxMethodLength ()I
+	public final fun getMaxQueryParameterCount ()I
+	public final fun getMaxReasonPhraseLength ()I
+	public final fun getMaxTotalHeaderBytes ()I
+	public final fun getMaxUrlLength ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/glyph11/parser/ParserLimits$Companion {
+	public final fun getDefault ()Lorg/genhttp/glyph11/parser/ParserLimits;
+}
+
+public final class org/genhttp/glyph11/parser/flexibleparser/FlexibleParser {
+	public static final field INSTANCE Lorg/genhttp/glyph11/parser/flexibleparser/FlexibleParser;
+	public final fun tryExtractFullHeader (Ljava/nio/ByteBuffer;Lorg/genhttp/glyph11/protocol/BinaryRequest;)I
+}
+
+public final class org/genhttp/glyph11/parser/ultrahardened/UltraHardenedParser {
+	public static final field INSTANCE Lorg/genhttp/glyph11/parser/ultrahardened/UltraHardenedParser;
+	public final fun tryExtractFullHeader (Ljava/nio/ByteBuffer;Lorg/genhttp/glyph11/protocol/BinaryRequest;Lorg/genhttp/glyph11/parser/ParserLimits;)I
+	public static synthetic fun tryExtractFullHeader$default (Lorg/genhttp/glyph11/parser/ultrahardened/UltraHardenedParser;Ljava/nio/ByteBuffer;Lorg/genhttp/glyph11/protocol/BinaryRequest;Lorg/genhttp/glyph11/parser/ParserLimits;ILjava/lang/Object;)I
+	public final fun tryExtractFullResponseHeader (Ljava/nio/ByteBuffer;Lorg/genhttp/glyph11/protocol/BinaryResponse;Lorg/genhttp/glyph11/parser/ParserLimits;)I
+	public static synthetic fun tryExtractFullResponseHeader$default (Lorg/genhttp/glyph11/parser/ultrahardened/UltraHardenedParser;Ljava/nio/ByteBuffer;Lorg/genhttp/glyph11/protocol/BinaryResponse;Lorg/genhttp/glyph11/parser/ParserLimits;ILjava/lang/Object;)I
+}
+
+public final class org/genhttp/glyph11/protocol/BinaryRequest : java/lang/AutoCloseable {
+	public fun <init> ()V
+	public final fun clear ()V
+	public fun close ()V
+	public final fun getBody ()Ljava/nio/ByteBuffer;
+	public final fun getHeaders ()Lorg/genhttp/glyph11/protocol/KeyValueList;
+	public final fun getMethod ()Ljava/nio/ByteBuffer;
+	public final fun getPath ()Ljava/nio/ByteBuffer;
+	public final fun getQueryParameters ()Lorg/genhttp/glyph11/protocol/KeyValueList;
+	public final fun getVersion ()Ljava/nio/ByteBuffer;
+}
+
+public final class org/genhttp/glyph11/protocol/BinaryResponse : java/lang/AutoCloseable {
+	public fun <init> ()V
+	public final fun clear ()V
+	public fun close ()V
+	public final fun getBody ()Ljava/nio/ByteBuffer;
+	public final fun getHeaders ()Lorg/genhttp/glyph11/protocol/KeyValueList;
+	public final fun getReasonPhrase ()Ljava/nio/ByteBuffer;
+	public final fun getStatus ()I
+	public final fun getStatusCode ()Ljava/nio/ByteBuffer;
+	public final fun getVersion ()Ljava/nio/ByteBuffer;
+}
+
+public final class org/genhttp/glyph11/protocol/KeyValueList : java/lang/AutoCloseable {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun asList ()Ljava/util/List;
+	public fun close ()V
+	public final fun get (I)Lkotlin/Pair;
+	public final fun getCount ()I
+}
+
+public final class org/genhttp/glyph11/validation/BodyFraming : java/lang/Enum {
+	public static final field Chunked Lorg/genhttp/glyph11/validation/BodyFraming;
+	public static final field ContentLength Lorg/genhttp/glyph11/validation/BodyFraming;
+	public static final field None Lorg/genhttp/glyph11/validation/BodyFraming;
+	public static final field UntilClose Lorg/genhttp/glyph11/validation/BodyFraming;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/glyph11/validation/BodyFraming;
+	public static fun values ()[Lorg/genhttp/glyph11/validation/BodyFraming;
+}
+
+public final class org/genhttp/glyph11/validation/BodyFramingDetector {
+	public static final field INSTANCE Lorg/genhttp/glyph11/validation/BodyFramingDetector;
+	public final fun detectBodyFraming (Lorg/genhttp/glyph11/protocol/BinaryRequest;)Lorg/genhttp/glyph11/validation/BodyFramingResult;
+	public final fun detectResponseBodyFraming (Lorg/genhttp/glyph11/protocol/BinaryResponse;Ljava/nio/ByteBuffer;)Lorg/genhttp/glyph11/validation/BodyFramingResult;
+}
+
+public final class org/genhttp/glyph11/validation/BodyFramingResult {
+	public static final field Companion Lorg/genhttp/glyph11/validation/BodyFramingResult$Companion;
+	public final fun getContentLength ()J
+	public final fun getFraming ()Lorg/genhttp/glyph11/validation/BodyFraming;
+}
+
+public final class org/genhttp/glyph11/validation/BodyFramingResult$Companion {
+	public final fun forContentLength (J)Lorg/genhttp/glyph11/validation/BodyFramingResult;
+	public final fun getForChunked ()Lorg/genhttp/glyph11/validation/BodyFramingResult;
+	public final fun getForUntilClose ()Lorg/genhttp/glyph11/validation/BodyFramingResult;
+	public final fun getNoBody ()Lorg/genhttp/glyph11/validation/BodyFramingResult;
+}
+
+public final class org/genhttp/glyph11/validation/ChunkedBodyValidator {
+	public static final field INSTANCE Lorg/genhttp/glyph11/validation/ChunkedBodyValidator;
+	public final fun tryValidate (Ljava/nio/ByteBuffer;)I
+}
+
+public final class org/genhttp/glyph11/validation/ContentLengthBodyReader {
+	public static final field INSTANCE Lorg/genhttp/glyph11/validation/ContentLengthBodyReader;
+	public final fun hasCompleteBody (Ljava/nio/ByteBuffer;J)Z
+	public final fun parseContentLength (Lorg/genhttp/glyph11/protocol/BinaryRequest;)J
 }
 
