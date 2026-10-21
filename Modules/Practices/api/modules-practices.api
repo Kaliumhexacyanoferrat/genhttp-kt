@@ -1,0 +1,5 @@
+public final class org/genhttp/modules/practices/Extensions {
+	public static final fun defaults (Lorg/genhttp/api/infrastructure/ServerHost;ZZZZZZZ)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static synthetic fun defaults$default (Lorg/genhttp/api/infrastructure/ServerHost;ZZZZZZZILjava/lang/Object;)Lorg/genhttp/api/infrastructure/ServerHost;
+}
+

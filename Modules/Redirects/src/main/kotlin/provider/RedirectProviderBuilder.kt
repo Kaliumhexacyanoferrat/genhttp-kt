@@ -50,10 +50,16 @@ public class RedirectProviderBuilder : HandlerBuilder.WithConcerns<RedirectProvi
     override fun build(): Handler {
         val location = location ?: throw BuilderMissingPropertyException("Location")
 
+        // .NET accepts relative locations with characters java.net.URI rejects (e.g. "{sitemap}"),
+        // so fall back to a URI with these characters quoted
         val parsed = try {
             URI(location)
-        } catch (e: URISyntaxException) {
-            throw IllegalStateException("The given location is not a valid URI", e)
+        } catch (_: URISyntaxException) {
+            try {
+                URI(null, location, null)
+            } catch (e: URISyntaxException) {
+                throw IllegalStateException("The given location is not a valid URI", e)
+            }
         }
 
         return Concerns.chain(concerns, RedirectProvider(parsed, temporary))

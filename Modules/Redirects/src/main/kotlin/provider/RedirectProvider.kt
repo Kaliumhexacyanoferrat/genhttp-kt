@@ -26,7 +26,9 @@ public class RedirectProvider(location: URI, temporary: Boolean) : Handler {
      */
     public val target: URI = location
 
-    private val stringTarget: String = location.toString()
+    // relative locations are rendered unescaped, like Uri.ToString() does in .NET
+    private val stringTarget: String = if (location.isAbsolute) location.toString() else
+        location.schemeSpecificPart + (location.fragment?.let { "#$it" } ?: "")
 
     /**
      * Specifies whether the redirection is temporary or whether the client should remember it.
