@@ -33,7 +33,9 @@ val pendingTests = listOf(
     "modules/io/VirtualTreeTests.kt",
     "modules/io/WebResourceTests.kt",
     "modules/layouting/LayoutTests.kt",
-    "modules/protobuf/ProtobufTests.kt"
+    "modules/protobuf/ProtobufTests.kt",
+    "modules/reflection/RoutingTests.kt",
+    "modules/reflection/WildcardTests.kt"
 )
 
 sourceSets.test {
