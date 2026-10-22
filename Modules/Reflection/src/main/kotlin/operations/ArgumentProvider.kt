@@ -70,7 +70,9 @@ public object ArgumentProvider {
 
         // an empty value falls back to the default value of the parameter, if any
         if (queryValue != null && (!argument.isOptional || !queryValue.isEmpty)) {
-            return queryValue.convertTo(argument.type, registry.formatting)
+            // the nullable variant maps empty values to the default of the type (like upstream)
+            val nullable: ByteString? = queryValue
+            return nullable.convertTo(argument.type, registry.formatting)
         }
 
         return null

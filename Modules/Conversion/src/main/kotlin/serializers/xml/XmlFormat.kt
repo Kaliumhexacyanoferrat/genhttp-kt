@@ -10,6 +10,8 @@ import org.genhttp.modules.conversion.serializers.SerializationFormat
 import tools.jackson.core.StreamReadFeature
 import tools.jackson.core.StreamWriteFeature
 import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.MapperFeature
+import tools.jackson.databind.PropertyNamingStrategies
 import tools.jackson.dataformat.xml.XmlMapper
 import tools.jackson.dataformat.xml.XmlWriteFeature
 import tools.jackson.module.kotlin.KotlinModule
@@ -49,6 +51,10 @@ internal object XmlSupport {
 
     val Mapper: XmlMapper = XmlMapper.builder()
         .addModule(KotlinModule.Builder().build())
+        // XmlSerializer writes the (PascalCase) .NET property names, so element names are capitalized
+        // and matched case-insensitively when reading
+        .propertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE)
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
         .enable(XmlWriteFeature.WRITE_XML_DECLARATION)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .changeDefaultPropertyInclusion { it.withValueInclusion(JsonInclude.Include.NON_NULL) }

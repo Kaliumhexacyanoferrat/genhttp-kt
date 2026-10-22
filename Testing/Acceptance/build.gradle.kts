@@ -50,3 +50,15 @@ tasks.test {
         "--enable-native-access=ALL-UNNAMED"
     )
 }
+
+// access to internals of modules, like InternalsVisibleTo("GenHTTP.Testing.Acceptance") upstream
+val friends = listOf(":modules-reflection")
+
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
+    for (friend in friends) {
+        val output = project(friend).layout.buildDirectory
+
+        friendPaths.from(output.dir("classes/kotlin/main"))
+        friendPaths.from(output.dir("libs").map { dir -> dir.asFileTree.matching { include("*.jar") } })
+    }
+}

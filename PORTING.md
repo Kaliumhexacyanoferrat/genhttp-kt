@@ -281,6 +281,8 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | Tests | `ConnectionTests.testUpgrade` reads the 101 response from a raw socket | The JDK HTTP client rejects unexpected 101 responses |
 | Tests | `ResourceTreeTests.testByAssembly` checks that the classpath root contains the `Resources` folder instead of exactly one node | The classpath root merges all roots of the runtime, an assembly has a single root |
 | Conversion | JSON escapes HTML-sensitive and non-ASCII characters as unicode escapes, enums with explicit values (`ResponseStatus`, `Priority`) are written as their value | Mirrors the defaults of System.Text.Json |
+| Conversion | XML element names are written in PascalCase and read case-insensitively; JSON writes whole-number floating point values without fraction (`42`) | Mirrors XmlSerializer (.NET property names) and System.Text.Json |
+| Tests | The acceptance tests are friends of selected modules (`friendPaths`) to access internals | Counterpart of `InternalsVisibleTo` |
 | Reflection | Kotlin types of lambda parameters are converted with `KType.toJavaType()` (Conversion) | kotlin-reflect cannot map types of lambdas to Java types |
 | IO | `FormattableContent<T>` merged into `FormattableContent(value: Any)` (formats via `toString()`, doubles like .NET) | No generic arity overloading, no `IUtf8SpanFormattable` |
 | IO | `WritingStream` is a write-only `OutputStream(WritableByteChannel, Flushable)` | JVM streams are not bidirectional |

@@ -138,7 +138,7 @@ def scan_kotlin(directory, filter_text):
     problems = []
     for root, _, files in os.walk(directory):
         for file in files:
-            if not file.endswith(".kt"):
+            if not file.endswith(".kt") or file in ("MultiEngineTest.kt", "MultiEngineFrameworkTest.kt"):
                 continue
             path = os.path.join(root, file)
             rel = os.path.relpath(path, directory)

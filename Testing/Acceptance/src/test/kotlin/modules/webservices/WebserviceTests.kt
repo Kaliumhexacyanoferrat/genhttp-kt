@@ -13,6 +13,8 @@ import org.genhttp.modules.reflection.ExecutionMode
 import org.genhttp.modules.reflection.Injection
 import org.genhttp.modules.reflection.Method
 import org.genhttp.modules.reflection.Result
+import org.genhttp.modules.conversion.serializers.xml.XmlFormat
+import kotlin.reflect.typeOf
 import org.genhttp.modules.webservices.ResourceMethod
 import org.genhttp.modules.webservices.ServiceResource
 import org.genhttp.modules.webservices.addService
@@ -250,12 +252,8 @@ class WebserviceTests {
 
         for (requestType in listOf("text/xml", "application/xml")) {
             withResponse(engine, mode, "entity", "POST", entity, requestType, "application/xml") { r ->
-                val mapper = XmlMapper.builder()
-                    .addModule(KotlinModule.Builder().build())
-                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                    .build()
-
-                val result = mapper.readValue(r.body(), TestEntity::class.java)
+                // upstream deserializes with XmlSerializer, the serializer used by the server as well
+                val result = XmlFormat().deserialize(java.io.ByteArrayInputStream(r.body()), typeOf<TestEntity>()) as TestEntity
 
                 assertNotNull(result)
 
