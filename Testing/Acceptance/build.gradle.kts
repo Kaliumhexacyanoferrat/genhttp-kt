@@ -28,6 +28,7 @@ dependencies {
     testImplementation(project(":modules-directory-browsing"))
     testImplementation(project(":modules-virtual-hosting"))
     testImplementation(project(":modules-open-api"))
+    testImplementation(project(":modules-websockets"))
     testImplementation(libs.coroutines.test)
 }
 
@@ -53,7 +54,7 @@ tasks.test {
 }
 
 // access to internals of modules, like InternalsVisibleTo("GenHTTP.Testing.Acceptance") upstream
-val friends = listOf(":modules-reflection")
+val friends = listOf(":modules-reflection", ":modules-websockets")
 
 tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
     for (friend in friends) {
