@@ -54,9 +54,8 @@ public class WebResource(public val source: URI, name: String?, modified: Instan
         get() = actualContentLength
 
     override suspend fun calculateChecksum(): Long {
-        val request = HttpRequest.newBuilder(source)
-            .method("HEAD", HttpRequest.BodyPublishers.noBody())
-            .build()
+        // HEAD() does not send a "Content-Length: 0" header, which strict servers reject
+        val request = HttpRequest.newBuilder(source).HEAD().build()
 
         val response = client.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream()).await()
 

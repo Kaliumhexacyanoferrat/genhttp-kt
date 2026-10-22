@@ -6,7 +6,6 @@ import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.ContentType
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.files.Asset
-import org.genhttp.modules.files.asDownload
 import org.genhttp.modules.io.Content
 import org.genhttp.modules.io.fromString
 import org.genhttp.modules.io.fromWeb

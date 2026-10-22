@@ -11,6 +11,7 @@ maven-publish = "0.37.0"
 brotli4j = "1.23.0"
 zstd = "1.5.7-24"
 commons-compress = "1.28.0"
+xz = "1.12"
 nimbus-jose = "10.10"
 swagger = "2.2.55"
 pebble = "4.1.2"
@@ -41,6 +42,7 @@ brotli4j-native-osx-x64 = { module = "com.aayushatharva.brotli4j:native-osx-x86_
 brotli4j-native-osx-arm64 = { module = "com.aayushatharva.brotli4j:native-osx-aarch64", version.ref = "brotli4j" }
 zstd = { module = "com.github.luben:zstd-jni", version.ref = "zstd" }
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
+xz = { module = "org.tukaani:xz", version.ref = "xz" }
 nimbus-jose = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus-jose" }
 swagger-core = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }
 pebble = { module = "io.pebbletemplates:pebble", version.ref = "pebble" }

@@ -5,6 +5,7 @@ import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.files.Assets
 import org.genhttp.modules.functional.*
+import org.genhttp.modules.io.fromClasspath
 import org.genhttp.modules.reflection.ExecutionMode
 import org.genhttp.testing.TestHost
 import org.genhttp.testing.acceptance.MultiEngineFrameworkTest

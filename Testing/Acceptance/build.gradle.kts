@@ -23,17 +23,18 @@ dependencies {
     testImplementation(project(":modules-functional"))
     testImplementation(project(":modules-webservices"))
     testImplementation(project(":modules-controllers"))
+    testImplementation(project(":modules-files"))
+    testImplementation(project(":modules-archives"))
+    testImplementation(project(":modules-directory-browsing"))
+    testImplementation(project(":modules-virtual-hosting"))
+    testImplementation(project(":modules-open-api"))
     testImplementation(libs.coroutines.test)
 }
 
 // tests that depend on modules which have not been ported yet (see STATUS.md)
 val pendingTests = listOf(
     "modules/io/PathTraversalTests.kt",
-    "modules/io/RangeTests.kt",
-    "modules/io/VirtualTreeTests.kt",
-    "modules/io/WebResourceTests.kt",
     "modules/layouting/LayoutTests.kt",
-    "modules/reflection/WildcardTests.kt",
     "modules/webservices/HandlerResultTests.kt"
 )
 
