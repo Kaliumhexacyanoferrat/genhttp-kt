@@ -290,3 +290,11 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | IO | `Handler.From` / `Concern.From` sync and async overloads merged into one suspend lambda | A suspend lambda accepts both |
 | IO | `DirectoryContainer` rejects paths that escape the directory (e.g. via `%2F`) | Hardening |
 | IO | `ResponseBuilder.apply(modifications)` shadows the stdlib `apply` for response builders | Upstream name kept |
+| Websockets | `WebsocketConnection` is not disposable; the `Canceled` frame error is never produced (cancellation throws `CancellationException`); segmented payloads are linearized into a copy | `close()` clashes with the close frame API and the engine owns the input; no `ReadOnlySequence` on the JVM |
+| Websockets | Status codes of close frames are `Int` (validated to 0..65535), opcodes are `Byte` | No unsigned types in the public API |
+| I18n | Overloads of `fromRequest` are resolved by the lambda return type (`@OverloadResolutionByLambdaReturnType`), the culture variant is `fromRequestCultures` on the JVM | Kotlin cannot overload lambdas by return type otherwise |
+| I18n | The selected culture is available via `CurrentCulture.culture()` / `uiCulture()` (coroutine context element `CultureContext`) instead of `CultureInfo.CurrentCulture` | The JVM has no per-thread culture; coroutines may switch threads |
+| I18n | Language tags without region resolve to a default region (`de` → `de-DE`) using a built-in table | Mirrors `CultureInfo.CreateSpecificCulture` |
+| Authentication | Lambda overloads of `authentication(...)` with two parameters need explicit parameter types at the call site | Kotlin does not resolve overloads by the lambda body |
+| Authentication | Bearer tokens are `com.nimbusds.jwt.SignedJWT`, keys are `java.security.Key`; unsigned (`alg: none`) and encrypted tokens are rejected | Nimbus JOSE replaces System.IdentityModel; hardening |
+| ServerSentEvents | `EventStream` rethrows `CancellationException` instead of sending a retry | Structured concurrency |

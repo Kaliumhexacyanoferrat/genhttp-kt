@@ -55,12 +55,12 @@ public final class org/genhttp/modules/i18n/provider/LocalizationConcernBuilder 
 	public final fun default (Ljava/util/Locale;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun fromCookie (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public static synthetic fun fromCookie$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
-	public final fun fromCultures (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun fromHeader (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public static synthetic fun fromHeader$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun fromQuery (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public static synthetic fun fromQuery$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun fromRequest (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromRequestCultures (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun setter (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun setter (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
 	public final fun setter (ZZ)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;

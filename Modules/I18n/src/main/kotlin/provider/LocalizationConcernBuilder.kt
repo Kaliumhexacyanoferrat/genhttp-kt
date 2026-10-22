@@ -13,6 +13,8 @@ import org.genhttp.modules.i18n.parsers.CultureInfoParser
 
 import java.util.Locale
 
+import kotlin.experimental.ExperimentalTypeInference
+
 /**
  * Builder class to configure and create an instance of [LocalizationConcern].
  */
@@ -63,19 +65,23 @@ public class LocalizationConcernBuilder : ConcernBuilder {
      *
      * @param languageSelector The selector to extract the language from, e.g. the value of a language header
      */
+    @OptIn(ExperimentalTypeInference::class)
+    @OverloadResolutionByLambdaReturnType
     public fun fromRequest(languageSelector: suspend (Request) -> String?): LocalizationConcernBuilder =
-        fromCultures { request ->
+        fromRequest { request: Request ->
             val language = languageSelector(request)
             CultureInfoParser.parseFromLanguage(language)
         }
 
     /**
-     * Extracts the culture from a custom (async) selector. Named differently than [fromRequest] as Kotlin cannot
-     * overload lambdas by their return type (`FromRequest` in GenHTTP).
+     * Extracts the culture from a custom (async) selector.
      *
      * @param cultureSelector The selector to extract the culture from
      */
-    public fun fromCultures(cultureSelector: CultureSelectorAsyncDelegate): LocalizationConcernBuilder {
+    @OptIn(ExperimentalTypeInference::class)
+    @OverloadResolutionByLambdaReturnType
+    @JvmName("fromRequestCultures")
+    public fun fromRequest(cultureSelector: CultureSelectorAsyncDelegate): LocalizationConcernBuilder {
         cultureSelectors.add(cultureSelector)
         return this
     }
