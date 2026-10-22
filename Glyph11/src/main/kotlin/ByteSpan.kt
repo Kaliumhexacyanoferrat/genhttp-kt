@@ -22,6 +22,9 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
 
     private val arrayBase: Int = if (array != null) buffer.arrayOffset() + start else 0
 
+    // the slices handed out are read-only, so a writable input is converted once instead of per slice
+    private var readOnly: ByteBuffer? = if (buffer.isReadOnly) buffer else null
+
     /** The number of bytes in this span. */
     val length: Int = buffer.remaining()
 
@@ -45,10 +48,20 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
         val size = needle.size
         val last = to - size
 
+        if (size == 0) {
+            return if (from <= last) from else -1
+        }
+
+        val first = needle[0].toInt() and 0xFF
+
         var i = from
 
         while (i <= last) {
-            var j = 0
+            i = indexOfByte(first, i, last + 1)
+
+            if (i < 0) return -1
+
+            var j = 1
 
             while (j < size && at(i + j) == (needle[j].toInt() and 0xFF)) {
                 j++
@@ -64,6 +77,24 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
 
     /** Index of the first occurrence of the byte [value] within `[from, to)`, or -1. */
     fun indexOfByte(value: Int, from: Int, to: Int): Int {
+        checkRange(from, to)
+
+        val a = array
+
+        if (a != null) {
+            val needle = value.toByte()
+            val end = arrayBase + to
+
+            var i = arrayBase + from
+
+            while (i < end) {
+                if (a[i] == needle) return i - arrayBase
+                i++
+            }
+
+            return -1
+        }
+
         var i = from
 
         while (i < to) {
@@ -76,6 +107,23 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
 
     /** True if all bytes within `[from, to)` are flagged in [table]. */
     fun allIn(table: BooleanArray, from: Int, to: Int): Boolean {
+        checkRange(from, to)
+
+        val a = array
+
+        if (a != null) {
+            val end = arrayBase + to
+
+            var i = arrayBase + from
+
+            while (i < end) {
+                if (!table[a[i].toInt() and 0xFF]) return false
+                i++
+            }
+
+            return true
+        }
+
         var i = from
 
         while (i < to) {
@@ -109,6 +157,16 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
     }
 
     /** Creates a read-only buffer covering exactly `[offset, offset + len)` of this span. */
-    fun slice(offset: Int, len: Int): ByteBuffer = buffer.slice(start + offset, len).asReadOnlyBuffer()
+    fun slice(offset: Int, len: Int): ByteBuffer {
+        val source = readOnly ?: buffer.asReadOnlyBuffer().also { readOnly = it }
+
+        return source.slice(start + offset, len)
+    }
+
+    private fun checkRange(from: Int, to: Int) {
+        if (from < to && (from < 0 || to > length)) {
+            throw IndexOutOfBoundsException("Range [$from, $to) out of bounds for length $length")
+        }
+    }
 
 }

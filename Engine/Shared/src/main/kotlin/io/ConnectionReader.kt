@@ -12,7 +12,7 @@ import java.nio.channels.ReadableByteChannel
  *
  * Data read from the channel is kept in a contiguous heap buffer. Callers inspect the buffered data via [data],
  * mark processed bytes via [consume] and request more data via [fill]. Views returned by [data] stay valid
- * until the next call to [fill] (which may compact or grow the buffer).
+ * until the next call to [fill] (which may compact or grow the buffer) and must not be modified.
  *
  * Reads block the calling thread, which is intended to be a virtual thread. Timeouts are enforced by the engine by
  * closing the channel, which aborts a blocked read.
@@ -21,8 +21,8 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
 
     private var buffer: ByteArray = ByteArray(initialCapacity)
 
-    // read-only view on the whole buffer, sliced by data()
-    private var view: ByteBuffer = ByteBuffer.wrap(buffer).asReadOnlyBuffer()
+    // view on the whole buffer, sliced by data(); not read-only, so that the parser can access the backing array
+    private var view: ByteBuffer = ByteBuffer.wrap(buffer)
 
     private var start = 0
 
@@ -41,7 +41,10 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
         get() = end - start
 
     /**
-     * A read-only view on the buffered bytes that have not been consumed yet (position 0, limit [available]).
+     * A view on the buffered bytes that have not been consumed yet (position 0, limit [available]).
+     *
+     * The view is backed by the buffer of the reader (so that parsers can access the array directly) and must not
+     * be modified. Data that is handed out to handlers needs to be sliced as read-only buffers.
      */
     public fun data(): ByteBuffer = view.slice(start, end - start)
 
@@ -151,7 +154,7 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
             System.arraycopy(buffer, start, buffer, 0, count)
         } else {
             buffer = buffer.copyOf(buffer.size * 2)
-            view = ByteBuffer.wrap(buffer).asReadOnlyBuffer()
+            view = ByteBuffer.wrap(buffer)
         }
 
         start = 0
