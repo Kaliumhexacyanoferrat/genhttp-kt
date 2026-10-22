@@ -25,7 +25,7 @@ class BaselineBodyChunkedBenchmark {
     private suspend fun createContext(): BenchmarkContext {
         val handler = ServiceResource.from<Baseline>()
 
-        val request = "POST /?a=1&b=2 HTTP/1.1\r\nHost: localhost:8080\r\nTransfer-Encoding: chunked\r\n\r\n2\r\n20\r\n0"
+        val request = "POST /?a=1&b=2 HTTP/1.1\r\nHost: localhost:8080\r\nTransfer-Encoding: chunked\r\n\r\n2\r\n20\r\n0\r\n\r\n"
 
         val context = BenchmarkContext(request, handler.build())
 
