@@ -1,0 +1,262 @@
+public final class org/genhttp/modules/websockets/ConnectionSerializationExtensions {
+	public static final fun writePayloadOf (Lorg/genhttp/modules/websockets/SocketConnection;Ljava/lang/Object;Lkotlin/reflect/KType;Lorg/genhttp/modules/websockets/protocol/FrameType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/websockets/ImperativeConnection : org/genhttp/modules/websockets/SocketConnection {
+	public abstract fun readFrame (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun tryReadFrame ()Lorg/genhttp/modules/websockets/WebsocketFrame;
+}
+
+public abstract interface class org/genhttp/modules/websockets/ImperativeHandler {
+	public abstract fun handle (Lorg/genhttp/modules/websockets/ImperativeConnection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/websockets/RawFrameData {
+	public abstract fun getFin ()Z
+	public abstract fun getMemory ()Ljava/nio/ByteBuffer;
+	public abstract fun getSegments ()Ljava/util/List;
+	public abstract fun isSegmented ()Z
+}
+
+public abstract interface class org/genhttp/modules/websockets/ReactiveConnection : org/genhttp/modules/websockets/SocketConnection {
+}
+
+public abstract interface class org/genhttp/modules/websockets/ReactiveHandler {
+	public fun onBinary (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onClose (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onConnected (Lorg/genhttp/modules/websockets/ReactiveConnection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onContinue (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onError (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/protocol/FrameError;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onMessage (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onPing (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onPong (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/genhttp/modules/websockets/SocketConnection {
+	public abstract fun close (Ljava/lang/String;IZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun close$default (Lorg/genhttp/modules/websockets/SocketConnection;Ljava/lang/String;IZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun flush (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getRequest ()Lorg/genhttp/api/protocol/Request;
+	public abstract fun getSettings ()Lorg/genhttp/modules/websockets/provider/ConnectionSettings;
+	public abstract fun ping (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun ping$default (Lorg/genhttp/modules/websockets/SocketConnection;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun pong (Ljava/nio/ByteBuffer;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun pong (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun pong$default (Lorg/genhttp/modules/websockets/SocketConnection;Ljava/nio/ByteBuffer;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun pong$default (Lorg/genhttp/modules/websockets/SocketConnection;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun write (Ljava/nio/ByteBuffer;Lorg/genhttp/modules/websockets/protocol/FrameType;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun write$default (Lorg/genhttp/modules/websockets/SocketConnection;Ljava/nio/ByteBuffer;Lorg/genhttp/modules/websockets/protocol/FrameType;ZZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/Websocket {
+	public static final field INSTANCE Lorg/genhttp/modules/websockets/Websocket;
+	public final fun functional ()Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun imperative ()Lorg/genhttp/modules/websockets/imperative/ImperativeWebsocketBuilder;
+	public final fun reactive ()Lorg/genhttp/modules/websockets/reactive/ReactiveWebsocketBuilder;
+}
+
+public abstract interface class org/genhttp/modules/websockets/WebsocketFrame {
+	public abstract fun getConnection ()Lorg/genhttp/modules/websockets/SocketConnection;
+	public abstract fun getData ()Ljava/nio/ByteBuffer;
+	public abstract fun getRaw ()Lorg/genhttp/modules/websockets/RawFrameData;
+	public abstract fun getType ()Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public abstract fun isError ()Lorg/genhttp/modules/websockets/protocol/FrameError;
+}
+
+public final class org/genhttp/modules/websockets/WebsocketFrameSerializationExtensions {
+	public static final fun readPayloadOf (Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/reflect/KType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/functional/FunctionalHandler : org/genhttp/modules/websockets/ReactiveHandler {
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)V
+	public fun onBinary (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onClose (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onConnected (Lorg/genhttp/modules/websockets/ReactiveConnection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onContinue (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onError (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/protocol/FrameError;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onMessage (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onPing (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onPong (Lorg/genhttp/modules/websockets/ReactiveConnection;Lorg/genhttp/modules/websockets/WebsocketFrame;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun doNotAllocateFrameData ()Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun formatters (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun handleContinuationFramesManually ()Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onBinary (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onClose (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onConnected (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onContinue (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onError (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onMessage (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onPing (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun onPong (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+	public final fun serialization (Lorg/genhttp/modules/conversion/serializers/SerializationFormat;)Lorg/genhttp/modules/websockets/functional/FunctionalWebsocketBuilder;
+}
+
+public final class org/genhttp/modules/websockets/imperative/ImperativeWebsocketBuilder : org/genhttp/modules/websockets/provider/WebsocketBuilder {
+	public fun <init> ()V
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun handler (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/websockets/imperative/ImperativeWebsocketBuilder;
+	public final fun handler (Lorg/genhttp/modules/websockets/ImperativeHandler;)Lorg/genhttp/modules/websockets/imperative/ImperativeWebsocketBuilder;
+}
+
+public final class org/genhttp/modules/websockets/imperative/ImperativeWebsocketContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/modules/websockets/ImperativeHandler;Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/websockets/provider/ConnectionSettings;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/protocol/Frame {
+	public static final field INSTANCE Lorg/genhttp/modules/websockets/protocol/Frame;
+	public final fun write (Ljava/nio/channels/WritableByteChannel;Ljava/nio/ByteBuffer;BZ)V
+	public static synthetic fun write$default (Lorg/genhttp/modules/websockets/protocol/Frame;Ljava/nio/channels/WritableByteChannel;Ljava/nio/ByteBuffer;BZILjava/lang/Object;)V
+	public final fun writeClose (Ljava/nio/channels/WritableByteChannel;Ljava/lang/String;I)V
+	public final fun writePing (Ljava/nio/channels/WritableByteChannel;)V
+	public final fun writePong (Ljava/nio/channels/WritableByteChannel;Ljava/nio/ByteBuffer;)V
+}
+
+public final class org/genhttp/modules/websockets/protocol/FrameError {
+	public static final field Companion Lorg/genhttp/modules/websockets/protocol/FrameError$Companion;
+	public static final field ReadCanceled Ljava/lang/String;
+	public static final field UnexpectedEndOfStream Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Lorg/genhttp/modules/websockets/protocol/FrameErrorType;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/genhttp/modules/websockets/protocol/FrameErrorType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public final fun copy (Ljava/lang/String;Lorg/genhttp/modules/websockets/protocol/FrameErrorType;)Lorg/genhttp/modules/websockets/protocol/FrameError;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/websockets/protocol/FrameError;Ljava/lang/String;Lorg/genhttp/modules/websockets/protocol/FrameErrorType;ILjava/lang/Object;)Lorg/genhttp/modules/websockets/protocol/FrameError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getErrorType ()Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/websockets/protocol/FrameError$Companion {
+}
+
+public final class org/genhttp/modules/websockets/protocol/FrameErrorType : java/lang/Enum {
+	public static final field Canceled Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field Incomplete Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field IncompleteForever Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field InvalidControlFrame Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field InvalidControlFrameLength Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field InvalidOpCode Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field None Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field PayloadTooLarge Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static final field UndefinedBehavior Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+	public static fun values ()[Lorg/genhttp/modules/websockets/protocol/FrameErrorType;
+}
+
+public final class org/genhttp/modules/websockets/protocol/FrameType : java/lang/Enum {
+	public static final field Binary Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Close Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Continue Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Error Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field None Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Ping Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Pong Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static final field Text Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/modules/websockets/protocol/FrameType;
+	public static fun values ()[Lorg/genhttp/modules/websockets/protocol/FrameType;
+}
+
+public final class org/genhttp/modules/websockets/protocol/Handshake {
+	public static final field INSTANCE Lorg/genhttp/modules/websockets/protocol/Handshake;
+	public final fun createAcceptKey (Lorg/genhttp/api/protocol/ByteString;)Lorg/genhttp/api/protocol/ByteString;
+}
+
+public final class org/genhttp/modules/websockets/provider/ConnectionSettings {
+	public fun <init> (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;Lorg/genhttp/modules/conversion/serializers/SerializationFormat;ZZ)V
+	public final fun component1 ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+	public final fun component2 ()Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun copy (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;Lorg/genhttp/modules/conversion/serializers/SerializationFormat;ZZ)Lorg/genhttp/modules/websockets/provider/ConnectionSettings;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/websockets/provider/ConnectionSettings;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;Lorg/genhttp/modules/conversion/serializers/SerializationFormat;ZZILjava/lang/Object;)Lorg/genhttp/modules/websockets/provider/ConnectionSettings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAllocateFrameData ()Z
+	public final fun getFormatters ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+	public final fun getHandleContinuationFramesManually ()Z
+	public final fun getSerializationFormat ()Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/genhttp/modules/websockets/provider/WebsocketBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/websockets/provider/WebsocketBuilder;
+	public abstract fun build ()Lorg/genhttp/api/content/Handler;
+	protected final fun buildSettings ()Lorg/genhttp/modules/websockets/provider/ConnectionSettings;
+	public final fun doNotAllocateFrameData ()Lorg/genhttp/modules/websockets/provider/WebsocketBuilder;
+	public final fun formatters (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)Lorg/genhttp/modules/websockets/provider/WebsocketBuilder;
+	protected final fun getAllocateFrameData ()Z
+	protected final fun getConcerns ()Ljava/util/List;
+	protected final fun getFormatters ()Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;
+	protected final fun getHandleContinuationFramesManually ()Z
+	protected final fun getMaxRxBufferSize ()I
+	protected final fun getSerializationFormat ()Lorg/genhttp/modules/conversion/serializers/SerializationFormat;
+	public final fun handleContinuationFramesManually ()Lorg/genhttp/modules/websockets/provider/WebsocketBuilder;
+	public final fun serialization (Lorg/genhttp/modules/conversion/serializers/SerializationFormat;)Lorg/genhttp/modules/websockets/provider/WebsocketBuilder;
+	protected final fun setAllocateFrameData (Z)V
+	protected final fun setFormatters (Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	protected final fun setHandleContinuationFramesManually (Z)V
+	protected final fun setMaxRxBufferSize (I)V
+	protected final fun setSerializationFormat (Lorg/genhttp/modules/conversion/serializers/SerializationFormat;)V
+}
+
+public final class org/genhttp/modules/websockets/provider/WebsocketConnection : org/genhttp/modules/websockets/ImperativeConnection, org/genhttp/modules/websockets/ReactiveConnection {
+	public fun <init> (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/ResponseSink;Lorg/genhttp/modules/websockets/provider/ConnectionSettings;)V
+	public fun close (Ljava/lang/String;IZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun flush (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getRequest ()Lorg/genhttp/api/protocol/Request;
+	public fun getSettings ()Lorg/genhttp/modules/websockets/provider/ConnectionSettings;
+	public fun ping (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun pong (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun pong (Ljava/nio/ByteBuffer;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun pong (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun pong$default (Lorg/genhttp/modules/websockets/provider/WebsocketConnection;Ljava/lang/String;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun readFrame (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryReadFrame ()Lorg/genhttp/modules/websockets/WebsocketFrame;
+	public fun write (Ljava/nio/ByteBuffer;Lorg/genhttp/modules/websockets/protocol/FrameType;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/provider/WebsocketHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/reactive/ReactiveWebsocketBuilder : org/genhttp/modules/websockets/provider/WebsocketBuilder {
+	public fun <init> ()V
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun handler (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/websockets/reactive/ReactiveWebsocketBuilder;
+	public final fun handler (Lorg/genhttp/modules/websockets/ReactiveHandler;)Lorg/genhttp/modules/websockets/reactive/ReactiveWebsocketBuilder;
+}
+
+public final class org/genhttp/modules/websockets/reactive/ReactiveWebsocketContent : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/modules/websockets/ReactiveHandler;Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/websockets/provider/ConnectionSettings;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/websockets/utils/SequenceUtils {
+	public static final field INSTANCE Lorg/genhttp/modules/websockets/utils/SequenceUtils;
+	public final fun concatSequences (Ljava/util/List;)Ljava/nio/ByteBuffer;
+}
+
