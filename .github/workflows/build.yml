@@ -43,7 +43,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build & test
-        run: ./gradlew check :koverXmlReport :koverLog --console=plain
+        run: ./gradlew check :koverXmlReport :koverLog :koverVerify --console=plain
 
       - name: Upload test reports
         if: failure()
