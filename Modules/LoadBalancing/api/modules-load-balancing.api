@@ -10,6 +10,8 @@ public final class org/genhttp/modules/loadbalancing/provider/LoadBalancerBuilde
 	public final fun add (Lorg/genhttp/api/content/HandlerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
 	public static synthetic fun add$default (Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;Lorg/genhttp/api/content/HandlerBuilder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
 	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun proxy (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+	public static synthetic fun proxy$default (Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
 	public final fun redirect (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
 	public static synthetic fun redirect$default (Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
 }

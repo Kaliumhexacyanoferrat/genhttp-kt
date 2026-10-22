@@ -37,6 +37,8 @@ dependencies {
     testImplementation(project(":modules-single-page-applications"))
     testImplementation(project(":modules-static-websites"))
     testImplementation(project(":modules-dependency-injection"))
+    testImplementation(project(":modules-reverse-proxy"))
+    testImplementation(project(":modules-load-balancing"))
     testImplementation(libs.coroutines.test)
 }
 

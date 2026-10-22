@@ -49,3 +49,8 @@ Modules/Reflection:OperationArgument.DefaultValue    # kotlin-reflect cannot rea
 # --- Serialization libraries
 Modules/Conversion:JsonFormat.Options                # JsonSerializerOptions -> Jackson JsonMapper (JsonFormat.mapper)
 Modules/ErrorHandling:ErrorHandlingContext           # System.Text.Json source generation context, not needed with Jackson
+
+# --- Later modules
+Modules/DependencyInjection:DependentWebsocket       # only inline reified extensions (dependentHandler), not part of ABI dumps
+Modules/ReverseProxy:*.DisposeAsync                  # AutoCloseable.close()
+Modules/ReverseProxy:RequestBody.*                   # HttpContent -> HttpRequest.BodyPublisher (contentLength / subscribe)

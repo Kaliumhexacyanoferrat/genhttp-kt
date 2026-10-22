@@ -6,6 +6,7 @@ import org.genhttp.api.content.Handler
 import org.genhttp.api.content.HandlerBuilder
 import org.genhttp.api.infrastructure.Priority
 import org.genhttp.modules.loadbalancing.PriorityEvaluation
+import org.genhttp.modules.reverseproxy.Proxy
 
 /**
  * Builds a handler that distributes requests to a set of nodes.
@@ -42,6 +43,15 @@ public class LoadBalancerBuilder : HandlerBuilder.WithConcerns<LoadBalancerBuild
      */
     public fun redirect(node: String, priority: PriorityEvaluation? = null): LoadBalancerBuilder =
         add(LoadBalancerRedirectionBuilder().root(node), priority)
+
+    /**
+     * Adds a node to the load balancer that proxies the request to the given upstream server.
+     *
+     * @param node The upstream server to proxy the request to
+     * @param priority Determines the priority of the node for a request (defaults to medium priority)
+     */
+    public fun proxy(node: String, priority: PriorityEvaluation? = null): LoadBalancerBuilder =
+        add(Proxy.create().upstream(node), priority)
 
     override fun build(): Handler = Concerns.chain(concerns, LoadBalancerHandler(nodes))
 
