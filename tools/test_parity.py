@@ -143,6 +143,8 @@ def scan_kotlin(directory, filter_text):
             path = os.path.join(root, file)
             rel = os.path.relpath(path, directory)
             text = open(path, encoding="utf-8").read()
+            # ignore examples in comments
+            text = re.sub(r"/\*.*?\*/", lambda m: " " * len(m.group(0)), text, flags=re.S)
             if re.search(r"@Disabled\b|assumeTrue|assumeFalse|Assumptions\.", text):
                 problems.append(f"{rel}: uses @Disabled or assumptions")
             classes = [(m.start(), m.group(1)) for m in KT_CLASS.finditer(text)]
