@@ -1,0 +1,53 @@
+public abstract interface class org/genhttp/modules/serversentevents/EventConnection {
+	public abstract fun comment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun data (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun data (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun data$default (Lorg/genhttp/modules/serversentevents/EventConnection;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun data$default (Lorg/genhttp/modules/serversentevents/EventConnection;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getConnected ()Z
+	public abstract fun getLastEventId ()Ljava/lang/String;
+	public abstract fun getRequest ()Lorg/genhttp/api/protocol/Request;
+	public abstract fun retry (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/serversentevents/EventSource {
+	public static final field INSTANCE Lorg/genhttp/modules/serversentevents/EventSource;
+	public final fun create ()Lorg/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder;
+}
+
+public final class org/genhttp/modules/serversentevents/handler/EventSourceHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun formatting (Lorg/genhttp/modules/conversion/formatters/FormatterBuilder;)Lorg/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder;
+	public final fun generator (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder;
+	public final fun inspector (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/serversentevents/handler/EventSourceHandlerBuilder;
+}
+
+public final class org/genhttp/modules/serversentevents/handler/EventStream : org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/api/protocol/Request;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/serversentevents/handler/StreamEventConnection : org/genhttp/modules/serversentevents/EventConnection {
+	public fun <init> (Lorg/genhttp/api/protocol/Request;Ljava/lang/String;Ljava/io/OutputStream;Lorg/genhttp/modules/conversion/formatters/FormatterRegistry;)V
+	public fun comment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun data (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun data (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getConnected ()Z
+	public fun getLastEventId ()Ljava/lang/String;
+	public fun getRequest ()Lorg/genhttp/api/protocol/Request;
+	public fun retry (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

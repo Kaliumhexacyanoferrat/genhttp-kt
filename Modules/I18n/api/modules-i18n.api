@@ -1,0 +1,72 @@
+public final class org/genhttp/modules/i18n/CultureContext : kotlin/coroutines/AbstractCoroutineContextElement {
+	public static final field Key Lorg/genhttp/modules/i18n/CultureContext$Key;
+	public fun <init> (Ljava/util/Locale;Ljava/util/Locale;)V
+	public final fun getCulture ()Ljava/util/Locale;
+	public final fun getUiCulture ()Ljava/util/Locale;
+}
+
+public final class org/genhttp/modules/i18n/CultureContext$Key : kotlin/coroutines/CoroutineContext$Key {
+}
+
+public final class org/genhttp/modules/i18n/CurrentCulture {
+	public static final field CultureProperty Ljava/lang/String;
+	public static final field INSTANCE Lorg/genhttp/modules/i18n/CurrentCulture;
+	public static final field UiCultureProperty Ljava/lang/String;
+	public final fun culture (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun uiCulture (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/i18n/Localization {
+	public static final field INSTANCE Lorg/genhttp/modules/i18n/Localization;
+	public final fun create ()Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+}
+
+public final class org/genhttp/modules/i18n/parsers/CultureInfoParser {
+	public static final field INSTANCE Lorg/genhttp/modules/i18n/parsers/CultureInfoParser;
+	public final fun parseFromLanguage (Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class org/genhttp/modules/i18n/provider/AsyncOrSyncSetter {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlin/jvm/functions/Function2;
+	public final fun component2 ()Lkotlin/jvm/functions/Function3;
+	public final fun copy (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/i18n/provider/AsyncOrSyncSetter;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/i18n/provider/AsyncOrSyncSetter;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/AsyncOrSyncSetter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAsyncSetter ()Lkotlin/jvm/functions/Function3;
+	public final fun getSyncSetter ()Lkotlin/jvm/functions/Function2;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/i18n/provider/LocalizationConcern : org/genhttp/api/content/services/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/Locale;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Ljava/util/List;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/i18n/provider/LocalizationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun default (Ljava/util/Locale;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromCookie (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public static synthetic fun fromCookie$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromCultures (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromHeader (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public static synthetic fun fromHeader$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromQuery (Ljava/lang/String;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public static synthetic fun fromQuery$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun fromRequest (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun setter (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun setter (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun setter (ZZ)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public static synthetic fun setter$default (Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;ZZILjava/lang/Object;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun supports (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun supports (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+	public final fun supports ([Ljava/util/Locale;)Lorg/genhttp/modules/i18n/provider/LocalizationConcernBuilder;
+}
+
