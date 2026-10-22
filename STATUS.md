@@ -48,3 +48,7 @@ Running when the session ended (check `git branch` for unmerged `worktree-agent-
 
 Then: tests of the last modules (ApiBrowsing, SPA, StaticWebsites, ReverseProxy, DependencyInjection, LoadBalancing),
 enable `pendingTests`, stage 10 (packages, playground, benchmarks, release), coverage, API parity pass.
+
+API parity: `python tools/api_parity.py --verbose` lists upstream declarations without Kotlin counterpart (163 on
+first run, many are still unported modules or naming false positives). Triage each: fix the port or add it with a
+reason to `tools/api_parity_exclusions.txt`.
