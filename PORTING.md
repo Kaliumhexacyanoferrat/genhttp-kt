@@ -298,3 +298,5 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | Authentication | Lambda overloads of `authentication(...)` with two parameters need explicit parameter types at the call site | Kotlin does not resolve overloads by the lambda body |
 | Authentication | Bearer tokens are `com.nimbusds.jwt.SignedJWT`, keys are `java.security.Key`; unsigned (`alg: none`) and encrypted tokens are rejected | Nimbus JOSE replaces System.IdentityModel; hardening |
 | ServerSentEvents | `EventStream` rethrows `CancellationException` instead of sending a retry | Structured concurrency |
+| ApiBrowsing | The browser templates (`Index.html`) use Pebble syntax (`{{ title }}`) instead of Cottle | Pebble replaces Cottle (see Pages) |
+| LoadBalancing | `PriorityEvaluation` is a typealias `(Request) -> Priority` | Delegates map to function types |

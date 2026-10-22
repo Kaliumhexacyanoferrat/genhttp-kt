@@ -33,14 +33,14 @@ dependencies {
     testImplementation(project(":modules-i18n"))
     testImplementation(project(":modules-inspection"))
     testImplementation(project(":modules-server-sent-events"))
+    testImplementation(project(":modules-api-browsing"))
+    testImplementation(project(":modules-single-page-applications"))
+    testImplementation(project(":modules-static-websites"))
     testImplementation(libs.coroutines.test)
 }
 
 // tests that depend on modules which have not been ported yet (see STATUS.md)
-val pendingTests = listOf(
-    "modules/io/PathTraversalTests.kt",
-    "modules/webservices/HandlerResultTests.kt"
-)
+val pendingTests = listOf<String>()
 
 sourceSets.test {
     kotlin.exclude(pendingTests)

@@ -11,7 +11,6 @@ import org.genhttp.modules.io.fromString
 import org.genhttp.modules.layouting.Layout
 import org.genhttp.modules.reflection.ExecutionMode
 import org.genhttp.modules.staticwebsites.StaticWebsite
-import org.genhttp.modules.staticwebsites.from
 import org.genhttp.modules.webservices.ResourceMethod
 import org.genhttp.modules.webservices.addService
 import org.genhttp.testing.TestHost
