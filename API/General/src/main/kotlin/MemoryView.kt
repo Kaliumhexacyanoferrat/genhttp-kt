@@ -156,11 +156,6 @@ public abstract class MemoryView {
             return bytes
         }
 
-        private fun normalize(value: Int): Int {
-            val lower = value or 0x20
-            return if (lower in 'a'.code..'z'.code) lower else value
-        }
-
         private fun computeHash(buffer: ByteBuffer): Int {
             val start = buffer.position()
             val length = buffer.remaining()
@@ -202,7 +197,8 @@ public abstract class MemoryView {
                 return false
             }
 
-            if (a.mismatch(b) == -1) {
+            // vectorized, but only worth its overhead for longer values
+            if (length >= 16 && a.mismatch(b) == -1) {
                 return true
             }
 
@@ -210,10 +206,11 @@ public abstract class MemoryView {
             val bStart = b.position()
 
             for (i in 0 until length) {
-                val x = a.get(aStart + i).toInt() and 0xFF
-                val y = b.get(bStart + i).toInt() and 0xFF
+                val x = a.get(aStart + i).toInt()
+                val y = b.get(bStart + i).toInt()
 
-                if (normalize(x) != normalize(y)) {
+                // same as comparing the normalized values: equal or the same letter in a different case
+                if (x != y && ((x xor y) != 0x20 || (x or 0x20) !in 'a'.code..'z'.code)) {
                     return false
                 }
             }
