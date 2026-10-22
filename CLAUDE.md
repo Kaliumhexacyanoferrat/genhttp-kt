@@ -43,13 +43,13 @@ Same layering as GenHTTP, enforced by Gradle dependencies:
 - **API parity is the top priority.** Every public type and member of upstream exists here with the translated name,
   same parameters, defaults and nullability. When unsure, read the upstream source.
 - **Tests mirror upstream 1:1** (same class and method names, same assertions). Never weaken, skip or delete a test to
-  make code pass. `@Disabled` and assumptions are forbidden. Platform-caused differences go to the deviation log.
+  make code pass. `@Disabled` and assumptions are forbidden. Platform-caused differences go to the deviation log (`docs/DEVIATIONS.md`).
 - **Explicit API mode** is on: public declarations need explicit visibility and KDoc.
 - **Warnings are errors.**
 - Implementations are `internal` unless upstream makes them `public`. Builders and handler classes that upstream
   exposes publicly stay public.
 - Keep `api/*.api` dumps in sync (`./gradlew updateKotlinAbi`) and review the diff — it is the public surface.
-- Every deviation from upstream in spirit or behavior is added to the deviation log in PORTING.md.
+- Every deviation from upstream in spirit or behavior is added to the deviation log ([docs/DEVIATIONS.md](docs/DEVIATIONS.md)).
 - Commits reference upstream commits with `Upstream-Commit:` trailers when porting upstream changes (see SYNC.md).
 
 ## Delegating to sub-agents

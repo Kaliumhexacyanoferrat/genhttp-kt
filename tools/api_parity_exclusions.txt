@@ -1,6 +1,6 @@
 # Upstream public declarations that intentionally have no direct counterpart in genhttp-kt.
 # Format: <upstream project>:<Type>[.<Member>] (glob patterns allowed)  # reason
-# Every entry must be covered by a rule or the deviation log in PORTING.md.
+# Every entry must be covered by a rule or the deviation log (docs/DEVIATIONS.md).
 
 # --- Dropped engines (only the internal engine is ported)
 API/General:ServerEngine.Kestrel                     # Kestrel engine not ported

@@ -52,3 +52,17 @@ the translation rules.
 - Mapping of every public upstream type/factory/extension to its Kotlin counterpart (one line each).
 - Every deviation from upstream API or behavior, explicitly.
 - Anything you think is missing or wrong in modules you depend on.
+
+## Working efficiently
+
+Your context is resent on every step, so everything you read stays expensive until you finish.
+
+- Never read full Gradle output. Filter it:
+  `./gradlew <task> --console=plain -q 2>&1 | grep -E "^e:|^w:|FAILED|went wrong" -A3 | head -40`.
+  For failing tests, read only the `<failure message=...>` of the failing classes in
+  `Testing/Acceptance/build/test-results/test/*.xml` (e.g. with a short `python`/`grep` extraction).
+- Search before you read: `grep -n` for the names you need in `api/*.api` dumps and sources, then read only the
+  relevant line ranges. Do not read whole ABI dumps, unrelated modules or `docs/DEVIATIONS.md` as a whole.
+- Read each file once; do not re-read files you have already seen or written.
+- Run only your own tests and builds, never the whole build.
+- Keep the final report compact: facts, names, failures and deviations, no narration.

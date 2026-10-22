@@ -68,3 +68,17 @@ Upstream: `C:\Work\Projects\GenHTTP\GenHTTP\Testing\Acceptance` (MSTest). Target
 API naming follows PORTING.md (no `I` prefix, camelCase, `Async` dropped, companion factories such as
 `Resource.fromString`, `Handler.from`, `Content.from`, fluent builders). Read the ported production code of the module
 under test (`src/main/kotlin` and `api/*.api`) to find the exact Kotlin names.
+
+## Working efficiently
+
+Your context is resent on every step, so everything you read stays expensive until you finish.
+
+- Never read full Gradle output. Filter it:
+  `./gradlew <task> --console=plain -q 2>&1 | grep -E "^e:|^w:|FAILED|went wrong" -A3 | head -40`.
+  For failing tests, read only the `<failure message=...>` of the failing classes in
+  `Testing/Acceptance/build/test-results/test/*.xml` (e.g. with a short `python`/`grep` extraction).
+- Search before you read: `grep -n` for the names you need in `api/*.api` dumps and sources, then read only the
+  relevant line ranges. Do not read whole ABI dumps, unrelated modules or `docs/DEVIATIONS.md` as a whole.
+- Read each file once; do not re-read files you have already seen or written.
+- Run only your own tests and builds, never the whole build.
+- Keep the final report compact: facts, names, failures and deviations, no narration.

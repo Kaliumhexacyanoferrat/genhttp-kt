@@ -47,7 +47,7 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
 4. Update `upstream.properties` (`genhttp.commit`, `glyph11.commit`) in the last commit of the sync.
 5. If `<Version>` in GenHTTP's `Directory.Build.props` changed, set `genhttp.version` to the new value and reset
    `port.revision=0`. Otherwise, if the sync is released, increment `port.revision`.
-6. Update the deviation log in PORTING.md if a new deviation was introduced.
+6. Update the deviation log (docs/DEVIATIONS.md) if a new deviation was introduced.
 7. Release by running the *Release* workflow (it tags `v<version>` and publishes to Maven Central).
 
 ## Rules for sync agents

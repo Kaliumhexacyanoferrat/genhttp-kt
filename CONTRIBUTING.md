@@ -33,7 +33,7 @@ For a pull request to be merged, the following rules need to be fulfilled:
 - The test coverage does not drop below 90 %
 - Public API declarations are documented (KDoc) and the ABI dumps (`api/*.api`) are updated (`./gradlew updateKotlinAbi`)
 - `Handler` and `Concern` instances can be created using a builder
-- The changes follow the rules in [PORTING.md](PORTING.md); deviations from GenHTTP are documented in its deviation log
+- The changes follow the rules in [PORTING.md](PORTING.md); deviations from GenHTTP are documented in the [deviation log](docs/DEVIATIONS.md)
 - Architecture principles as described in the following section have not been violated
 
 ## Project Structure
