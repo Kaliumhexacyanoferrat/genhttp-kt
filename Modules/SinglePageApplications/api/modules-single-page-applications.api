@@ -1,0 +1,22 @@
+public final class org/genhttp/modules/singlepageapplications/SinglePageApplication {
+	public static final field INSTANCE Lorg/genhttp/modules/singlepageapplications/SinglePageApplication;
+	public final fun from (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+}
+
+public final class org/genhttp/modules/singlepageapplications/provider/SinglePageBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun serverSideRouting ()Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+	public final fun tree (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+	public final fun tree (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/singlepageapplications/provider/SinglePageBuilder;
+}
+
+public final class org/genhttp/modules/singlepageapplications/provider/SinglePageProvider : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceTree;Z)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

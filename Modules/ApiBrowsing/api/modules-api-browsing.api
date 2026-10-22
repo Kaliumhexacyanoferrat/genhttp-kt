@@ -1,0 +1,47 @@
+public final class org/genhttp/modules/apibrowsing/ApiBrowser {
+	public static final field INSTANCE Lorg/genhttp/modules/apibrowsing/ApiBrowser;
+	public final fun redoc ()Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+	public final fun scalar ()Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+	public final fun swaggerUi ()Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+}
+
+public final class org/genhttp/modules/apibrowsing/Extensions {
+	public static final fun addRedoc (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static synthetic fun addRedoc$default (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static final fun addScalar (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static synthetic fun addScalar$default (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static final fun addSwaggerUi (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+	public static synthetic fun addSwaggerUi$default (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public final class org/genhttp/modules/apibrowsing/common/BrowserHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/lang/String;Lorg/genhttp/modules/apibrowsing/common/BrowserMetaData;)V
+	public final fun getMetaData ()Lorg/genhttp/modules/apibrowsing/common/BrowserMetaData;
+	public final fun getStaticResources ()Lorg/genhttp/api/content/Handler;
+	public final fun getTemplate ()Lorg/genhttp/modules/pages/rendering/TemplateRenderer;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun title (Ljava/lang/String;)Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+	public final fun url (Ljava/lang/String;)Lorg/genhttp/modules/apibrowsing/common/BrowserHandlerBuilder;
+}
+
+public final class org/genhttp/modules/apibrowsing/common/BrowserMetaData {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/apibrowsing/common/BrowserMetaData;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/apibrowsing/common/BrowserMetaData;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/apibrowsing/common/BrowserMetaData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

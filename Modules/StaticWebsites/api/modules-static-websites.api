@@ -1,0 +1,20 @@
+public final class org/genhttp/modules/staticwebsites/StaticWebsite {
+	public static final field INSTANCE Lorg/genhttp/modules/staticwebsites/StaticWebsite;
+	public final fun from (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/staticwebsites/provider/StaticWebsiteBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/staticwebsites/provider/StaticWebsiteBuilder;
+}
+
+public final class org/genhttp/modules/staticwebsites/provider/StaticWebsiteBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/staticwebsites/provider/StaticWebsiteBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun tree (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/staticwebsites/provider/StaticWebsiteBuilder;
+}
+
+public final class org/genhttp/modules/staticwebsites/provider/StaticWebsiteHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceTree;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
