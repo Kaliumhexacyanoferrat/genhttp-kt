@@ -75,7 +75,8 @@ Code written for GenHTTP translates mechanically:
 | `Resource.FromAssembly("index.html")`          | `Resource.fromClasspath("index.html")`              |
 | `Stream`                                       | `InputStream` / `OutputStream`                      |
 
-[PORTING.md](PORTING.md) contains the complete mapping and lists every place where the port intentionally differs.
+[PORTING.md](PORTING.md) contains the complete mapping, [docs/DEVIATIONS.md](docs/DEVIATIONS.md) lists every place
+where the port intentionally differs.
 
 ## Samples
 

@@ -149,6 +149,9 @@ def scan_kotlin(directory, filter_text):
                 continue
             path = os.path.join(root, file)
             rel = os.path.relpath(path, directory)
+            # tests without upstream counterpart (see PORTING.md)
+            if rel.replace(os.sep, "/").startswith("additional/"):
+                continue
             text = open(path, encoding="utf-8").read()
             # ignore examples in comments
             # (string literals are matched first so that e.g. "*/*" does not start a comment)

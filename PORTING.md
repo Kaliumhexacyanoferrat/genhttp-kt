@@ -246,6 +246,9 @@ expects classpath resources to behave:
   `@MultiEngineFrameworkTest` (engine × `ExecutionMode`).
 - Tests are never weakened to make an implementation pass. A test that cannot be ported 1:1 for a platform reason is
   ported as closely as possible and listed in the deviation log with the reason. `@Disabled` is not allowed.
+- Tests without an upstream counterpart (Kotlin-specific code, coverage of JVM-only paths) live in the `additional`
+  package (`Testing/Acceptance/src/test/kotlin/additional/<area>/`), never in the mirrored files. The parity tool
+  ignores this package, so the mirror of upstream stays exact and syncs stay mechanical.
 
 ## Deviation log
 

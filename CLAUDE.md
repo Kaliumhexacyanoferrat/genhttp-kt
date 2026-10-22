@@ -22,6 +22,8 @@ follows it commit by commit. The port keeps GenHTTP's public API and behavior 1:
 ./gradlew koverHtmlReport                # coverage report (build/reports/kover)
 ./gradlew :playground:run                # demo server on port 8080
 python tools/test_parity.py              # compare ported tests with upstream (needs ../GenHTTP, ../Glyph11)
+python tools/api_parity.py --verbose     # compare the public API with upstream (exclusions: tools/api_parity_exclusions.txt)
+./gradlew :benchmarks:mainBenchmark     # JMH benchmarks of the request pipeline (:benchmarks:mainBaselineBenchmark for one)
 ```
 
 Upstream checkouts are expected next to this repository: `../GenHTTP` and `../Glyph11`.
