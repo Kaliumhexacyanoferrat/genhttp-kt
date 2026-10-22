@@ -30,8 +30,7 @@ public class StringResource(content: String, override val name: String?, content
 
     override val contentType: ContentType? = contentType ?: ContentType.TextPlain
 
-    override val length: Long?
-        get() = content.size.toLong()
+    override val length: Long? = this.content.size.toLong()
 
     override suspend fun getContent(): InputStream = ByteArrayInputStream(content)
 

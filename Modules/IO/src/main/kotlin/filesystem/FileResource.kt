@@ -23,8 +23,9 @@ import java.time.Instant
  */
 public class FileResource(public val file: Path, name: String?, contentType: ContentType?) : Resource {
 
+    // boxed once per change, as the length is read several times per response
     @Volatile
-    private var currentLength: Long
+    private var currentLength: Long?
 
     init {
         if (!Files.exists(file)) {
@@ -51,16 +52,24 @@ public class FileResource(public val file: Path, name: String?, contentType: Con
     override suspend fun getContent(): InputStream = Files.newInputStream(file)
 
     override suspend fun calculateChecksum(): Long {
-        currentLength = Files.size(file)
+        updateLength()
 
         return Checksum.calculate(this)
     }
 
     override suspend fun write(sink: ResponseSink) {
         Files.newInputStream(file).use { stream ->
-            currentLength = Files.size(file)
+            updateLength()
 
             stream.write(sink.writer)
+        }
+    }
+
+    private fun updateLength() {
+        val size = Files.size(file)
+
+        if (currentLength != size) {
+            currentLength = size
         }
     }
 
