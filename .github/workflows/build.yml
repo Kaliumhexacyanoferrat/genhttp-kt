@@ -92,10 +92,14 @@ jobs:
           python-version: '3.13'
 
       - name: Test parity
-        # informational until the initial port is complete (see STATUS.md)
-        continue-on-error: true
         working-directory: genhttp-kt
         run: python tools/test_parity.py
+
+      - name: API parity
+        working-directory: genhttp-kt
+        run: |
+          python tools/api_parity.py --verbose
+          python tools/api_parity.py --signatures
 
   verify:
 

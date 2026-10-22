@@ -357,14 +357,231 @@ def compare(upstream_dir, kotlin_dir, exclusions, project):
     }
 
 
+# --- Signature check (--signatures) -----------------------------------------------------------------------------
+
+METHOD_DECL_RE = re.compile(r"\bpublic\s+(?:(?:static|virtual|override|abstract|sealed|async|new|unsafe|extern)\s+)*"
+                            r"[\w<>\[\],.?() ]+?\s+(\w+)\s*(?:<[^>()]*>)?\s*\(")
+
+
+def split_parameters(params):
+    """Splits a C# parameter list at top-level commas."""
+    result, depth, current = [], 0, ""
+    for char in params:
+        if char in "<([{":
+            depth += 1
+        elif char in ">)]}":
+            depth -= 1
+        if char == "," and depth == 0:
+            result.append(current)
+            current = ""
+        else:
+            current += char
+    if current.strip():
+        result.append(current)
+    return [r.strip() for r in result if r.strip()]
+
+
+def parse_csharp_signatures(path):
+    """Returns {type: [(method, parameter count, default count)]} for the public methods of a C# project."""
+    signatures = {}
+
+    for dirpath, dirnames, filenames in os.walk(path):
+        dirnames[:] = [d for d in dirnames if d not in SKIPPED_DIRS]
+
+        for filename in filenames:
+            if not filename.endswith(".cs") or filename.endswith(".g.cs"):
+                continue
+
+            with open(os.path.join(dirpath, filename), encoding="utf-8-sig") as f:
+                text = find_attribute_free(strip_comments_and_strings(f.read()))
+
+            # spans of the type bodies, the innermost one owns a method
+            spans = []
+            for match in TYPE_RE.finditer(text):
+                brace = text.find("{", match.end())
+                semicolon = text.find(";", match.end())
+                if brace == -1 or (semicolon != -1 and semicolon < brace):
+                    continue
+                depth = 0
+                for i in range(brace, len(text)):
+                    if text[i] == "{":
+                        depth += 1
+                    elif text[i] == "}":
+                        depth -= 1
+                        if depth == 0:
+                            spans.append((brace, i, match.group(2), "public" in match.group(0)))
+                            break
+
+            for match in METHOD_DECL_RE.finditer(text):
+                name = match.group(1)
+                enclosing = [span for span in spans if span[0] < match.start() < span[1]]
+                if not enclosing:
+                    continue
+                owner = min(enclosing, key=lambda span: span[1] - span[0])
+                if not owner[3] or name == owner[2]:
+                    continue
+
+                depth, end = 0, match.end() - 1
+                for i in range(match.end() - 1, len(text)):
+                    if text[i] == "(":
+                        depth += 1
+                    elif text[i] == ")":
+                        depth -= 1
+                        if depth == 0:
+                            end = i
+                            break
+
+                params = split_parameters(text[match.end():end])
+                defaults = sum(1 for param in params if "=" in param)
+
+                signatures.setdefault(owner[2], []).append((name, len(params), defaults))
+
+    return signatures
+
+
+def descriptor_count(descriptor):
+    """Number of parameters of a JVM method descriptor, without a trailing continuation."""
+    params = descriptor[1:descriptor.index(")")]
+    count, i, last = 0, 0, ""
+    while i < len(params):
+        start = i
+        while params[i] == "[":
+            i += 1
+        if params[i] == "L":
+            i = params.index(";", i) + 1
+        else:
+            i += 1
+        count += 1
+        last = params[start:i]
+    if last == "Lkotlin/coroutines/Continuation;":
+        count -= 1
+    return count
+
+
+def parse_kotlin_signatures(path):
+    """Returns {type: {member: (set of parameter counts, has defaults)}} of a Kotlin ABI dump."""
+    types = {}
+    current = None
+
+    if not os.path.isdir(path):
+        return types
+
+    for filename in os.listdir(path):
+        if not filename.endswith(".api"):
+            continue
+
+        with open(os.path.join(path, filename), encoding="utf-8") as f:
+            for line in f:
+                line = line.rstrip()
+
+                header = re.match(r"^public .*?(?:class|interface) ([\w/$]+)(?: : .*)? \{$", line)
+                if header:
+                    parts = header.group(1).split("/")[-1].split("$")
+                    simple = parts[-2] if parts[-1] in ("Companion", "DefaultImpls") and len(parts) > 1 else parts[-1]
+                    current = types.setdefault(simple, {})
+                    continue
+
+                if line == "}":
+                    current = None
+                    continue
+
+                member = re.match(r"^\s+(?:public|protected) (.*?)fun ([^\s(]+) (\(.*)$", line)
+                if current is None or not member:
+                    continue
+
+                name = member.group(2)
+                if name.endswith("$default"):
+                    base = normalize_member(name[:-8])
+                    counts, _ = current.get(base, (set(), False))
+                    current[base] = (counts, True)
+                    continue
+
+                base = normalize_member(name)
+                counts, defaults = current.get(base, (set(), False))
+                counts.add(descriptor_count(member.group(3)))
+                current[base] = (counts, defaults)
+
+    return types
+
+
+def check_signatures(upstream_dir, kotlin_dir, exclusions, project):
+    upstream = parse_csharp_signatures(upstream_dir)
+    kotlin = parse_kotlin_signatures(os.path.join(ROOT, kotlin_dir, "api"))
+    findings = []
+
+    for type_name, methods in sorted(upstream.items()):
+        if f"{project}:{type_name}" in exclusions:
+            continue
+
+        found = next((candidate for candidate in kotlin_type_names(type_name) if candidate in kotlin), None)
+        if found is None:
+            continue
+
+        available = dict(kotlin[found])
+        for facade in (found + "Extensions", type_name + "Extensions"):
+            for name, value in kotlin.get(facade, {}).items():
+                counts, defaults = available.get(name, (set(), False))
+                available[name] = (counts | value[0], defaults or value[1])
+
+        for name, count, defaults in methods:
+            if f"{project}:{type_name}.{name}" in exclusions or name[:1].islower():
+                continue
+
+            matches = [available[c] for c in kotlin_names(name) if c in available]
+            if not matches:
+                continue  # missing members are reported by the name check (or inline / source-only)
+
+            counts = set().union(*(m[0] for m in matches))
+            has_defaults = any(m[1] for m in matches)
+
+            # receivers (extensions, companion extensions) may add or remove one parameter
+            def supports(n):
+                return any(abs(c - n) <= 1 for c in counts)
+
+            if not supports(count):
+                findings.append(f"`{type_name}.{name}` has {count} parameter(s), Kotlin overloads take {sorted(counts)}")
+            elif defaults and not has_defaults and not supports(count - defaults):
+                findings.append(f"`{type_name}.{name}` has {defaults} default value(s), Kotlin has neither defaults "
+                                f"nor a shorter overload")
+
+    return findings
+
+
+def run_signature_check(args, exclusions):
+    total = 0
+    projects = [(os.path.join(GENHTTP, up), kt, up) for up, kt in discover_projects()]
+    projects.append((os.path.join(GLYPH11, "Glyph11"), "Glyph11", "Glyph11"))
+
+    for upstream_dir, kotlin_dir, project in projects:
+        if args.filter and args.filter.lower() not in project.lower():
+            continue
+        if not os.path.isdir(upstream_dir):
+            continue
+
+        findings = check_signatures(upstream_dir, kotlin_dir, exclusions, project)
+        total += len(findings)
+
+        if findings:
+            print(f"\n### {project}\n")
+            for finding in findings:
+                print(f"- {finding}")
+
+    print(f"\n{total} signature differences")
+    return 1 if total else 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--filter", default=None)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--report", default=None)
+    parser.add_argument("--signatures", action="store_true", help="compare parameter counts and default values")
     args = parser.parse_args()
 
     exclusions = load_exclusions()
+
+    if args.signatures:
+        return run_signature_check(args, exclusions)
 
     projects = [(os.path.join(GENHTTP, up), kt, up) for up, kt in discover_projects()]
     projects.append((os.path.join(GLYPH11, "Glyph11"), "Glyph11", "Glyph11"))

@@ -54,3 +54,11 @@ Modules/ErrorHandling:ErrorHandlingContext           # System.Text.Json source g
 Modules/DependencyInjection:DependentWebsocket       # only inline reified extensions (dependentHandler), not part of ABI dumps
 Modules/ReverseProxy:*.DisposeAsync                  # AutoCloseable.close()
 Modules/ReverseProxy:RequestBody.*                   # HttpContent -> HttpRequest.BodyPublisher (contentLength / subscribe)
+
+# --- Signature check: defaults declared where the dump does not show them
+Engine/Shared:RequestTarget.AsString                 # defaults declared on the API interface, inherited by HttpRequestTarget
+Modules/Websockets:WebsocketConnection.WriteAsync    # defaults declared on SocketConnection, inherited by the override
+Modules/Websockets:WebsocketConnection.CloseAsync    # defaults declared on SocketConnection, inherited by the override
+Modules/Websockets:ConnectionSerializationExtensions.WritePayloadAsync # inline reified function with defaults
+Modules/DependencyInjection:DependentController.AddDependentController # inline reified function with defaults
+Modules/DependencyInjection:DependentWebservice.AddDependentService   # inline reified function with defaults
