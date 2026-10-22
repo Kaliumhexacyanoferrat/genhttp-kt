@@ -16,18 +16,22 @@ import java.nio.channels.WritableByteChannel
  * @param bufferSize The size of the buffer used to transfer the data
  */
 public suspend fun InputStream.copyPooled(target: OutputStream, bufferSize: Int) {
-    val buffer = ByteArray(bufferSize)
+    val buffer = BytePool.rent(bufferSize)
 
-    while (true) {
-        val read = read(buffer)
+    try {
+        while (true) {
+            val read = read(buffer)
 
-        if (read < 0) {
-            break
+            if (read < 0) {
+                break
+            }
+
+            if (read > 0) {
+                target.write(buffer, 0, read)
+            }
         }
-
-        if (read > 0) {
-            target.write(buffer, 0, read)
-        }
+    } finally {
+        BytePool.release(buffer)
     }
 }
 
@@ -59,23 +63,27 @@ public suspend fun InputStream.calculateChecksum(): Long? {
  * @param target The writer to write the content to
  */
 public suspend fun InputStream.write(target: WritableByteChannel) {
-    val array = ByteArray(BufferSize.Write)
+    val array = BytePool.rent(BufferSize.Write)
 
-    val buffer = ByteBuffer.wrap(array)
+    try {
+        val buffer = ByteBuffer.wrap(array)
 
-    while (true) {
-        val read = read(array)
+        while (true) {
+            val read = read(array)
 
-        if (read < 0) {
-            break
+            if (read < 0) {
+                break
+            }
+
+            if (read > 0) {
+                buffer.clear()
+                buffer.limit(read)
+
+                target.writeFully(buffer)
+            }
         }
-
-        if (read > 0) {
-            buffer.clear()
-            buffer.limit(read)
-
-            target.writeFully(buffer)
-        }
+    } finally {
+        BytePool.release(array)
     }
 }
 
@@ -85,18 +93,22 @@ public suspend fun InputStream.write(target: WritableByteChannel) {
 internal fun InputStream.computeChecksum(): Long {
     var hash = 17L
 
-    val buffer = ByteArray(4096)
+    val buffer = BytePool.rent(4096)
 
-    while (true) {
-        val read = read(buffer)
+    try {
+        while (true) {
+            val read = read(buffer)
 
-        if (read < 0) {
-            break
+            if (read < 0) {
+                break
+            }
+
+            for (i in 0 until read) {
+                hash = hash * 23 + (buffer[i].toLong() and 0xFF)
+            }
         }
-
-        for (i in 0 until read) {
-            hash = hash * 23 + (buffer[i].toLong() and 0xFF)
-        }
+    } finally {
+        BytePool.release(buffer)
     }
 
     return hash
