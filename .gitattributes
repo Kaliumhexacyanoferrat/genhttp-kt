@@ -1,0 +1,10 @@
+# Source files use LF everywhere (agents and contributors work on Windows, Linux and macOS)
+* text=auto eol=lf
+
+# Windows scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Resources are served and compared byte by byte (checksums, content assertions): keep them untouched
+**/src/main/resources/** -text
+**/src/test/resources/** -text
