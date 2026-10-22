@@ -1,6 +1,8 @@
 package org.genhttp.engine.shared.hosting
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
@@ -119,7 +121,11 @@ public abstract class AbstractServerHost : ServerHost {
 
             try {
                 start()
-                shutdown.await()
+                // resumed on a dispatcher, so that the caller does not continue on the thread of the shutdown hook
+                // (calling exitProcess() there would wait for the hook to finish forever)
+                withContext(Dispatchers.Default) {
+                    shutdown.await()
+                }
             } finally {
                 try {
                     stop()
