@@ -1,0 +1,71 @@
+public final class org/genhttp/modules/reverseproxy/Proxy {
+	public static final field INSTANCE Lorg/genhttp/modules/reverseproxy/Proxy;
+	public final fun create ()Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+}
+
+public final class org/genhttp/modules/reverseproxy/http/HttpProxy : org/genhttp/api/content/Handler {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/net/http/HttpClient;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/net/http/HttpClient;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getUpstream ()Ljava/lang/String;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reverseproxy/http/RequestBody : java/net/http/HttpRequest$BodyPublisher {
+	public fun <init> (Lorg/genhttp/api/protocol/RequestBody;J)V
+	public synthetic fun <init> (Lorg/genhttp/api/protocol/RequestBody;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun contentLength ()J
+	public fun subscribe (Ljava/util/concurrent/Flow$Subscriber;)V
+}
+
+public final class org/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+	public final fun adjustClient (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+	public final fun adjustHandler (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun connectTimeout-LRDsOJo (J)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+	public final fun readTimeout-LRDsOJo (J)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+	public final fun upstream (Ljava/lang/String;)Lorg/genhttp/modules/reverseproxy/provider/ReverseProxyBuilder;
+}
+
+public final class org/genhttp/modules/reverseproxy/provider/ReverseProxyProvider : org/genhttp/api/content/Handler {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/net/http/HttpClient;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/net/http/HttpClient;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reverseproxy/websocket/DuplexPipe : java/lang/AutoCloseable {
+	public fun <init> (Ljava/io/InputStream;Ljava/io/OutputStream;)V
+	public fun close ()V
+	public final fun getInput ()Ljava/io/InputStream;
+	public final fun getOutput ()Ljava/io/OutputStream;
+}
+
+public final class org/genhttp/modules/reverseproxy/websocket/RawWebsocketConnection : java/lang/AutoCloseable {
+	public fun <init> (Ljava/lang/String;II)V
+	public synthetic fun <init> (Ljava/lang/String;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun getPipe ()Lorg/genhttp/modules/reverseproxy/websocket/DuplexPipe;
+	public final fun initializeStream (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun tryUpgrade (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reverseproxy/websocket/WebsocketProxy : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/lang/String;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/reverseproxy/websocket/WebsocketTunnelContent : java/lang/AutoCloseable, org/genhttp/api/protocol/ResponseContent {
+	public fun <init> (Lorg/genhttp/modules/reverseproxy/websocket/RawWebsocketConnection;Lorg/genhttp/api/protocol/Request;)V
+	public fun calculateChecksum (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun getEncoding ()Ljava/nio/ByteBuffer;
+	public fun getLength ()Ljava/lang/Long;
+	public fun getType ()Lorg/genhttp/api/protocol/ContentType;
+	public fun write (Lorg/genhttp/api/protocol/ResponseSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
