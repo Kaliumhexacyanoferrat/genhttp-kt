@@ -13,13 +13,15 @@ import java.nio.channels.WritableByteChannel
  * Buffered, blocking writer on a connection channel (the counterpart of the `PipeWriter` used by GenHTTP).
  *
  * Data is collected in a direct buffer and sent to the channel when the buffer is full or when [flush] is called.
+ * The buffer is rented from a pool as soon as data is written and returned when it has been flushed.
  * Failures to write to the underlying channel (the client went away) are reported as [ConnectionClosedException].
  *
  * Closing the writer has no effect, the connection is owned by the engine.
  */
-public class ConnectionWriter(private val channel: WritableByteChannel, capacity: Int = BufferSize.Write) : WritableByteChannel, Flushable {
+public class ConnectionWriter(private val channel: WritableByteChannel, private val capacity: Int = BufferSize.Write) : WritableByteChannel, Flushable {
 
-    private val buffer: ByteBuffer = ByteBuffer.allocateDirect(capacity)
+    // only rented while there is data to be sent
+    private var current: ByteBuffer? = null
 
     /**
      * An output stream writing to this writer. Flushing the stream sends the buffered data to the client.
@@ -30,21 +32,21 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * The number of bytes that have been buffered but not sent yet.
      */
     public val pending: Int
-        get() = buffer.position()
+        get() = current?.position() ?: 0
 
     override fun write(src: ByteBuffer): Int {
         val count = src.remaining()
 
-        if (count > buffer.remaining()) {
+        if (count > capacity - pending) {
             flush()
 
-            if (count >= buffer.capacity()) {
+            if (count >= capacity) {
                 send(src)
                 return count
             }
         }
 
-        buffer.put(src)
+        buffer().put(src)
         return count
     }
 
@@ -52,8 +54,8 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * Writes the given bytes.
      */
     public fun write(bytes: ByteArray, offset: Int = 0, length: Int = bytes.size) {
-        if (length <= buffer.remaining()) {
-            buffer.put(bytes, offset, length)
+        if (length <= capacity - pending) {
+            buffer().put(bytes, offset, length)
         } else {
             write(ByteBuffer.wrap(bytes, offset, length))
         }
@@ -63,11 +65,11 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * Writes a single byte.
      */
     public fun writeByte(value: Int) {
-        if (!buffer.hasRemaining()) {
+        if (pending == capacity) {
             flush()
         }
 
-        buffer.put(value.toByte())
+        buffer().put(value.toByte())
     }
 
     /**
@@ -87,9 +89,11 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
             limit *= 10
         }
 
-        if (digits > buffer.remaining()) {
+        if (digits > capacity - pending) {
             flush()
         }
+
+        val buffer = buffer()
 
         var remaining = value
         val start = buffer.position()
@@ -106,14 +110,16 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * Writes the given ASCII string.
      */
     public fun writeAscii(value: String) {
-        if (value.length > buffer.remaining()) {
+        if (value.length > capacity - pending) {
             flush()
         }
 
-        if (value.length > buffer.remaining()) {
+        if (value.length > capacity) {
             write(value.toByteArray(Charsets.ISO_8859_1))
             return
         }
+
+        val buffer = buffer()
 
         for (i in value.indices) {
             buffer.put(value[i].code.toByte())
@@ -126,16 +132,16 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * @throws ConnectionClosedException if the client closed the connection
      */
     override fun flush() {
-        if (buffer.position() == 0) {
-            return
-        }
-
-        buffer.flip()
+        val buffer = current ?: return
 
         try {
-            send(buffer)
+            if (buffer.position() > 0) {
+                buffer.flip()
+                send(buffer)
+            }
         } finally {
-            buffer.clear()
+            current = null
+            WriteBuffers.release(buffer)
         }
     }
 
@@ -144,6 +150,8 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
     override fun close() {
         // owned by the connection
     }
+
+    private fun buffer(): ByteBuffer = current ?: WriteBuffers.rent(capacity).also { current = it }
 
     private fun send(data: ByteBuffer) {
         try {
