@@ -13,6 +13,11 @@ on:
 permissions:
   contents: read
 
+# a newer push supersedes running builds of the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   build:
