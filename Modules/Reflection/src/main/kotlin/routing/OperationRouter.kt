@@ -23,7 +23,16 @@ internal object OperationRouter {
             offset += offsetBy
         }
 
-        return RoutingMatch(offset, sink.arguments)
+        val arguments = sink.arguments
+
+        if (arguments == null && offset in WithoutArguments.indices) {
+            return WithoutArguments[offset]
+        }
+
+        return RoutingMatch(offset, arguments)
     }
+
+    // the matches of routes without path arguments are shared (by their offset)
+    private val WithoutArguments = Array(4) { offset -> RoutingMatch(offset, null) }
 
 }

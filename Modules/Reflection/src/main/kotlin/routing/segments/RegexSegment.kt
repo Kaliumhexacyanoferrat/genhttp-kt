@@ -4,6 +4,7 @@ import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.RequestTarget
 import org.genhttp.modules.reflection.routing.PathArgumentSink
 import org.genhttp.modules.reflection.routing.RoutingSegment
+import org.genhttp.modules.reflection.routing.SegmentMatch
 import org.genhttp.modules.reflection.toParameter
 
 /**
@@ -37,16 +38,16 @@ internal class RegexSegment(definition: String) : RoutingSegment {
     }
 
     override fun tryMatch(target: RequestTarget, offset: Int, argumentSink: PathArgumentSink): Pair<Boolean, Int> {
-        val part = target.next(offset) ?: return false to 0
+        val part = target.next(offset) ?: return SegmentMatch.None
 
-        val result = matcher.matchEntire(part.toString()) ?: return false to 0
+        val result = matcher.matchEntire(part.toString()) ?: return SegmentMatch.None
 
         for (name in providedArguments) {
             val group = result.groups[name] ?: continue
             argumentSink.add(ByteString(name), ByteString(group.value))
         }
 
-        return true to 1
+        return SegmentMatch.Consumed
     }
 
     private companion object {

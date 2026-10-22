@@ -23,3 +23,18 @@ public interface RoutingSegment {
     public fun tryMatch(target: RequestTarget, offset: Int, argumentSink: PathArgumentSink): Pair<Boolean, Int>
 
 }
+
+/**
+ * The results of [RoutingSegment.tryMatch] (shared, as matching runs for every request).
+ */
+internal object SegmentMatch {
+
+    val None: Pair<Boolean, Int> = false to 0
+
+    val Ended: Pair<Boolean, Int> = true to 0
+
+    val Consumed: Pair<Boolean, Int> = true to 1
+
+    val Previous: Pair<Boolean, Int> = true to -1
+
+}

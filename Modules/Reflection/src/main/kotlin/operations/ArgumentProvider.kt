@@ -83,7 +83,12 @@ public object ArgumentProvider {
      */
     public fun getQueryValue(request: Request, name: ByteString): ByteString? {
         val queryValue = request.header.query.getEntry(name) ?: return null
-        return ByteString(PercentEncoding.decode(queryValue.bytes, decodePlus = true))
+
+        val encoded = queryValue.bytes
+        val decoded = PercentEncoding.decode(encoded, decodePlus = true)
+
+        // nothing to decode (the usual case), so the value can be used as it is
+        return if (decoded === encoded) queryValue else ByteString(decoded)
     }
 
     /**

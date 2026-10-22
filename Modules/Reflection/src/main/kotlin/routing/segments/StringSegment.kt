@@ -3,6 +3,7 @@ package org.genhttp.modules.reflection.routing.segments
 import org.genhttp.api.protocol.RequestTarget
 import org.genhttp.modules.reflection.routing.PathArgumentSink
 import org.genhttp.modules.reflection.routing.RoutingSegment
+import org.genhttp.modules.reflection.routing.SegmentMatch
 
 import java.nio.ByteBuffer
 
@@ -19,10 +20,10 @@ internal class StringSegment(segment: String) : RoutingSegment {
         val next = target.next(offset)
 
         if (next != null && next.bytes.mismatch(segmentBytes) == -1) {
-            return true to 1
+            return SegmentMatch.Consumed
         }
 
-        return false to 0
+        return SegmentMatch.None
     }
 
 }

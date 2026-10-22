@@ -82,7 +82,7 @@ public class MethodHandler(
         // nothing to prepare, signatures have been analyzed when creating the operation
     }
 
-    override suspend fun handle(request: Request): Response? = handle(request, RoutingMatch(0, null))
+    override suspend fun handle(request: Request): Response? = handle(request, NoMatch)
 
     /**
      * Handles the given request that matched the route of the operation.
@@ -223,6 +223,8 @@ public class MethodHandler(
     }
 
     private companion object {
+
+        val NoMatch = RoutingMatch(0, null)
 
         /**
          * The value passed for a missing, required argument (`null` for reference types, zero for primitives,

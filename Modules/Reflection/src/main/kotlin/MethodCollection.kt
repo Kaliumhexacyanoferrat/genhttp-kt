@@ -24,8 +24,11 @@ public class MethodCollection(methods: Iterable<MethodHandler>) : Handler {
     override suspend fun handle(request: Request): Response? {
         var foundOthers = false
 
-        var directMatch: Pair<MethodHandler, RoutingMatch>? = null
-        var wildcardMatch: Pair<MethodHandler, RoutingMatch>? = null
+        var directMethod: MethodHandler? = null
+        var directMatch: RoutingMatch? = null
+
+        var wildcardMethod: MethodHandler? = null
+        var wildcardMatch: RoutingMatch? = null
 
         val requestTarget = request.header.target
 
@@ -41,17 +44,23 @@ public class MethodCollection(methods: Iterable<MethodHandler>) : Handler {
             }
 
             if (route.isWildcard) {
-                wildcardMatch = method to match
-            } else if (directMatch != null) {
+                wildcardMethod = method
+                wildcardMatch = match
+            } else if (directMethod != null) {
                 throw ProviderException(ResponseStatus.BadRequest, "There are multiple methods matching '${requestTarget.asString(decode = false)}'")
             } else {
-                directMatch = method to match
+                directMethod = method
+                directMatch = match
             }
         }
 
-        directMatch?.let { return it.first.handle(request, it.second) }
+        if (directMethod != null && directMatch != null) {
+            return directMethod.handle(request, directMatch)
+        }
 
-        wildcardMatch?.let { return it.first.handle(request, it.second) }
+        if (wildcardMethod != null && wildcardMatch != null) {
+            return wildcardMethod.handle(request, wildcardMatch)
+        }
 
         if (foundOthers) {
             throw ProviderException(ResponseStatus.MethodNotAllowed, "There is no method of a matching request type")
