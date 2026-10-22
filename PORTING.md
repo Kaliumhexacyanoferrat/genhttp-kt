@@ -300,3 +300,5 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | ServerSentEvents | `EventStream` rethrows `CancellationException` instead of sending a retry | Structured concurrency |
 | ApiBrowsing | The browser templates (`Index.html`) use Pebble syntax (`{{ title }}`) instead of Cottle | Pebble replaces Cottle (see Pages) |
 | LoadBalancing | `PriorityEvaluation` is a typealias `(Request) -> Priority` | Delegates map to function types |
+| Engine | Implementation clashes in Engine/Shared: `ServerHost` → `AbstractServerHost`, `ClientConnection` → `RemoteClientConnection`, `KeyValueList` → `GlyphKeyValueList`, `PropertyBag` → `MapPropertyBag` | The API interfaces use these names (`I` prefix dropped) |
+| Files | `FileAssetsBuilder.refreshInterval(...)` is accepted but has no effect | Upstream it only affects the Ioxide engine |

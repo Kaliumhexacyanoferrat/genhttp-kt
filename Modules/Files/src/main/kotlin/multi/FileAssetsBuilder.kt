@@ -8,6 +8,8 @@ import org.genhttp.api.content.io.CompressionAlgorithm
 
 import java.nio.file.Path
 
+import kotlin.time.Duration
+
 /**
  * Builds a handler that serves the files of a directory.
  *
@@ -45,6 +47,17 @@ public class FileAssetsBuilder(private val directory: Path) : HandlerBuilder.Wit
         this.separator = separator
 
         return allowPrecompressed(*algorithms)
+    }
+
+    /**
+     * How often the mounted directory may be re-scanned for changes. Defaults to 250 ms and
+     * only affects the Ioxide engine of GenHTTP, so it has no effect on this server.
+     *
+     * @param interval The refresh interval ([Duration.INFINITE] to never refresh)
+     */
+    public fun refreshInterval(interval: Duration): FileAssetsBuilder {
+        require(!interval.isNegative()) { "The refresh interval must not be negative." }
+        return this
     }
 
     override fun add(concern: ConcernBuilder): FileAssetsBuilder {

@@ -1,0 +1,51 @@
+# Upstream public declarations that intentionally have no direct counterpart in genhttp-kt.
+# Format: <upstream project>:<Type>[.<Member>] (glob patterns allowed)  # reason
+# Every entry must be covered by a rule or the deviation log in PORTING.md.
+
+# --- Dropped engines (only the internal engine is ported)
+API/General:ServerEngine.Kestrel                     # Kestrel engine not ported
+API/General:ServerEngine.Ioxide                      # Ioxide engine not ported
+
+# --- Naming rules
+API/General:Forwarding.For                           # `for` is a keyword: Forwarding.forAddress (deviation log)
+API/General:IHandlerBuilder.Add                      # generic IHandlerBuilder<T> is HandlerBuilder.WithConcerns<T>.add
+Engine/Shared:ServerHost                             # implementation clash: AbstractServerHost
+Engine/Shared:ClientConnection                       # implementation clash: RemoteClientConnection
+Engine/Shared:KeyValueList                           # implementation clash: GlyphKeyValueList
+Engine/Shared:PropertyBag                            # implementation clash: MapPropertyBag
+Modules/Functional:MethodConfiguration               # implementation clash: InlineMethodConfiguration
+Modules/Files:TreeAssetsHandler.Resolve              # protected override, not part of ABI dumps of final classes
+
+# --- .NET stream members (Stream -> InputStream / OutputStream, see type mapping)
+Engine/Shared:LengthLimitedStream.*                  # InputStream API instead of Stream
+Modules/IO:RangedStream.*                            # OutputStream API instead of Stream
+Modules/IO:StreamWithDependency.*                    # InputStream API instead of Stream
+Modules/IO:WriterStreamAdapter.*                     # OutputStream API instead of Stream
+Modules/IO:WritingStream.*                           # OutputStream API instead of Stream
+Modules/IO:StreamBufferWriter.*                      # IBufferWriter -> WritableByteChannel
+Testing/Testing:TestHost.DisposeAsync                # AutoCloseable.close()
+Modules/IO:StreamContent.Dispose                     # AutoCloseable.close()
+Modules/Compression:CompressedResponseContent.Dispose # AutoCloseable.close()
+Modules/Compression:DecompressedBody.Dispose*        # AutoCloseable.close()
+Modules/Websockets:WebsocketConnection.DisposeAsync  # not disposable (deviation log)
+Modules/Websockets:BufferSegment                     # ReadOnlySequenceSegment has no JVM counterpart (deviation log)
+
+# --- Assemblies -> classpath
+Modules/IO:EmbeddedResource                          # ClasspathResource
+Modules/IO:EmbeddedResourceBuilder                   # ClasspathResourceBuilder
+Modules/IO:EmbeddedResourceTreeBuilder               # ClasspathResourceTreeBuilder
+Modules/IO:Resource.FromAssembly                     # Resource.fromClasspath
+Modules/IO:ResourceTree.FromAssembly                 # ResourceTree.fromClasspath
+
+# --- Reflection: the C# code generator is replaced by kotlin-reflect (docs/specs/reflection.md)
+Modules/Reflection:CodeProvider*                     # code generation not used
+Modules/Reflection:CodeBuilderResultWrappingExtensions # code generation not used
+Modules/Reflection:CodeGenerationException           # code generation not used
+Modules/Reflection:CompilationUtil                   # code generation not used
+Modules/Reflection:RuntimeAsyncMethodGenerationAttribute # code generation not used
+Modules/Reflection:Extensions.Is*                    # Task/ValueTask detection; suspend functions instead
+Modules/Reflection:OperationArgument.DefaultValue    # kotlin-reflect cannot read defaults: isOptional (deviation log)
+
+# --- Serialization libraries
+Modules/Conversion:JsonFormat.Options                # JsonSerializerOptions -> Jackson JsonMapper (JsonFormat.mapper)
+Modules/ErrorHandling:ErrorHandlingContext           # System.Text.Json source generation context, not needed with Jackson

@@ -14,6 +14,7 @@ Usage: python tools/api_parity.py [--filter <project>] [--verbose] [--report doc
 """
 
 import argparse
+import fnmatch
 import os
 import re
 import sys
@@ -98,7 +99,7 @@ def parse_csharp_file(text, file, types):
                 record = re.search(r"record\s+(?:class\s+|struct\s+)?\w+\s*(?:<[^>]*>)?\s*\(([^)]*)\)", line)
                 if record:
                     for param in record.group(1).split(","):
-                        parts = param.strip().split()
+                        parts = param.split("=")[0].strip().split()
                         if len(parts) >= 2:
                             entry["members"].add(parts[-1].split("=")[0].strip())
 
@@ -185,7 +186,7 @@ def parse_kotlin_dump(path):
                 if current is None:
                     continue
 
-                member = re.match(r"^\s+public .*?(fun|field) ([^\s(]+)", line)
+                member = re.match(r"^\s+(?:public|protected) .*?(fun|field) ([^\s(]+)", line)
                 if member:
                     current.add(member.group(2))
 
@@ -194,10 +195,12 @@ def parse_kotlin_dump(path):
 
 def kotlin_names(name):
     """Candidate Kotlin member names for an upstream member name."""
+    name = name.lstrip("_")
     base = name[:-5] if name.endswith("Async") and len(name) > 5 else name
     camel = base[:1].lower() + base[1:]
+    pascal = base[:1].upper() + base[1:]
 
-    candidates = {name, base, camel, "get" + base, "is" + base, "set" + base, camel + "Of"}
+    candidates = {name, base, camel, "get" + pascal, "is" + pascal, "set" + pascal, camel + "Of"}
 
     if base.startswith("Is") and len(base) > 2 and base[2].isupper():
         candidates.add("is" + base[2:])
@@ -209,7 +212,27 @@ def kotlin_names(name):
     # SCREAMING / acronyms: HTTP -> http
     candidates.add(base.lower())
 
+    # indexers become get / set operators
+    if name == "this":
+        candidates.update({"get", "set"})
+
     return candidates
+
+
+def parse_kotlin_sources(path):
+    """Names of public functions and properties declared in Kotlin sources (covers inline reified functions,
+    which are not part of ABI dumps)."""
+    names = set()
+
+    for dirpath, _, filenames in os.walk(path):
+        for filename in filenames:
+            if filename.endswith(".kt"):
+                with open(os.path.join(dirpath, filename), encoding="utf-8") as f:
+                    for match in re.finditer(r"^\s*public\s+(?:[a-z]+\s+)*(?:fun|val|var)\s+(?:<[^>]*>\s+)?(?:[\w.<>?, *]+\.)?(\w+)",
+                                             f.read(), re.M):
+                        names.add(match.group(1))
+
+    return names
 
 
 def kotlin_type_names(name):
@@ -224,8 +247,9 @@ def kotlin_type_names(name):
             candidates.append(prefix + name[1:])
 
     if name.endswith("Attribute"):
+        # annotations clashing with API types carry an `Api` prefix, prefer them
+        candidates.insert(0, "Api" + name[:-9])
         candidates.append(name[:-9])
-        candidates.append("Api" + name[:-9])
 
     return candidates
 
@@ -238,8 +262,15 @@ def normalize_member(name):
     return name
 
 
+class Exclusions(dict):
+    """Exclusion entries, supporting glob patterns (`Modules/IO:WritingStream.*`)."""
+
+    def __contains__(self, key):
+        return dict.__contains__(self, key) or any(fnmatch.fnmatchcase(key, pattern) for pattern in self.keys() if "*" in pattern)
+
+
 def load_exclusions():
-    exclusions = {}
+    exclusions = Exclusions()
 
     if os.path.exists(EXCLUSIONS_FILE):
         with open(EXCLUSIONS_FILE, encoding="utf-8") as f:
@@ -266,6 +297,7 @@ def discover_projects():
 def compare(upstream_dir, kotlin_dir, exclusions, project):
     upstream = parse_csharp_project(upstream_dir)
     kotlin = parse_kotlin_dump(os.path.join(ROOT, kotlin_dir, "api"))
+    declared = parse_kotlin_sources(os.path.join(ROOT, kotlin_dir, "src", "main", "kotlin"))
 
     missing_types = []
     missing_members = []
@@ -289,14 +321,25 @@ def compare(upstream_dir, kotlin_dir, exclusions, project):
 
         available = {normalize_member(m) for m in kotlin[found]}
 
+        # extension methods of static classes may live in `<Type>Extensions` facades or be inline (not in the dump)
+        for facade in (found + "Extensions", name + "Extensions"):
+            available |= {normalize_member(m) for m in kotlin.get(facade, set())}
+        fallback = declared
+
         # extension methods of static classes may live in facades named after the C# class
         for member in sorted(info["members"]):
             if f"{key}.{member}" in exclusions:
                 continue
 
+            # public C# members are PascalCase, lower case names are misparsed constructor parameters
+            if member[:1].islower() and member != "this":
+                continue
+
             total_members += 1
 
             if any(candidate in available for candidate in kotlin_names(member)):
+                matched_members += 1
+            elif any(candidate in fallback for candidate in kotlin_names(member)):
                 matched_members += 1
             elif member in upstream or any(candidate in kotlin for candidate in kotlin_type_names(member)):
                 matched_members += 1  # nested type, checked separately
