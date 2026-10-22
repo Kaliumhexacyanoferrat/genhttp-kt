@@ -1,0 +1,51 @@
+public final class org/genhttp/modules/directorybrowsing/Listing {
+	public static final field INSTANCE Lorg/genhttp/modules/directorybrowsing/Listing;
+	public final fun from (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/FileSizeFormatter {
+	public static final field INSTANCE Lorg/genhttp/modules/directorybrowsing/provider/FileSizeFormatter;
+	public final fun format (Ljava/lang/Long;)Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/ListingModel {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceContainer;Z)V
+	public final fun component1 ()Lorg/genhttp/api/content/io/ResourceContainer;
+	public final fun component2 ()Z
+	public final fun copy (Lorg/genhttp/api/content/io/ResourceContainer;Z)Lorg/genhttp/modules/directorybrowsing/provider/ListingModel;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/directorybrowsing/provider/ListingModel;Lorg/genhttp/api/content/io/ResourceContainer;ZILjava/lang/Object;)Lorg/genhttp/modules/directorybrowsing/provider/ListingModel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContainer ()Lorg/genhttp/api/content/io/ResourceContainer;
+	public final fun getHasParent ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/ListingProvider : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceContainer;)V
+	public final fun getContainer ()Lorg/genhttp/api/content/io/ResourceContainer;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/ListingRenderer {
+	public static final field INSTANCE Lorg/genhttp/modules/directorybrowsing/provider/ListingRenderer;
+	public final fun render (Lorg/genhttp/modules/directorybrowsing/provider/ListingModel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/ListingRouter : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceTree;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun tree (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder;
+	public final fun tree (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/directorybrowsing/provider/ListingRouterBuilder;
+}
+

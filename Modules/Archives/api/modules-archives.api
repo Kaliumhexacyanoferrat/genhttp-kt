@@ -1,0 +1,33 @@
+public final class org/genhttp/modules/archives/ArchiveTree {
+	public static final field INSTANCE Lorg/genhttp/modules/archives/ArchiveTree;
+	public final fun from (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/archives/tree/ArchivedTreeBuilder;
+	public final fun from (Lorg/genhttp/api/content/io/ResourceBuilder;)Lorg/genhttp/modules/archives/tree/ArchivedTreeBuilder;
+	public final fun from (Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;)Lorg/genhttp/modules/archives/tree/ArchivedTreeBuilder;
+}
+
+public final class org/genhttp/modules/archives/tree/ArchiveNode : org/genhttp/api/content/io/ResourceNode {
+	public fun <init> (Ljava/lang/String;Lorg/genhttp/api/content/io/ResourceContainer;)V
+	public fun getModified ()Ljava/time/Instant;
+	public fun getName ()Ljava/lang/String;
+	public fun getNodes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getParent ()Lorg/genhttp/api/content/io/ResourceContainer;
+	public fun getResources (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetNode (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetResource (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/archives/tree/ArchivedTree : org/genhttp/api/content/io/ResourceTree {
+	public fun <init> (Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;)V
+	public fun getModified ()Ljava/time/Instant;
+	public fun getNodes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getResources (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetNode (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tryGetResource (Lorg/genhttp/api/protocol/PathSegment;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/archives/tree/ArchivedTreeBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> (Lorg/genhttp/modules/io/tracking/ChangeTrackingResource;)V
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/api/content/io/ResourceTree;
+}
+

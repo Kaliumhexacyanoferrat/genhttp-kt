@@ -1,0 +1,74 @@
+public final class org/genhttp/modules/files/Asset {
+	public static final field INSTANCE Lorg/genhttp/modules/files/Asset;
+	public final fun from (Ljava/lang/String;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public final fun from (Ljava/nio/file/Path;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public final fun from (Lorg/genhttp/api/content/io/Resource;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+}
+
+public final class org/genhttp/modules/files/Assets {
+	public static final field INSTANCE Lorg/genhttp/modules/files/Assets;
+	public final fun from (Ljava/lang/String;)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
+	public final fun from (Ljava/nio/file/Path;)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
+	public final fun from (Lorg/genhttp/api/content/io/ResourceTree;)Lorg/genhttp/modules/files/multi/TreeAssetsBuilder;
+	public final fun from (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/files/multi/TreeAssetsBuilder;
+}
+
+public abstract class org/genhttp/modules/files/multi/AbstractAssetsHandler : org/genhttp/api/content/Handler {
+	protected fun <init> (Ljava/util/List;C)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected abstract fun resolve (Lorg/genhttp/api/protocol/RequestTarget;Lorg/genhttp/api/protocol/ContentType;Ljava/nio/ByteBuffer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun resolve$default (Lorg/genhttp/modules/files/multi/AbstractAssetsHandler;Lorg/genhttp/api/protocol/RequestTarget;Lorg/genhttp/api/protocol/ContentType;Ljava/nio/ByteBuffer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/files/multi/FileAssetsBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> (Ljava/nio/file/Path;)V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
+	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
+	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;C)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+}
+
+public final class org/genhttp/modules/files/multi/FileAssetsHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/nio/file/Path;Ljava/util/List;C)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/files/multi/SupportedCompression {
+	public fun <init> (Lorg/genhttp/api/content/io/CompressionAlgorithm;Ljava/nio/ByteBuffer;)V
+	public final fun getAlgorithm ()Lorg/genhttp/api/content/io/CompressionAlgorithm;
+	public final fun getExtension ()Ljava/nio/ByteBuffer;
+}
+
+public final class org/genhttp/modules/files/multi/TreeAssetsBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceTree;)V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/files/multi/TreeAssetsBuilder;
+	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;)Lorg/genhttp/modules/files/multi/TreeAssetsBuilder;
+	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;C)Lorg/genhttp/modules/files/multi/TreeAssetsBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+}
+
+public final class org/genhttp/modules/files/multi/TreeAssetsHandler : org/genhttp/modules/files/multi/AbstractAssetsHandler {
+	public fun <init> (Lorg/genhttp/api/content/io/ResourceTree;Ljava/util/List;C)V
+}
+
+public final class org/genhttp/modules/files/single/ResourceAssetBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> (Lorg/genhttp/api/content/io/Resource;)V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public final fun asDownload (Ljava/lang/String;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public static synthetic fun asDownload$default (Lorg/genhttp/modules/files/single/ResourceAssetBuilder;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun type (Lorg/genhttp/api/protocol/ContentType;)Lorg/genhttp/modules/files/single/ResourceAssetBuilder;
+}
+
+public final class org/genhttp/modules/files/single/ResourceAssetHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Lorg/genhttp/api/content/io/Resource;ZLjava/lang/String;Lorg/genhttp/api/protocol/ContentType;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

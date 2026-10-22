@@ -1,0 +1,20 @@
+public final class org/genhttp/modules/virtualhosting/VirtualHosts {
+	public static final field INSTANCE Lorg/genhttp/modules/virtualhosting/VirtualHosts;
+	public final fun create ()Lorg/genhttp/modules/virtualhosting/provider/VirtualHostRouterBuilder;
+}
+
+public final class org/genhttp/modules/virtualhosting/provider/VirtualHostRouter : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/util/Map;Lorg/genhttp/api/content/HandlerBuilder;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/virtualhosting/provider/VirtualHostRouterBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/String;Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/virtualhosting/provider/VirtualHostRouterBuilder;
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/virtualhosting/provider/VirtualHostRouterBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun default (Lorg/genhttp/api/content/HandlerBuilder;)Lorg/genhttp/modules/virtualhosting/provider/VirtualHostRouterBuilder;
+}
+
