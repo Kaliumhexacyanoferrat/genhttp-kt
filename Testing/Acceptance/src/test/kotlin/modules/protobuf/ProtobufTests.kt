@@ -13,7 +13,7 @@ import org.genhttp.modules.layouting.Layout
 import org.genhttp.modules.protobuf.addProtobuf
 import org.genhttp.modules.reflection.Injection
 import org.genhttp.modules.reflection.Method
-import org.genhttp.modules.reflection.ResourceMethod
+import org.genhttp.modules.webservices.ResourceMethod
 import org.genhttp.modules.webservices.ServiceResource
 import org.genhttp.testing.TestHost
 import org.genhttp.testing.acceptance.MultiEngineTest
@@ -75,7 +75,7 @@ class ProtobufTests {
         }, engine)
 
         assertEquals(1, result!!.id)
-        assertEquals("test1", result!!.name)
+        assertEquals("test1", result.name)
     }
 
     @MultiEngineTest
@@ -95,9 +95,9 @@ class ProtobufTests {
         }, engine)
 
         assertNotNull(result)
-        assertEquals(entity.id, result!!.id)
-        assertEquals(entity.name, result!!.name)
-        assertNull(result!!.nullable)
+        assertEquals(entity.id, result.id)
+        assertEquals(entity.name, result.name)
+        assertNull(result.nullable)
     }
 
     // endregion
