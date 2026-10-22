@@ -5,7 +5,9 @@ developers to quickly create web services on the JVM and concentrate on the func
 files or complex concepts. genhttp-kt is the Kotlin port of [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP)
 (see [About the Port](#about-the-port)).
 
-[![Build](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml/badge.svg)](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml) [![View - Documentation](https://img.shields.io/badge/view-Documentation-AB54FF)](https://genhttp.org/documentation/) [![Discord](https://discordapp.com/api/guilds/1177529388229734410/widget.png?style=shield)](https://discord.gg/PRkwKrnrB4)
+Website and documentation: **[genhttp-kt.genhttp.run](https://genhttp-kt.genhttp.run/)**
+
+[![Build](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml/badge.svg)](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml) [![View - Documentation](https://img.shields.io/badge/view-Documentation-7F52FF)](https://genhttp-kt.genhttp.run/documentation/) [![Discord](https://discordapp.com/api/guilds/1177529388229734410/widget.png?style=shield)](https://discord.gg/PRkwKrnrB4)
 
 ## Getting Started
 
@@ -53,14 +55,29 @@ Running this snippet will provide the following endpoints:
 | http://localhost:8080/scalar/      | Serves a graphical viewer of the API, using Scalar.                               |
 
 If you only need the engine and the basic modules (IO, layouting and best practices), depend on `genhttp-core` instead
-and add the modules you need individually (`genhttp-modules-<name>`).
+and add the modules you need individually (`genhttp-modules-<name>`, see the
+[list of modules](https://genhttp-kt.genhttp.run/documentation/content/#modules)).
+
+## Documentation
+
+The [documentation](https://genhttp-kt.genhttp.run/documentation/) describes every framework, handler, concern and
+concept of genhttp-kt, with Kotlin samples that are compiled against the release they describe:
+
+- [Getting started](https://genhttp-kt.genhttp.run/documentation/) with Gradle or Maven
+- [Content](https://genhttp-kt.genhttp.run/documentation/content/) - webservices, functional handlers, controllers,
+  websockets, static websites, SPAs, Open API, authentication and all other modules
+- [Testing](https://genhttp-kt.genhttp.run/documentation/testing/), [running](https://genhttp-kt.genhttp.run/documentation/server/)
+  and [hosting](https://genhttp-kt.genhttp.run/documentation/hosting/) an application
+- [Coming from GenHTTP](https://genhttp-kt.genhttp.run/documentation/port/coming-from-genhttp/) - how C# code
+  translates to Kotlin, and the [deviations](https://genhttp-kt.genhttp.run/documentation/port/deviations/) from GenHTTP
+
+It is the documentation of GenHTTP, ported page by page, and kept in sync with GenHTTP's documentation and with
+genhttp-kt the same way the port is (see [SYNC.md](docs/SYNC.md#the-website)).
 
 ## Samples
 
 The [playground](./Playground/) project provides a quick starting point to view sample code. See
-[the GenHTTP documentation](https://genhttp.org/documentation/content/) for all available capabilities. The
-documentation uses C#, see [Coming from GenHTTP](docs/PORT.md#coming-from-genhttp) for how its samples translate to
-Kotlin.
+[the documentation](https://genhttp-kt.genhttp.run/documentation/content/) for all available capabilities.
 
 ## Support
 
@@ -85,8 +102,9 @@ This will build the playground project with all the server dependencies and laun
 genhttp-kt is an automated port of GenHTTP, generated and maintained by [Claude](https://claude.ai) as a proof of
 concept: can a framework be kept in sync across ecosystems by agents? GenHTTP stays the source of truth and genhttp-kt
 follows it commit by commit. The public API and behavior mirror GenHTTP, expressed in idiomatic Kotlin (coroutines,
-NIO and virtual threads), so the [GenHTTP documentation](https://genhttp.org/documentation/) applies to this project
-as well.
+NIO and virtual threads). The [documentation of genhttp-kt](https://genhttp-kt.genhttp.run/documentation/) is the
+documentation of GenHTTP ported to Kotlin, so samples written for GenHTTP translate mechanically
+([Coming from GenHTTP](https://genhttp-kt.genhttp.run/documentation/port/coming-from-genhttp/)).
 
 Versions follow GenHTTP: `11.1.0.0` is based on GenHTTP `11.1.0`, the last component counts port-only releases. Features
 and behavioral changes are contributed to GenHTTP first and reach genhttp-kt with the next sync (see

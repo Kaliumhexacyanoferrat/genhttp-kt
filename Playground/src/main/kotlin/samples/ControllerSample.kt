@@ -15,7 +15,7 @@ object ControllerSample {
          * Shows how to declare and register a controller that will be invoked
          * to handle incoming HTTP requests.
          *
-         * See https://genhttp.org/documentation/content/frameworks/controllers/
+         * See https://genhttp-kt.genhttp.run/documentation/content/frameworks/controllers/
          *
          */
         return Layout.create()

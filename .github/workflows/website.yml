@@ -1,0 +1,88 @@
+name: Website Watch
+
+# Checks whether the website (https://genhttp-kt.genhttp.run/) reflects the latest documentation of GenHTTP and
+# the latest release of genhttp-kt, and keeps an issue labeled "website-sync" up to date with what is pending.
+# The website publishes what it reflects as upstream.json and is synced as its docs/sync.md describes (see also
+# docs/SYNC.md, "The website").
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+
+  watch:
+
+    name: Check whether the website is up to date
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Collect pending changes
+        id: pending
+        run: |
+          set -euo pipefail
+
+          state=$(curl -fsS https://genhttp-kt.genhttp.run/upstream.json)
+          website_repository=$(jq -r .website.repository <<< "$state")
+          website_commit=$(jq -r .website.commit <<< "$state")
+          port_commit=$(jq -r .port.commit <<< "$state")
+          port_version=$(jq -r .port.version <<< "$state")
+
+          report=""
+
+          # the GenHTTP website: its documentation and its theme
+          git clone --quiet --no-checkout "$website_repository" "$RUNNER_TEMP/website"
+          commits=$(git -C "$RUNNER_TEMP/website" log --reverse --format='- `%h` %s' "${website_commit}..HEAD" -- site Website.cs)
+          if [ -n "$commits" ]; then
+            report="${report}### GenHTTP website"$'\n\n'"${commits}"$'\n\n'
+          fi
+
+          # genhttp-kt: a new release on Maven Central, and changes to what the pages document
+          version="$(grep '^genhttp.version=' upstream.properties | cut -d= -f2).$(grep '^port.revision=' upstream.properties | cut -d= -f2)"
+          if [ "$version" != "$port_version" ] && curl -fsIo /dev/null "https://repo1.maven.org/maven2/org/genhttp/genhttp-full/${version}/genhttp-full-${version}.pom"; then
+            report="${report}### New release"$'\n\n'"genhttp-kt ${version} is on Maven Central, the website describes ${port_version}."$'\n\n'
+          fi
+
+          commits=$(git log --reverse --format='- [`%h`](https://github.com/${{ github.repository }}/commit/%H) %s' "${port_commit}..HEAD" -- ':(glob)**/api/*.api' settings.gradle.kts upstream.properties docs README.md)
+          if [ -n "$commits" ]; then
+            report="${report}### genhttp-kt"$'\n\n'"${commits}"$'\n\n'
+          fi
+
+          {
+            echo "report<<EOF"
+            echo "$report"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ${{ steps.pending.outputs.report }}
+        run: |
+          gh label create website-sync --color 7F52FF --description "Changes the website does not reflect yet" 2>/dev/null || true
+
+          issue=$(gh issue list --label website-sync --state open --json number --jq '.[0].number')
+
+          if [ -n "$(tr -d '[:space:]' <<< "$REPORT")" ]; then
+            body=$(printf "The [website](https://genhttp-kt.genhttp.run/) does not reflect the following changes yet. Sync it as \`docs/sync.md\` of the website describes - \`node tools/sync.mjs\` lists the pages each change affects.\n\n%s" "$REPORT")
+
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --body "$body"
+            else
+              gh issue create --title "Sync the website" --label website-sync --body "$body"
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "The website reflects the documentation of GenHTTP and the latest release of genhttp-kt again."
+          fi

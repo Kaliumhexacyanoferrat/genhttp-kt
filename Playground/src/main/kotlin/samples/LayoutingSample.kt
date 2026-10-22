@@ -14,7 +14,7 @@ object LayoutingSample {
          * different logical parts. The layout will route incoming requests to the designated
          * handler. Layouts can be nested as needed.
          *
-         * See https://genhttp.org/documentation/content/handlers/layouting/
+         * See https://genhttp-kt.genhttp.run/documentation/content/handlers/layouting/
          *
          */
 

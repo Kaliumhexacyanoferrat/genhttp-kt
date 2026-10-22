@@ -28,7 +28,7 @@ object CustomFrameworkSample {
          *
          * Shows how to implement a custom framework.
          *
-         * See https://genhttp.org/documentation/content/frameworks/custom/
+         * See https://genhttp-kt.genhttp.run/documentation/content/frameworks/custom/
          *
          */
         return Layout.create()

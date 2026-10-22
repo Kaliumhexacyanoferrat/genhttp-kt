@@ -14,7 +14,7 @@ object StaticFileSample {
          *
          * Serves files from a given directory or resource tree.
          *
-         * See https://genhttp.org/documentation/content/handlers/static-content/
+         * See https://genhttp-kt.genhttp.run/documentation/content/handlers/files/
          *
          */
 
@@ -31,7 +31,7 @@ object StaticWebsiteSample {
          *
          * Serves a static website from a directory (or resource tree in general).
          *
-         * See https://genhttp.org/documentation/content/frameworks/static-websites/
+         * See https://genhttp-kt.genhttp.run/documentation/content/frameworks/static-websites/
          *
          */
         val files = ResourceTree.fromDirectory("/var/www")
@@ -48,7 +48,7 @@ object SinglePageApplicationSample {
          *
          * Serves a single page application (SPA) from a directory (or resource tree in general).
          *
-         * See https://genhttp.org/documentation/content/frameworks/single-page-applications/
+         * See https://genhttp-kt.genhttp.run/documentation/content/frameworks/single-page-applications/
          *
          */
         val files = ResourceTree.fromDirectory("/var/app")

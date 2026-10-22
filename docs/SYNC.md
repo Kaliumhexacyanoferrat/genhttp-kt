@@ -62,6 +62,22 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
 6. Update the [deviation log](DEVIATIONS.md) if a new deviation was introduced.
 7. Release by running the *Release* workflow (it tags `v<version>` and publishes to Maven Central).
 
+## The website
+
+The website [genhttp-kt.genhttp.run](https://genhttp-kt.genhttp.run/) is the documentation of GenHTTP
+(genhttp.org) ported to Kotlin. It is a lambda on [GenHTTP Lambda](https://genhttp.dev/) and follows two upstreams
+the same way this repository follows GenHTTP: the GenHTTP website, and genhttp-kt itself. It records the commits it
+reflects (`site/data/upstream.yaml` in the lambda, published as
+[`upstream.json`](https://genhttp-kt.genhttp.run/upstream.json)), every page names the GenHTTP page and the modules
+of genhttp-kt it documents, and `node tools/sync.mjs` in the lambda lists what is pending and the pages it affects.
+Its `docs/sync.md` describes the procedure.
+
+The *Website Watch* workflow (`.github/workflows/website.yml`) checks daily whether the published website reflects
+the latest documentation of GenHTTP, the latest release of genhttp-kt on Maven Central and the changes to the public
+API (`api/*.api`), modules and docs since, and keeps an issue labeled `website-sync` up to date (closing it when
+nothing is pending). After a release of genhttp-kt, sync the website: its samples are compiled against the release
+it describes, so the new version shows every sample an API change breaks.
+
 ## Rules for sync agents
 
 - Never port a change partially without saying so: if something cannot be ported, document it in the commit message

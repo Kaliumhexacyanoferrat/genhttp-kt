@@ -13,8 +13,10 @@ The port pursues two goals (see the [philosophy](PORTING.md#philosophy) of the p
 
 ## Coming from GenHTTP
 
-The [GenHTTP documentation](https://genhttp.org/documentation/) applies to genhttp-kt. Its C# samples translate
-mechanically:
+The [documentation of genhttp-kt](https://genhttp-kt.genhttp.run/documentation/) is the
+[GenHTTP documentation](https://genhttp.org/documentation/) ported to Kotlin, page by page and at the same addresses.
+C# samples translate mechanically (see also
+[Coming from GenHTTP](https://genhttp-kt.genhttp.run/documentation/port/coming-from-genhttp/) on the website):
 
 | GenHTTP (C#)                                   | genhttp-kt (Kotlin)                                 |
 |------------------------------------------------|-----------------------------------------------------|

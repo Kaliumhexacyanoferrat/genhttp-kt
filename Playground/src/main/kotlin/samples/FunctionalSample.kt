@@ -12,7 +12,7 @@ object FunctionalSample {
          * Shows how to use lambdas that will be invoked
          * to handle incoming HTTP requests.
          *
-         * See https://genhttp.org/documentation/content/frameworks/functional/
+         * See https://genhttp-kt.genhttp.run/documentation/content/frameworks/functional/
          *
          */
         val books = mutableListOf(Book(1, "Lord of the Rings"))
