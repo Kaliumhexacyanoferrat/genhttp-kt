@@ -16,9 +16,9 @@ done.
 | 8  | Content modules               | done        | Files, Archives, DirectoryBrowsing, VirtualHosting, StaticWebsites, SinglePageApplications, LoadBalancing incl. tests |
 | 9  | Connection modules            | done        | Websockets, ServerSentEvents, ReverseProxy incl. tests |
 | 10 | Distribution                  | done        | `genhttp-core`/`genhttp-full`, Playground (`./gradlew :playground:run`), Benchmarks (kotlinx-benchmark/JMH, in-memory pipeline), release workflow |
-| 11 | Coverage & platforms          | in progress | 821/821 upstream acceptance tests ported, line coverage 91 % (enforced by `:koverVerify` in CI); CI matrix to be confirmed on all platforms |
+| 11 | Coverage & platforms          | done        | 821/821 upstream acceptance tests ported, line coverage 91 % (enforced by `:koverVerify`); CI green on Linux/Windows/macOS x64+arm64 |
 | 12 | API parity pass               | done        | `tools/api_parity.py` (names) and `--signatures` (parameter counts, defaults): 0 differences; intentional ones in `tools/api_parity_exclusions.txt`; CI gate |
-| 13 | Sync readiness                | open        | |
+| 13 | Sync readiness                | done        | SYNC.md describes the full verification (build, coverage, test and API parity); daily upstream-watch workflow; no upstream commits to sync yet |
 
 ## Decisions confirmed by the maintainer
 
@@ -38,8 +38,9 @@ done.
 
 ## Next steps
 
-- Confirm the CI matrix (Linux/Windows/macOS, x64/arm64) is green; fix platform issues.
-- Stage 13: final pass on SYNC.md/CLAUDE.md and the upstream-watch workflow, then a first sync dry run against a newer
-  upstream commit.
-- Optional: raise branch coverage (currently lower than line coverage); additional tests go to the `additional`
-  package (see PORTING.md).
+The initial port is complete. Further work:
+
+- Sync upstream changes as they appear (the upstream-watch workflow opens an issue), following SYNC.md.
+- First release: provide the Maven Central and signing secrets, then run the *Release* workflow (`v11.1.0.0`).
+- Optional: raise branch coverage (lower than line coverage); additional tests go to the `additional` package.
+- Website (planned as a GenHTTP lambda, out of scope of the initial port).
