@@ -3,3 +3,4 @@
 ChunkedBodyStreamSequenceTests.Sequence_MatchesSpan_AcrossSegmentations Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
 ChunkedBodyStreamSequenceTests.Sequence_ChunkDataSpanningSegmentBoundary Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
 ChunkedBodyStreamSequenceTests.Sequence_NeedMoreData_RollsBack_ThenCompletes Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
+DefaultResource.TestLiteralGeneration Kotlin port has no Roslyn code generation (CompilationUtil.GetLiteral does not exist)
