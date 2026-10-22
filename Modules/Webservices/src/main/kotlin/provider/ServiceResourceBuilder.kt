@@ -60,7 +60,7 @@ public class ServiceResourceBuilder : ReflectionFrameworkBuilder<ServiceResource
      */
     public fun instance(instance: Any): ServiceResourceBuilder {
         type = instance::class
-        instanceProvider = { instance }
+        instanceProvider = FixedInstance(instance)
         return this
     }
 
@@ -111,5 +111,14 @@ public class ServiceResourceBuilder : ReflectionFrameworkBuilder<ServiceResource
     }
 
     // endregion
+
+    /**
+     * Provides the same instance for every request (unlike a suspend lambda, invoking it does not allocate).
+     */
+    private class FixedInstance(private val instance: Any) : suspend (Request) -> Any {
+
+        override suspend fun invoke(request: Request): Any = instance
+
+    }
 
 }

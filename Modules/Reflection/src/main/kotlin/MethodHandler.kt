@@ -10,6 +10,7 @@ import org.genhttp.api.protocol.getEntry
 import org.genhttp.api.protocol.preAllocate
 import org.genhttp.modules.reflection.operations.ArgumentProvider
 import org.genhttp.modules.reflection.operations.Operation
+import org.genhttp.modules.reflection.operations.OperationArgument
 import org.genhttp.modules.reflection.operations.OperationArgumentSource
 import org.genhttp.modules.reflection.operations.SignatureAnalyzer
 import org.genhttp.modules.reflection.routing.RoutingMatch
@@ -55,9 +56,19 @@ public class MethodHandler(
 
     private val parameters: List<KParameter> = SignatureAnalyzer.valueParameters(operation.method)
 
+    // the argument read for each parameter (null, if the parameter is not mapped)
+    private val parameterArguments: Array<OperationArgument?> = Array(parameters.size) { index ->
+        parameters[index].name?.let { operation.arguments[it] }
+    }
+
     private val instanceParameter: KParameter? = operation.method.parameters.firstOrNull { it.kind == KParameter.Kind.INSTANCE }
 
     private val useReflection: Boolean = (operation.executionSettings.mode ?: ExecutionMode.Auto) == ExecutionMode.Reflection
+
+    // invokes member functions without kotlin-reflect in the automatic execution mode
+    private val invoker: MethodInvoker? = if (!useReflection && operation.delegate == null) MethodInvoker.create(operation.method) else null
+
+    private val argumentCount: Int = invoker?.arity ?: parameters.size
 
     init {
         if (operation.delegate == null) {
@@ -85,10 +96,12 @@ public class MethodHandler(
 
         val arguments = getArguments(request, match)
 
-        val interception = interceptor.intercept(request, arguments.named, accepted)
+        if (operation.interceptors.isNotEmpty()) {
+            val interception = interceptor.intercept(request, getNamedArguments(arguments), accepted)
 
-        if (interception != null) {
-            return interception
+            if (interception != null) {
+                return interception
+            }
         }
 
         val result = invoke(request, arguments)
@@ -97,17 +110,15 @@ public class MethodHandler(
     }
 
     private suspend fun getArguments(request: Request, match: RoutingMatch): Arguments {
-        if (parameters.isEmpty()) {
+        if (argumentCount == 0) {
             return Arguments.None
         }
 
-        val named = LinkedHashMap<ByteString, Any?>(parameters.size)
-        val values = arrayOfNulls<Any?>(parameters.size)
-        val omitted = BooleanArray(parameters.size)
+        val values = arrayOfNulls<Any?>(argumentCount)
+        var omitted: BooleanArray? = null
 
-        for ((index, parameter) in parameters.withIndex()) {
-            val name = parameter.name ?: continue
-            val argument = operation.arguments[name] ?: continue
+        for (index in parameterArguments.indices) {
+            val argument = parameterArguments[index] ?: continue
 
             val value = when (argument.source) {
                 OperationArgumentSource.Injected -> ArgumentProvider.getInjectedArgument(request, this, argument, registry)
@@ -120,16 +131,24 @@ public class MethodHandler(
 
             if (value == null && argument.isOptional) {
                 // let the declared default value apply
-                omitted[index] = true
+                (omitted ?: BooleanArray(parameters.size).also { omitted = it })[index] = true
             }
 
-            val effective = value ?: if (argument.isOptional) null else defaultOf(argument.type.classifier, argument.type.isMarkedNullable)
-
-            values[index] = effective
-            named[argument.name] = effective
+            values[index] = value ?: if (argument.isOptional) null else defaultOf(argument.type.classifier, argument.type.isMarkedNullable)
         }
 
-        return Arguments(named, values, omitted)
+        return Arguments(values, omitted)
+    }
+
+    private fun getNamedArguments(arguments: Arguments): Map<ByteString, Any?> {
+        val named = LinkedHashMap<ByteString, Any?>(parameters.size)
+
+        for (index in parameterArguments.indices) {
+            val argument = parameterArguments[index] ?: continue
+            named[argument.name] = arguments.values[index]
+        }
+
+        return named
     }
 
     private suspend fun intercept(request: Request, arguments: Map<ByteString, Any?>, acceptedFormat: ByteString?): Response? {
@@ -155,11 +174,19 @@ public class MethodHandler(
             val function = operation.method
             val instance = if (instanceParameter != null) instanceProvider(request) else null
 
-            if (!useReflection && !arguments.hasOmitted) {
-                return if (instanceParameter != null) {
-                    function.callSuspend(instance, *arguments.values)
-                } else {
-                    function.callSuspend(*arguments.values)
+            val omitted = arguments.omitted
+
+            if (omitted == null) {
+                if (invoker != null && instance != null) {
+                    return invoker.invoke(instance, arguments.values)
+                }
+
+                if (!useReflection) {
+                    return if (instanceParameter != null) {
+                        function.callSuspend(instance, *arguments.values)
+                    } else {
+                        function.callSuspend(*arguments.values)
+                    }
                 }
             }
 
@@ -169,9 +196,9 @@ public class MethodHandler(
                 map[instanceParameter] = instance
             }
 
-            for ((index, parameter) in parameters.withIndex()) {
-                if (!arguments.omitted[index]) {
-                    map[parameter] = arguments.values[index]
+            for (index in parameters.indices) {
+                if (omitted == null || !omitted[index]) {
+                    map[parameters[index]] = arguments.values[index]
                 }
             }
 
@@ -183,12 +210,14 @@ public class MethodHandler(
 
     // endregion
 
-    private class Arguments(val named: Map<ByteString, Any?>, val values: Array<Any?>, val omitted: BooleanArray) {
-
-        val hasOmitted: Boolean = omitted.any { it }
+    /**
+     * The values of the arguments (by the position of the parameters, see [argumentCount]) and the parameters
+     * whose value has been omitted (null, if none).
+     */
+    private class Arguments(val values: Array<Any?>, val omitted: BooleanArray?) {
 
         companion object {
-            val None = Arguments(emptyMap(), emptyArray(), BooleanArray(0))
+            val None = Arguments(emptyArray(), null)
         }
 
     }

@@ -188,7 +188,9 @@ Host.create()
 
 ## Reflection
 
-The Reflection module analyzes signatures with **kotlin-reflect** and invokes through it. There is no code generation.
+The Reflection module analyzes signatures with **kotlin-reflect**. There is no code generation: member functions are
+invoked through method handles resolved once per operation (the counterpart of GenHTTP's generated code), everything
+kotlin-reflect is needed for (value classes, omitted optional parameters, `ExecutionMode.Reflection`) through kotlin-reflect.
 
 - **Methods of classes** (webservices, controllers): `KClass.memberFunctions`, annotations, `KParameter` (name, `KType`
   incl. nullability, `isOptional`), suspend functions are first-class (`callSuspendBy`).
@@ -203,8 +205,9 @@ The Reflection module analyzes signatures with **kotlin-reflect** and invokes th
   (`[FromBody]`, `[Summary]`, `int x = 42`) use **function references** (`post(::handler)`), which carry everything.
 - Default values cannot be read via kotlin-reflect. Optional parameters are omitted from the call so that Kotlin's own
   default applies (`callBy`); `OperationArgument` exposes `isOptional` instead of the default value.
-- `ExecutionMode` is kept: `Auto` uses a precomputed positional invocation fast path, `Reflection` always uses
-  `callSuspendBy`. Both are tested by `@MultiEngineFrameworkTest`.
+- `ExecutionMode` is kept: `Auto` invokes member functions through a `MethodHandle` (falling back to `callSuspend`
+  where kotlin-reflect is required), `Reflection` always uses `callSuspendBy`. Both are tested by
+  `@MultiEngineFrameworkTest`.
 
 ## Assemblies → classpath
 
