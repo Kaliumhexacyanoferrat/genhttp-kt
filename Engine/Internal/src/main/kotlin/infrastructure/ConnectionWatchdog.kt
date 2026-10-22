@@ -16,9 +16,9 @@ import kotlin.time.Duration.Companion.seconds
  * Closes client connections that do not send data in time.
  *
  * GenHTTP cancels pending reads with a cancellation token that expires after the read timeout. Arming a timer for
- * every read does not scale on the JVM (kotlinx.coroutines keeps the timers of executor based dispatchers in a
- * single, synchronized queue), so connections publish a deadline while they wait for data instead and the watchdog
- * checks the deadlines of all connections in a fixed interval. Closing an expired connection aborts its blocked read.
+ * every read would add a timer to schedule and cancel to every read, while publishing a deadline is a single atomic
+ * update, so connections publish a deadline while they wait for data instead and the watchdog checks the deadlines
+ * of all connections in a fixed interval. Closing an expired connection aborts its blocked read.
  *
  * @param interval The interval in which deadlines are checked (timeouts fire up to one interval late)
  */

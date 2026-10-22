@@ -18,17 +18,17 @@ import org.genhttp.engine.shared.types.MapPropertyBag
 import org.slf4j.ILoggerFactory
 
 import java.util.Locale
-import java.util.concurrent.Executors
 
 /**
  * The server implementation of the internal engine.
  *
- * Connections are handled as coroutines on a dispatcher that runs every task on a new virtual thread. Read timeouts
- * are enforced by a [ConnectionWatchdog].
+ * Connections are handled as coroutines on a dispatcher that runs every task on a new virtual thread and schedules
+ * timers (`delay`, `withTimeout`) on the sharded timers of the [VirtualThreadExecutor]. Read timeouts are enforced
+ * by a [ConnectionWatchdog].
  */
 internal class ThreadedServer(private val configuration: ServerConfiguration, override val handler: Handler) : Server {
 
-    private val dispatcher: ExecutorCoroutineDispatcher = Executors.newThreadPerTaskExecutor(
+    private val dispatcher: ExecutorCoroutineDispatcher = VirtualThreadExecutor(
         Thread.ofVirtual().name("genhttp-", 0).factory()
     ).asCoroutineDispatcher()
 

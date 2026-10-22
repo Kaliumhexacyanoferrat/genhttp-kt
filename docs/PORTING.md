@@ -162,6 +162,8 @@ infix helpers instead of operators.
   (`Executors.newVirtualThreadPerTaskExecutor()`). This makes the blocking-shaped JVM stream types that the API must
   expose (`InputStream` request bodies, `OutputStream` sinks, serializers, compressors) safe to use from suspend
   handlers: a blocking call only parks a virtual thread. Suspending handlers (`delay`, channels, flows) release it.
+  The executor is a `ScheduledExecutorService` with sharded timers, otherwise kotlinx.coroutines would run every
+  `delay` and `withTimeout` of the server through the single queue of its `DefaultExecutor` thread.
 - Handlers must not assume a specific dispatcher. Blocking calls inside handlers are allowed (they run on virtual
   threads), long CPU work should use `Dispatchers.Default`.
 
