@@ -27,6 +27,7 @@ dependencies {
     testImplementation(project(":modules-archives"))
     testImplementation(project(":modules-directory-browsing"))
     testImplementation(project(":modules-virtual-hosting"))
+    testImplementation(project(":modules-static-websites"))
     testImplementation(project(":modules-open-api"))
     testImplementation(project(":modules-websockets"))
     testImplementation(project(":modules-authentication"))
@@ -39,6 +40,7 @@ dependencies {
 // tests that depend on modules which have not been ported yet (see STATUS.md)
 val pendingTests = listOf(
     "modules/io/PathTraversalTests.kt",
+    "modules/archives/IntegrationTests.kt",
     "modules/webservices/HandlerResultTests.kt"
 )
 
