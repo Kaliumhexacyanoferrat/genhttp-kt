@@ -1,0 +1,23 @@
+public final class org/genhttp/modules/inspection/Inspector {
+	public static final field INSTANCE Lorg/genhttp/modules/inspection/Inspector;
+	public final fun create ()Lorg/genhttp/modules/inspection/concern/InspectionConcernBuilder;
+}
+
+public final class org/genhttp/modules/inspection/InspectorExtensions {
+	public static final fun addInspector (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+}
+
+public final class org/genhttp/modules/inspection/concern/InspectionConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public final fun getSerialization ()Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/inspection/concern/InspectionConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun serialization (Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;)Lorg/genhttp/modules/inspection/concern/InspectionConcernBuilder;
+}
+

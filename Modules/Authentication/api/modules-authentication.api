@@ -1,0 +1,168 @@
+public final class org/genhttp/modules/authentication/ApiKeyAuthentication {
+	public static final field INSTANCE Lorg/genhttp/modules/authentication/ApiKeyAuthentication;
+	public final fun create ()Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/ApiKeyAuthenticationExtensions {
+	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lkotlin/jvm/functions/Function3;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+}
+
+public final class org/genhttp/modules/authentication/BasicAuthentication {
+	public static final field INSTANCE Lorg/genhttp/modules/authentication/BasicAuthentication;
+	public final fun create (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
+	public final fun create (Lkotlin/jvm/functions/Function3;Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
+	public static synthetic fun create$default (Lorg/genhttp/modules/authentication/BasicAuthentication;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
+	public static synthetic fun create$default (Lorg/genhttp/modules/authentication/BasicAuthentication;Lkotlin/jvm/functions/Function3;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/BasicAuthenticationExtensions {
+	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lkotlin/jvm/functions/Function3;Ljava/lang/String;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static synthetic fun authentication$default (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lkotlin/jvm/functions/Function3;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+}
+
+public final class org/genhttp/modules/authentication/BearerAuthentication {
+	public static final field INSTANCE Lorg/genhttp/modules/authentication/BearerAuthentication;
+	public final fun create ()Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/ClientCertificateAuthentication {
+	public static final field INSTANCE Lorg/genhttp/modules/authentication/ClientCertificateAuthentication;
+	public final fun create ()Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
+}
+
+public final class org/genhttp/modules/authentication/Extensions {
+	public static final fun clearUser (Lorg/genhttp/api/protocol/Request;)V
+	public static final fun getUser (Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;)Lorg/genhttp/api/content/authentication/User;
+	public static final fun setUser (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/authentication/User;)V
+}
+
+public final class org/genhttp/modules/authentication/MultiAuthentication {
+	public static final field INSTANCE Lorg/genhttp/modules/authentication/MultiAuthentication;
+	public final fun create ()Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+}
+
+public abstract interface annotation class org/genhttp/modules/authentication/RequireRole : java/lang/annotation/Annotation {
+	public abstract fun roles ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/modules/authentication/RequireRole$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/modules/authentication/RequireRole;
+}
+
+public final class org/genhttp/modules/authentication/apikey/ApiKeyConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun authenticator (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun extractor (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public final fun keys ([Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public final fun withHeader (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public final fun withQueryParameter (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/apikey/ApiKeyUser : org/genhttp/api/content/authentication/User {
+	public fun <init> (Ljava/lang/String;[Ljava/lang/String;)V
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public fun getRoles ()Ljava/util/List;
+}
+
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/lang/String;Lkotlin/jvm/functions/Function3;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun handler (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
+	public final fun realm (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun realm (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
+}
+
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationUser : org/genhttp/api/content/authentication/User {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;[Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationUser;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/authentication/basic/BasicAuthenticationUser;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public fun getRoles ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun allowExpired ()Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public final fun audience (Ljava/lang/String;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun issuer (Ljava/lang/String;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public final fun keyResolver (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public final fun userMapping (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public final fun validation (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+}
+
+public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun authorization (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun userMapping (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
+}
+
+public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationConcern : org/genhttp/api/content/Concern {
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateUser : org/genhttp/api/content/authentication/User {
+	public fun <init> (Ljava/security/cert/X509Certificate;[Ljava/lang/String;)V
+	public final fun getCertificate ()Ljava/security/cert/X509Certificate;
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getRoles ()Ljava/util/List;
+}
+
+public final class org/genhttp/modules/authentication/multi/MultiAuthenticationConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/List;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;)Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+	public final fun add (Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;)Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+	public final fun add (Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;)Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+	public final fun add (Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;)Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+	public final fun add (Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;)Lorg/genhttp/modules/authentication/multi/MultiAuthenticationConcernBuilder;
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+}
+
+public final class org/genhttp/modules/authentication/roles/RoleInterceptor : org/genhttp/modules/reflection/OperationInterceptor {
+	public fun <init> ()V
+	public fun configure (Ljava/lang/annotation/Annotation;)V
+	public fun intercept (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/Operation;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
