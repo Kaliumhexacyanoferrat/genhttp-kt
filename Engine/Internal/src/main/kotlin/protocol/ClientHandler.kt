@@ -1,7 +1,5 @@
 package org.genhttp.engine.internal.protocol
 
-import kotlinx.coroutines.TimeoutCancellationException
-
 import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.Connection
 import org.genhttp.api.protocol.HttpProtocol
@@ -10,6 +8,7 @@ import org.genhttp.api.protocol.RequestMethod
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.api.protocol.getEntry
 import org.genhttp.engine.internal.context.ConnectionContext
+import org.genhttp.engine.internal.infrastructure.ConnectionWatch
 import org.genhttp.engine.shared.types.ConnectionExceptions
 import org.genhttp.engine.shared.types.HttpRequest
 import org.genhttp.engine.shared.types.HttpResponseBuilder
@@ -67,25 +66,35 @@ internal class ClientHandler(private val context: ConnectionContext) {
         val reader = context.reader
         val request = context.request
         val into = request.source
+        val watch = context.watch
 
-        var timeout = InitialReadTimeout
+        // data needs to arrive before this deadline, the watchdog closes the connection otherwise
+        var deadline = ConnectionWatch.deadlineAfter(InitialReadTimeout)
         var dataRemaining = false
 
         try {
             while (context.server.running) {
                 if (!dataRemaining) {
-                    try {
-                        if (reader.fill(timeout) < 0) {
-                            break
-                        }
-                    } catch (_: TimeoutCancellationException) {
+                    if (!watch.arm(deadline)) {
                         return
+                    }
+
+                    val read = try {
+                        reader.fill()
                     } catch (e: IOException) {
-                        if (ConnectionExceptions.isGracefulDisconnect(e)) {
+                        if (!watch.disarm() || ConnectionExceptions.isGracefulDisconnect(e)) {
                             return
                         }
 
                         throw e
+                    }
+
+                    if (!watch.disarm()) {
+                        return
+                    }
+
+                    if (read < 0) {
+                        break
                     }
                 }
 
@@ -131,7 +140,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
                         break
                     }
 
-                    timeout = KeepAliveTimeout
+                    deadline = ConnectionWatch.deadlineAfter(KeepAliveTimeout)
                     context.writer.flush()
                 }
             }

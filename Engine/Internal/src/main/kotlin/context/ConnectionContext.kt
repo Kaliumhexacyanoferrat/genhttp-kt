@@ -2,6 +2,7 @@ package org.genhttp.engine.internal.context
 
 import org.genhttp.api.infrastructure.EndPoint
 import org.genhttp.api.infrastructure.Server
+import org.genhttp.engine.internal.infrastructure.ConnectionWatch
 import org.genhttp.engine.internal.protocol.ClientHandler
 import org.genhttp.engine.shared.io.ConnectionReader
 import org.genhttp.engine.shared.io.ConnectionWriter
@@ -19,6 +20,7 @@ import java.security.cert.X509Certificate
  *
  * @property connection The underlying connection (usually the socket, closed when the connection ends)
  * @property channel The channel used to exchange data (the socket itself or a TLS channel wrapping it)
+ * @property watch The read deadline of the connection, enforced by the watchdog of the server
  * @property remoteAddress The address of the connected client, if known
  */
 internal class ConnectionContext(
@@ -26,6 +28,7 @@ internal class ConnectionContext(
     val endPoint: EndPoint,
     val connection: Channel,
     val channel: ByteChannel,
+    val watch: ConnectionWatch,
     val clientCertificate: X509Certificate?,
     val remoteAddress: InetAddress?
 ) : ClientContext {

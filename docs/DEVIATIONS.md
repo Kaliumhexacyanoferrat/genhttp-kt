@@ -6,7 +6,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 |------|-----------|--------|
 | Naming | Interfaces drop the `I` prefix; factory clashes resolved via companion extensions, implementation clashes via descriptive prefixes | Kotlin convention (decided by the maintainer) |
 | Naming | `Async` suffix dropped, methods are `suspend` | Kotlin coroutine convention |
-| Generators | `[MemoryView]` source generator replaced by the `MemoryView` base class | No source generators needed on the JVM |
+| Generators | `[MemoryView]` source generator replaced by the `MemoryView` base class; the views (`ByteString`, `ContentType`, ...) are classes instead of structs and compute their hash on first use | No source generators needed on the JVM; no user-defined value types on the JVM (Kotlin value classes wrap a single value and are boxed when used as keys or through interfaces) |
 | Engines | Only the internal engine is ported; `ServerEngine` contains `Internal` and `Custom` | Kestrel and ioxide are .NET specific |
 | Adapters | `GenHTTP.Adapters.AspNetCore` is not ported | ASP.NET Core does not exist on the JVM |
 | I/O | `Stream` → `InputStream`/`OutputStream`, `IBufferWriter` → `WritableByteChannel`, `PipeReader` → `InputStream` | JVM standard types, usable from coroutines because connections run on virtual threads |
@@ -28,6 +28,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `IServer.DisposeAsync()` → `suspend fun close()`; `IEndPoint : IDisposable` → `EndPoint : AutoCloseable` | Kotlin lifecycle conventions |
 | API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
 | API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |
+| Engine | Read timeouts (initial request, keep-alive, TLS handshake) are enforced by a watchdog that checks the deadlines of waiting connections once per second and closes expired connections, instead of a cancellation token per read; timeouts fire up to a second late | A timer per read does not scale on the JVM (kotlinx.coroutines keeps the timers of executor based dispatchers in a single, synchronized queue) |
 | Engine | Endpoints with `dualStack = false` on IPv6 accept IPv4 connections at the TCP level but close them immediately | The JDK cannot set `IPV6_V6ONLY`; the binding tests therefore check that a request is answered instead of a bare TCP connect |
 | Tests | `ConnectionTests.testUpgrade` reads the 101 response from a raw socket | The JDK HTTP client rejects unexpected 101 responses |
 | Tests | `ResourceTreeTests.testByAssembly` checks that the classpath root contains the `Resources` folder instead of exactly one node | The classpath root merges all roots of the runtime, an assembly has a single root |

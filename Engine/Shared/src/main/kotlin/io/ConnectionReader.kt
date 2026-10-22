@@ -1,16 +1,11 @@
 package org.genhttp.engine.shared.io
 
-import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withTimeout
-
 import org.genhttp.api.infrastructure.BufferSize
 
 import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.channels.ReadableByteChannel
-
-import kotlin.time.Duration
 
 /**
  * Buffered, blocking reader on a connection channel (the counterpart of the `PipeReader` used by GenHTTP).
@@ -19,11 +14,15 @@ import kotlin.time.Duration
  * mark processed bytes via [consume] and request more data via [fill]. Views returned by [data] stay valid
  * until the next call to [fill] (which may compact or grow the buffer).
  *
- * Reads block the calling thread, which is intended to be a virtual thread.
+ * Reads block the calling thread, which is intended to be a virtual thread. Timeouts are enforced by the engine by
+ * closing the channel, which aborts a blocked read.
  */
 public class ConnectionReader(private val channel: ReadableByteChannel, initialCapacity: Int = BufferSize.Read) {
 
     private var buffer: ByteArray = ByteArray(initialCapacity)
+
+    // read-only view on the whole buffer, sliced by data()
+    private var view: ByteBuffer = ByteBuffer.wrap(buffer).asReadOnlyBuffer()
 
     private var start = 0
 
@@ -44,7 +43,7 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
     /**
      * A read-only view on the buffered bytes that have not been consumed yet (position 0, limit [available]).
      */
-    public fun data(): ByteBuffer = ByteBuffer.wrap(buffer, start, end - start).slice().asReadOnlyBuffer()
+    public fun data(): ByteBuffer = view.slice(start, end - start)
 
     /**
      * Marks the given number of buffered bytes as consumed.
@@ -87,16 +86,6 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
 
         end += read
         return read
-    }
-
-    /**
-     * Reads more data from the channel, closing the connection if no data arrives within the given time.
-     *
-     * @return The number of bytes read, or -1 if the end of the stream has been reached
-     * @throws kotlinx.coroutines.TimeoutCancellationException if the timeout elapsed
-     */
-    public suspend fun fill(timeout: Duration): Int = withTimeout(timeout) {
-        runInterruptible { fill() }
     }
 
     /**
@@ -162,6 +151,7 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
             System.arraycopy(buffer, start, buffer, 0, count)
         } else {
             buffer = buffer.copyOf(buffer.size * 2)
+            view = ByteBuffer.wrap(buffer).asReadOnlyBuffer()
         }
 
         start = 0

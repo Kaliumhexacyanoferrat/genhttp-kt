@@ -10,6 +10,8 @@ import org.genhttp.api.infrastructure.EndPoint
 import org.genhttp.api.infrastructure.HttpProtocols
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.engine.internal.context.ConnectionContext
+import org.genhttp.engine.internal.infrastructure.ConnectionWatch
+import org.genhttp.engine.internal.infrastructure.ConnectionWatchdog
 import org.genhttp.engine.shared.types.ConnectionExceptions
 
 import org.slf4j.Logger
@@ -31,10 +33,12 @@ import java.security.cert.X509Certificate
  * An endpoint listening on a TCP port (`EndPoint` in GenHTTP).
  *
  * The endpoint accepts connections on a virtual thread and handles every connection as a coroutine within the
- * scope of the server, which runs on virtual threads as well.
+ * scope of the server, which runs on virtual threads as well. Connections are registered with the watchdog of the
+ * server, which closes them if they do not send data in time.
  */
 internal abstract class SocketEndPoint(
     protected val server: Server,
+    private val watchdog: ConnectionWatchdog,
     override val address: InetAddress?,
     override val port: Int,
     override val dualStack: Boolean
@@ -116,7 +120,13 @@ internal abstract class SocketEndPoint(
                 }
 
                 scope.launch {
-                    accept(client)
+                    val watch = watchdog.register(client)
+
+                    try {
+                        accept(client, watch)
+                    } finally {
+                        watchdog.unregister(watch)
+                    }
                 }
             } catch (_: ClosedChannelException) {
                 break
@@ -134,9 +144,9 @@ internal abstract class SocketEndPoint(
         }
     }
 
-    protected abstract suspend fun accept(client: SocketChannel)
+    protected abstract suspend fun accept(client: SocketChannel, watch: ConnectionWatch)
 
-    protected suspend fun handle(client: SocketChannel, channel: ByteChannel, clientCertificate: X509Certificate? = null) {
+    protected suspend fun handle(client: SocketChannel, channel: ByteChannel, watch: ConnectionWatch, clientCertificate: X509Certificate? = null) {
         client.setOption(StandardSocketOptions.TCP_NODELAY, true)
 
         val remoteAddress = try {
@@ -145,7 +155,7 @@ internal abstract class SocketEndPoint(
             null
         }
 
-        val context = ConnectionContext(server, this, client, channel, clientCertificate, remoteAddress)
+        val context = ConnectionContext(server, this, client, channel, watch, clientCertificate, remoteAddress)
 
         context.clientHandler.run()
     }

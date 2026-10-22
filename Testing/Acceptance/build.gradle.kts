@@ -60,7 +60,7 @@ tasks.test {
 }
 
 // access to internals of modules, like InternalsVisibleTo("GenHTTP.Testing.Acceptance") upstream
-val friends = listOf(":modules-reflection", ":modules-websockets")
+val friends = listOf(":engine-internal", ":modules-reflection", ":modules-websockets")
 
 tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
     for (friend in friends) {

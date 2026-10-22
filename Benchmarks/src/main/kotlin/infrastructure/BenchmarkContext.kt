@@ -4,6 +4,7 @@ import org.genhttp.api.content.Handler
 import org.genhttp.api.infrastructure.EndPoint
 import org.genhttp.api.infrastructure.HttpProtocols
 import org.genhttp.engine.internal.context.ConnectionContext
+import org.genhttp.engine.internal.infrastructure.ConnectionWatchdog
 import org.genhttp.glyph11.parser.ParserLimits
 import org.genhttp.glyph11.parser.ultrahardened.UltraHardenedParser
 
@@ -26,7 +27,9 @@ class BenchmarkContext(request: String, handler: Handler) {
 
     private val server = BenchmarkServer(handler)
 
-    private val context = ConnectionContext(server, BenchmarkEndPoint, channel, channel, null, InetAddress.getLoopbackAddress())
+    private val context = ConnectionContext(
+        server, BenchmarkEndPoint, channel, channel, ConnectionWatchdog().register(channel), null, InetAddress.getLoopbackAddress()
+    )
 
     suspend fun prepare() {
         server.handler.prepare(server)

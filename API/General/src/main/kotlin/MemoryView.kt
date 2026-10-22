@@ -12,12 +12,18 @@ import java.nio.ByteBuffer
  *
  * Views compare ASCII case-insensitively, have a stable case-insensitive hash and are only equal
  * to views of the same type. The view does not copy the memory it has been created from.
+ *
+ * GenHTTP declares the views as structs. The JVM has no user-defined value types, so views are objects
+ * holding a single read-only buffer; the hash is computed on first use.
  */
 public abstract class MemoryView {
 
     private val value: ByteBuffer
 
-    private val hash: Int
+    // computed lazily like String.hashCode(), racy but benign as the result is always the same
+    private var hash: Int = 0
+
+    private var hashIsZero: Boolean = false
 
     // region Initialization
 
@@ -28,8 +34,10 @@ public abstract class MemoryView {
      * @param value The memory to create a view on
      */
     protected constructor(value: ByteBuffer) {
-        this.value = value.slice().asReadOnlyBuffer()
-        this.hash = computeHash(this.value)
+        val slice = value.slice()
+
+        // views sliced from request data are read-only already
+        this.value = if (slice.isReadOnly) slice else slice.asReadOnlyBuffer()
     }
 
     /**
@@ -37,7 +45,9 @@ public abstract class MemoryView {
      *
      * @param value The memory to create a view on
      */
-    protected constructor(value: ByteArray) : this(ByteBuffer.wrap(value))
+    protected constructor(value: ByteArray) {
+        this.value = ByteBuffer.wrap(value).asReadOnlyBuffer()
+    }
 
     /**
      * Creates a view from the given string by converting each character into a single byte.
@@ -89,12 +99,27 @@ public abstract class MemoryView {
 
         other as MemoryView
 
-        if (hash != other.hash) return false
+        // only compare hashes that are known already, computing them would read the content anyway
+        if (hash != 0 && other.hash != 0 && hash != other.hash) return false
 
         return equalsIgnoreCase(value, other.value)
     }
 
-    override fun hashCode(): Int = hash
+    override fun hashCode(): Int {
+        var current = hash
+
+        if (current == 0 && !hashIsZero) {
+            current = computeHash(value)
+
+            if (current == 0) {
+                hashIsZero = true
+            } else {
+                hash = current
+            }
+        }
+
+        return current
+    }
 
     /**
      * Returns the ASCII representation of this view (bytes outside of the ASCII range are rendered as `?`).
@@ -121,14 +146,14 @@ public abstract class MemoryView {
 
         private const val OFFSET = -0x340d631b7bdddcdbL // 14695981039346656037
 
-        private fun fromString(value: String): ByteBuffer {
+        private fun fromString(value: String): ByteArray {
             val bytes = ByteArray(value.length)
 
             for (i in value.indices) {
                 bytes[i] = value[i].code.toByte()
             }
 
-            return ByteBuffer.wrap(bytes)
+            return bytes
         }
 
         private fun normalize(value: Int): Int {

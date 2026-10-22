@@ -23,7 +23,8 @@ import java.util.concurrent.Executors
 /**
  * The server implementation of the internal engine.
  *
- * Connections are handled as coroutines on a dispatcher that runs every task on a new virtual thread.
+ * Connections are handled as coroutines on a dispatcher that runs every task on a new virtual thread. Read timeouts
+ * are enforced by a [ConnectionWatchdog].
  */
 internal class ThreadedServer(private val configuration: ServerConfiguration, override val handler: Handler) : Server {
 
@@ -33,7 +34,9 @@ internal class ThreadedServer(private val configuration: ServerConfiguration, ov
 
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
 
-    private val _endPoints = ServerEndPoints(this, configuration.endPoints)
+    private val watchdog = ConnectionWatchdog()
+
+    private val _endPoints = ServerEndPoints(this, watchdog, configuration.endPoints)
 
     private val _properties = MapPropertyBag()
 
@@ -70,6 +73,7 @@ internal class ThreadedServer(private val configuration: ServerConfiguration, ov
 
     override suspend fun start() {
         prepareHandler()
+        watchdog.start(scope)
         _endPoints.start(scope)
     }
 
@@ -97,7 +101,10 @@ internal class ThreadedServer(private val configuration: ServerConfiguration, ov
 
             _endPoints.close()
 
-            // terminates idle connections waiting for the next request; the executor is not shut down,
+            // terminates idle connections waiting for the next request
+            watchdog.close()
+
+            // stops the watchdog and handlers that are suspended; the executor is not shut down,
             // so cancelled connections can still complete their cleanup (virtual threads are not pooled)
             scope.cancel()
         }

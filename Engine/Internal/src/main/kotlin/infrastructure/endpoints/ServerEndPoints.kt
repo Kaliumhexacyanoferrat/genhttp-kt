@@ -6,6 +6,7 @@ import org.genhttp.api.infrastructure.EndPoint
 import org.genhttp.api.infrastructure.EndPointCollection
 import org.genhttp.api.infrastructure.HttpProtocols
 import org.genhttp.api.infrastructure.Server
+import org.genhttp.engine.internal.infrastructure.ConnectionWatchdog
 import org.genhttp.engine.shared.infrastructure.EndPointConfiguration
 
 /**
@@ -13,10 +14,12 @@ import org.genhttp.engine.shared.infrastructure.EndPointConfiguration
  */
 internal class ServerEndPoints private constructor(
     private val server: Server,
+    private val watchdog: ConnectionWatchdog,
     private val endPoints: MutableList<EndPoint>
 ) : EndPointCollection, List<EndPoint> by endPoints, AutoCloseable {
 
-    constructor(server: Server, configuration: Iterable<EndPointConfiguration>) : this(server, mutableListOf<EndPoint>()) {
+    constructor(server: Server, watchdog: ConnectionWatchdog, configuration: Iterable<EndPointConfiguration>) :
+            this(server, watchdog, mutableListOf<EndPoint>()) {
         for (config in configuration) {
             endPoints.add(build(config))
         }
@@ -34,9 +37,9 @@ internal class ServerEndPoints private constructor(
         }
 
         val security = configuration.security
-            ?: return InsecureEndPoint(server, configuration.address, configuration.port, configuration.dualStack)
+            ?: return InsecureEndPoint(server, watchdog, configuration.address, configuration.port, configuration.dualStack)
 
-        return SecureEndPoint(server, configuration.address, configuration.port, configuration.dualStack, security)
+        return SecureEndPoint(server, watchdog, configuration.address, configuration.port, configuration.dualStack, security)
     }
 
     fun start(scope: CoroutineScope) {

@@ -1,6 +1,8 @@
 package org.genhttp.engine.internal.infrastructure.endpoints
 
 import org.genhttp.api.infrastructure.Server
+import org.genhttp.engine.internal.infrastructure.ConnectionWatch
+import org.genhttp.engine.internal.infrastructure.ConnectionWatchdog
 
 import java.net.InetAddress
 import java.nio.channels.SocketChannel
@@ -8,14 +10,14 @@ import java.nio.channels.SocketChannel
 /**
  * An endpoint serving plain HTTP.
  */
-internal class InsecureEndPoint(server: Server, address: InetAddress?, port: Int, dualStack: Boolean) :
-    SocketEndPoint(server, address, port, dualStack) {
+internal class InsecureEndPoint(server: Server, watchdog: ConnectionWatchdog, address: InetAddress?, port: Int, dualStack: Boolean) :
+    SocketEndPoint(server, watchdog, address, port, dualStack) {
 
     override val secure: Boolean
         get() = false
 
-    override suspend fun accept(client: SocketChannel) {
-        handle(client, client)
+    override suspend fun accept(client: SocketChannel, watch: ConnectionWatch) {
+        handle(client, client, watch)
     }
 
 }

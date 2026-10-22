@@ -125,7 +125,6 @@ public final class org/genhttp/engine/shared/io/ConnectionReader {
 	public final fun consume (I)V
 	public final fun data ()Ljava/nio/ByteBuffer;
 	public final fun fill ()I
-	public final fun fill-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getAvailable ()I
 	public final fun isCompleted ()Z
 	public final fun read ([BII)I
