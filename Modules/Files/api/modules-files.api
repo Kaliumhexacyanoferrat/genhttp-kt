@@ -29,6 +29,7 @@ public final class org/genhttp/modules/files/multi/FileAssetsBuilder : org/genht
 	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
 	public final fun allowPrecompressed ([Lorg/genhttp/api/content/io/CompressionAlgorithm;C)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
 	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun refreshInterval-LRDsOJo (J)Lorg/genhttp/modules/files/multi/FileAssetsBuilder;
 }
 
 public final class org/genhttp/modules/files/multi/FileAssetsHandler : org/genhttp/api/content/Handler {
