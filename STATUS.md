@@ -11,13 +11,13 @@ done.
 | 3  | Engine core                   | done        | Engine (NIO + virtual threads + coroutines, SSLEngine TLS), IO, Pages (Pebble), Conversion (Jackson 3), ErrorHandling, Redirects, Layouting |
 | 4  | Testing & engine acceptance   | done        | 313 acceptance tests green (Engine, Api, IO, Layouting, Redirects, Conversion, ErrorHandling, Compression, Security, ClientCaching); a few IO/Layouting test files wait for unported modules (`pendingTests`) |
 | 5  | Reflection frameworks         | done        | Reflection, Functional, Webservices, Controllers incl. tests (570 acceptance tests green in total) |
-| 6  | API documentation             | in progress | OpenApi ported; ApiBrowsing and the OpenApi tests are being ported |
-| 7  | Cross-cutting modules         | in progress | Authentication, I18n, Inspection ported; DependencyInjection (Koin, see `docs/specs/dependency-injection.md`) and the tests are being ported |
-| 8  | Content modules               | in progress | Files, Archives, DirectoryBrowsing, VirtualHosting ported; StaticWebsites, SinglePageApplications, LoadBalancing and the tests are being ported |
-| 9  | Connection modules            | in progress | Websockets, ServerSentEvents ported; ReverseProxy and the tests are being ported |
-| 10 | Distribution                  | open        | |
-| 11 | Coverage & platforms          | open        | |
-| 12 | API parity pass               | open        | |
+| 6  | API documentation             | done        | OpenApi (swagger-core), ApiBrowsing (Swagger UI, Redoc, Scalar) incl. tests |
+| 7  | Cross-cutting modules         | done        | Authentication, I18n, Inspection, DependencyInjection (Koin, `docs/specs/dependency-injection.md`) incl. tests |
+| 8  | Content modules               | done        | Files, Archives, DirectoryBrowsing, VirtualHosting, StaticWebsites, SinglePageApplications, LoadBalancing incl. tests |
+| 9  | Connection modules            | done        | Websockets, ServerSentEvents, ReverseProxy incl. tests |
+| 10 | Distribution                  | done        | `genhttp-core`/`genhttp-full`, Playground (`./gradlew :playground:run`), Benchmarks (kotlinx-benchmark/JMH, in-memory pipeline), release workflow |
+| 11 | Coverage & platforms          | in progress | 821/821 upstream acceptance tests ported, line coverage 91 % (enforced by `:koverVerify` in CI); CI matrix to be confirmed on all platforms |
+| 12 | API parity pass               | done        | `tools/api_parity.py` (names) and `--signatures` (parameter counts, defaults): 0 differences; intentional ones in `tools/api_parity_exclusions.txt`; CI gate |
 | 13 | Sync readiness                | open        | |
 
 ## Decisions confirmed by the maintainer
@@ -38,17 +38,8 @@ done.
 
 ## Next steps
 
-Agents work in git worktrees (`.claude/worktrees/*`, branches `worktree-agent-*`); merge their branches when done.
-Running when the session ended (check `git branch` for unmerged `worktree-agent-*` branches):
-
-- Modules: ApiBrowsing + SinglePageApplications + StaticWebsites + LoadBalancing (without `proxy(...)`, add it after
-  ReverseProxy is merged); ReverseProxy; DependencyInjection.
-- Tests: Files + Archives + DirectoryBrowsing + VirtualHosting + Inspection + I18n; OpenApi; Websockets;
-  Authentication + ServerSentEvents.
-
-Then: tests of the last modules (ApiBrowsing, SPA, StaticWebsites, ReverseProxy, DependencyInjection, LoadBalancing),
-enable `pendingTests`, stage 10 (packages, playground, benchmarks, release), coverage, API parity pass.
-
-API parity: `python tools/api_parity.py --verbose` lists upstream declarations without Kotlin counterpart (163 on
-first run, many are still unported modules or naming false positives). Triage each: fix the port or add it with a
-reason to `tools/api_parity_exclusions.txt`.
+- Confirm the CI matrix (Linux/Windows/macOS, x64/arm64) is green; fix platform issues.
+- Stage 13: final pass on SYNC.md/CLAUDE.md and the upstream-watch workflow, then a first sync dry run against a newer
+  upstream commit.
+- Optional: raise branch coverage (currently lower than line coverage); additional tests go to the `additional`
+  package (see PORTING.md).
