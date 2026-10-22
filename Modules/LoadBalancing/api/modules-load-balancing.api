@@ -1,0 +1,36 @@
+public final class org/genhttp/modules/loadbalancing/LoadBalancer {
+	public static final field INSTANCE Lorg/genhttp/modules/loadbalancing/LoadBalancer;
+	public final fun create ()Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+}
+
+public final class org/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+	public final fun add (Lorg/genhttp/api/content/HandlerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+	public static synthetic fun add$default (Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;Lorg/genhttp/api/content/HandlerBuilder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun redirect (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+	public static synthetic fun redirect$default (Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerBuilder;
+}
+
+public final class org/genhttp/modules/loadbalancing/provider/LoadBalancerHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/util/List;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/loadbalancing/provider/LoadBalancerRedirectionBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerRedirectionBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun root (Ljava/lang/String;)Lorg/genhttp/modules/loadbalancing/provider/LoadBalancerRedirectionBuilder;
+}
+
+public final class org/genhttp/modules/loadbalancing/provider/LoadBalancerRedirectionHandler : org/genhttp/api/content/Handler {
+	public fun <init> (Ljava/lang/String;)V
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
