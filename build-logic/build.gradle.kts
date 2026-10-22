@@ -8,6 +8,8 @@ dependencies {
     implementation(libs.gradle.dokka)
     implementation(libs.gradle.maven.publish)
     implementation(libs.gradle.serialization)
+    implementation(libs.gradle.allopen)
+    implementation(libs.gradle.benchmark)
 }
 
 dependencies {

@@ -14,6 +14,8 @@ import org.genhttp.engine.shared.types.ConnectionExceptions
 
 import org.slf4j.Logger
 
+import java.io.IOException
+
 import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -137,7 +139,13 @@ internal abstract class SocketEndPoint(
     protected suspend fun handle(client: SocketChannel, channel: ByteChannel, clientCertificate: X509Certificate? = null) {
         client.setOption(StandardSocketOptions.TCP_NODELAY, true)
 
-        val context = ConnectionContext(server, this, client, channel, clientCertificate)
+        val remoteAddress = try {
+            (client.remoteAddress as? InetSocketAddress)?.address
+        } catch (_: IOException) {
+            null
+        }
+
+        val context = ConnectionContext(server, this, client, channel, clientCertificate, remoteAddress)
 
         context.clientHandler.run()
     }

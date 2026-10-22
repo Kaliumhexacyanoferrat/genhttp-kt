@@ -10,23 +10,24 @@ import org.genhttp.engine.shared.types.HttpRequest
 import org.genhttp.engine.shared.types.ResponseHandler
 
 import java.net.InetAddress
-import java.net.InetSocketAddress
 import java.nio.channels.ByteChannel
-import java.nio.channels.SocketChannel
+import java.nio.channels.Channel
 import java.security.cert.X509Certificate
 
 /**
  * The state of a single client connection (`ClientContext` in GenHTTP).
  *
- * @property connection The underlying socket of the connection
+ * @property connection The underlying connection (usually the socket, closed when the connection ends)
  * @property channel The channel used to exchange data (the socket itself or a TLS channel wrapping it)
+ * @property remoteAddress The address of the connected client, if known
  */
 internal class ConnectionContext(
     override val server: Server,
     val endPoint: EndPoint,
-    val connection: SocketChannel,
+    val connection: Channel,
     val channel: ByteChannel,
-    val clientCertificate: X509Certificate?
+    val clientCertificate: X509Certificate?,
+    val remoteAddress: InetAddress?
 ) : ClientContext {
 
     val reader: ConnectionReader = ConnectionReader(channel)
@@ -38,12 +39,5 @@ internal class ConnectionContext(
     val responseHandler: ResponseHandler = ResponseHandler(this)
 
     val clientHandler: ClientHandler = ClientHandler(this)
-
-    val remoteAddress: InetAddress?
-        get() = try {
-            (connection.remoteAddress as? InetSocketAddress)?.address
-        } catch (_: Exception) {
-            null
-        }
 
 }
