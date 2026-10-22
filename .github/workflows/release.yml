@@ -1,0 +1,80 @@
+name: Release
+
+# Publishes all artifacts to Maven Central (Central Portal) with the version derived from upstream.properties
+# (<genhttp.version>.<port.revision>, see SYNC.md), then tags the commit and creates a GitHub release.
+#
+# Required secrets:
+#   MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD  - user token of the Central Portal (namespace org.genhttp)
+#   SIGNING_KEY / SIGNING_KEY_PASSWORD               - ASCII armored GPG private key and its password
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  publish:
+
+    name: Build & Publish Packages
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Determine version
+        id: version
+        run: |
+          upstream=$(grep '^genhttp.version=' upstream.properties | cut -d= -f2)
+          revision=$(grep '^port.revision=' upstream.properties | cut -d= -f2)
+          echo "version=${upstream}.${revision}" >> "$GITHUB_OUTPUT"
+
+      - name: Check that the version has not been released yet
+        run: |
+          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Version ${{ steps.version.outputs.version }} has already been released, increase port.revision in upstream.properties" >&2
+            exit 1
+          fi
+
+      - name: Build & test
+        run: ./gradlew build --console=plain
+
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew publishToMavenCentral --no-configuration-cache --console=plain
+
+      - name: Tag & release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          upstream_commit=$(grep '^genhttp.commit=' upstream.properties | cut -d= -f2)
+
+          git tag "v${version}"
+          git push origin "v${version}"
+
+          gh release create "v${version}" \
+            --title "genhttp-kt ${version}" \
+            --notes "Based on GenHTTP $(grep '^genhttp.version=' upstream.properties | cut -d= -f2) (upstream commit Kaliumhexacyanoferrat/GenHTTP@${upstream_commit}). Artifacts are available on Maven Central (group org.genhttp)."
