@@ -35,9 +35,21 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
       PORTING.md). Changes to Kestrel, ioxide, the ASP.NET Core adapter, `.csproj`/NuGet plumbing and other items
       listed as deviations are not ported, but their *behavioral* intent is checked (e.g. a bug fix in shared engine
       code also applies to the Kotlin engine).
-   2. Port production code and tests together. Ported tests must mirror the upstream tests 1:1.
-   3. Run `./gradlew check` (includes test parity, API dumps and coverage verification).
-   4. Commit with a message that references the upstream commit(s) via trailers:
+   2. Port production code and tests together. Ported tests must mirror the upstream tests 1:1. A new upstream
+      module becomes a Gradle project (`module(...)` in `settings.gradle.kts`, dependency of `Packages/Full` and of
+      `Testing/Acceptance`).
+   3. Refresh the ABI dumps of changed projects (`./gradlew :<project>:updateKotlinAbi`) and review the diff: it must
+      reflect exactly the upstream API change.
+   4. Verify:
+      ```sh
+      ./gradlew build :koverVerify                  # compile, tests, ABI check, coverage >= 90 %
+      python tools/test_parity.py                   # every upstream test has its Kotlin counterpart
+      python tools/api_parity.py --verbose          # every upstream public declaration has its counterpart
+      python tools/api_parity.py --signatures       # parameter counts and default values match
+      ```
+      Intentional differences go to `tools/test_parity_exclusions.txt` / `tools/api_parity_exclusions.txt` with a
+      reason and to the deviation log.
+   5. Commit with a message that references the upstream commit(s) via trailers:
       ```
       Port: <upstream subject>
 
@@ -53,9 +65,11 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
 ## Rules for sync agents
 
 - Never port a change partially without saying so: if something cannot be ported, document it in the commit message
-  and in PORTING.md.
+  and in the deviation log (`docs/DEVIATIONS.md`).
 - Never weaken or delete tests to make a sync pass. If upstream changed a test, change the Kotlin test the same way.
 - Keep the public API identical to upstream in name, parameters, defaults and nullability (after the PORTING.md
-  translation). Run `tools/api-parity` after API changes.
+  translation). Run `python tools/api_parity.py` (with and without `--signatures`) after API changes.
 - Do not refactor unrelated code during a sync; keep diffs reviewable and traceable to upstream commits.
 - Dependency updates of the port are separate commits without `Upstream-Commit` trailers.
+- Changes to upstream benchmarks (`Benchmarks/`) and the playground are ported as well.
+- When delegating to sub-agents, follow the delegation rules in CLAUDE.md and the briefs in `docs/specs/`.
