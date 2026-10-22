@@ -1,0 +1,69 @@
+name: Upstream Watch
+
+# Checks GenHTTP and Glyph11 for commits that have not been ported yet (see SYNC.md and upstream.properties)
+# and keeps an issue labeled "upstream-sync" up to date with the list of pending commits.
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+
+  watch:
+
+    name: Check for upstream changes
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Collect pending commits
+        id: pending
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          report=""
+
+          check() {
+            local repository=$1 commit=$2
+            local commits
+            commits=$(gh api "repos/${repository}/compare/${commit}...HEAD" --jq '.commits[] | "- [`\(.sha[0:8])`](https://github.com/'"${repository}"'/commit/\(.sha)) \(.commit.message | split("\n")[0])"')
+            if [ -n "$commits" ]; then
+              report="${report}### ${repository}"$'\n\n'"${commits}"$'\n\n'
+            fi
+          }
+
+          check "Kaliumhexacyanoferrat/GenHTTP" "$(grep '^genhttp.commit=' upstream.properties | cut -d= -f2)"
+          check "dotnet-web-stack/Glyph11" "$(grep '^glyph11.commit=' upstream.properties | cut -d= -f2)"
+
+          {
+            echo "report<<EOF"
+            echo "$report"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update issue
+        if: steps.pending.outputs.report != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ${{ steps.pending.outputs.report }}
+        run: |
+          body=$(printf "The following upstream commits have not been ported yet. Follow [SYNC.md](../blob/main/SYNC.md) to port them.\n\n%s" "$REPORT")
+
+          gh label create upstream-sync --color AB54FF --description "Upstream changes to be ported" 2>/dev/null || true
+
+          issue=$(gh issue list --label upstream-sync --state open --json number --jq '.[0].number')
+
+          if [ -n "$issue" ]; then
+            gh issue edit "$issue" --body "$body"
+          else
+            gh issue create --title "Port pending upstream changes" --label upstream-sync --body "$body"
+          fi
