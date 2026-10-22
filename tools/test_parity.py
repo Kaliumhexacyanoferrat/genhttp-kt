@@ -110,6 +110,11 @@ def enclosing_class(classes, position):
     return current
 
 
+def dir_key(rel):
+    # directories mirror upstream (lower-cased packages), used to tell apart classes with the same name
+    return re.sub(r"[^a-z0-9]", "", os.path.dirname(rel).lower())
+
+
 def scan_upstream(directory, filter_text):
     tests = {}
     for root, _, files in os.walk(directory):
@@ -129,6 +134,8 @@ def scan_upstream(directory, filter_text):
                 cls = enclosing_class(classes, attr.start())
                 body = body_after(text, method.end())
                 key = normalize(f"{cls}.{method.group(1)}")
+                if key in tests and dir_key(tests[key][1]) != dir_key(rel):
+                    key = key + "@" + dir_key(rel)
                 tests[key] = (f"{cls}.{method.group(1)}", rel, bool(ASSERTION_HINT.search(body)))
     return tests
 
@@ -144,7 +151,9 @@ def scan_kotlin(directory, filter_text):
             rel = os.path.relpath(path, directory)
             text = open(path, encoding="utf-8").read()
             # ignore examples in comments
-            text = re.sub(r"/\*.*?\*/", lambda m: " " * len(m.group(0)), text, flags=re.S)
+            # (string literals are matched first so that e.g. "*/*" does not start a comment)
+            text = re.sub(r'"(?:\\.|[^"\\\n])*"|/\*.*?\*/',
+                          lambda m: m.group(0) if m.group(0).startswith('"') else " " * len(m.group(0)), text, flags=re.S)
             if re.search(r"@Disabled\b|assumeTrue|assumeFalse|Assumptions\.", text):
                 problems.append(f"{rel}: uses @Disabled or assumptions")
             classes = [(m.start(), m.group(1)) for m in KT_CLASS.finditer(text)]
@@ -157,7 +166,9 @@ def scan_kotlin(directory, filter_text):
                 body = body_after(text, fun.end())
                 key = normalize(f"{cls}.{name}")
                 if key in tests and tests[key][1] != rel:
-                    problems.append(f"{rel}: duplicate test {cls}.{name}")
+                    if dir_key(tests[key][1]) == dir_key(rel):
+                        problems.append(f"{rel}: duplicate test {cls}.{name}")
+                    key = key + "@" + dir_key(rel)
                 tests[key] = (f"{cls}.{name}", rel, bool(ASSERTION_HINT.search(body)), body.strip() in ("", "{}", "{ }"))
     return tests, problems
 
@@ -175,6 +186,10 @@ def check_suite(name, filter_text, exclusions):
         if key in exclusions:
             continue
         found = kotlin.get(key)
+        twins = [v for k, v in kotlin.items() if k.split("@")[0] == key.split("@")[0]]
+        if len(twins) > 1:
+            # same-named classes: match the Kotlin test in the mirrored directory
+            found = next((v for v in twins if dir_key(v[1]) == dir_key(rel)), None)
         if not found:
             missing.append(f"{display}  ({rel})")
             continue
@@ -183,7 +198,8 @@ def check_suite(name, filter_text, exclusions):
         elif has_assert and not found[2]:
             problems.append(f"{found[1]}: test {found[0]} has no assertion but upstream does")
 
-    extra = [f"{v[0]}  ({v[1]})" for k, v in kotlin.items() if k not in upstream]
+    upstream_names = {k.split("@")[0] for k in upstream}
+    extra = [f"{v[0]}  ({v[1]})" for k, v in kotlin.items() if k.split("@")[0] not in upstream_names]
     if filter_text:
         extra = []
 

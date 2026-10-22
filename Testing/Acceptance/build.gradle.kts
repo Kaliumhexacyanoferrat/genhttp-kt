@@ -36,6 +36,7 @@ dependencies {
     testImplementation(project(":modules-api-browsing"))
     testImplementation(project(":modules-single-page-applications"))
     testImplementation(project(":modules-static-websites"))
+    testImplementation(project(":modules-dependency-injection"))
     testImplementation(libs.coroutines.test)
 }
 

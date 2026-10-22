@@ -302,3 +302,5 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | LoadBalancing | `PriorityEvaluation` is a typealias `(Request) -> Priority` | Delegates map to function types |
 | Engine | Implementation clashes in Engine/Shared: `ServerHost` → `AbstractServerHost`, `ClientConnection` → `RemoteClientConnection`, `KeyValueList` → `GlyphKeyValueList`, `PropertyBag` → `MapPropertyBag` | The API interfaces use these names (`I` prefix dropped) |
 | Files | `FileAssetsBuilder.refreshInterval(...)` is accepted but has no effect | Upstream it only affects the Ioxide engine |
+| DependencyInjection | Koin replaces Microsoft.Extensions.DependencyInjection (`IServiceProvider` → `Koin`, `IServiceScope` → `Scope`); scoped services are registered in `scope(RequestScope) { scoped { } }`; `ActivatorUtilities` is replaced by an internal activator (primary constructor, parameters resolved by class) | See `docs/specs/dependency-injection.md` |
+| Tests | `IoxideFilesTests` are not ported | They only run on the Ioxide engine upstream |
