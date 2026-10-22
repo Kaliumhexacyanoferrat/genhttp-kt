@@ -30,6 +30,62 @@ public class FormattableFormatter : Formatter {
             UUID::class
         )
 
+        // the JVM classes of the types (primitive and boxed), as comparing classes is cheaper than comparing KClasses
+        val JavaTypes: Set<Class<*>> = Types.flatMapTo(HashSet()) { listOfNotNull(it.javaPrimitiveType, it.javaObjectType) }
+
+        val IntTypes: Set<Class<*>> = setOf(Int::class.javaPrimitiveType!!, Int::class.javaObjectType)
+
+        val LongTypes: Set<Class<*>> = setOf(Long::class.javaPrimitiveType!!, Long::class.javaObjectType)
+
+        /**
+         * Parses a plain decimal number (optional sign, at most 18 digits, surrounded by whitespace) directly from
+         * the given bytes. Returns null for everything else, which is then handled (or rejected) by the regular
+         * parser, so that the behavior does not change.
+         */
+        fun parsePlainNumber(value: ByteString): Long? {
+            val bytes = value.bytes
+
+            var start = bytes.position()
+            var end = bytes.limit()
+
+            while (start < end && isWhitespace(bytes.get(start))) start++
+            while (end > start && isWhitespace(bytes.get(end - 1))) end--
+
+            var negative = false
+
+            if (start < end) {
+                val sign = bytes.get(start)
+
+                if (sign == '-'.code.toByte() || sign == '+'.code.toByte()) {
+                    negative = sign == '-'.code.toByte()
+                    start++
+                }
+            }
+
+            val digits = end - start
+
+            if (digits == 0 || digits > 18) {
+                return null
+            }
+
+            var result = 0L
+
+            for (i in start until end) {
+                val digit = bytes.get(i) - '0'.code.toByte()
+
+                if (digit !in 0..9) {
+                    return null
+                }
+
+                result = result * 10 + digit
+            }
+
+            return if (negative) -result else result
+        }
+
+        // the characters removed by trim() that can be part of a byte string
+        fun isWhitespace(value: Byte): Boolean = value == ' '.code.toByte() || value in 0x09..0x0D || value in 0x1C..0x1F
+
         val FloatingPoint = Regex("[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?")
 
         val Decimal = Regex("[+-]?(\\d+(\\.\\d*)?|\\.\\d+)")
@@ -118,9 +174,21 @@ public class FormattableFormatter : Formatter {
 
     }
 
-    override fun canHandle(type: KClass<*>): Boolean = type in Types
+    override fun canHandle(type: KClass<*>): Boolean = type.java in JavaTypes
 
     override fun read(value: ByteString, type: KClass<*>): Any {
+        val javaType = type.java
+
+        if (javaType in IntTypes) {
+            val number = parsePlainNumber(value)
+
+            if (number != null && number >= Int.MIN_VALUE && number <= Int.MAX_VALUE) {
+                return number.toInt()
+            }
+        } else if (javaType in LongTypes) {
+            parsePlainNumber(value)?.let { return it }
+        }
+
         val text = value.toString().trim()
 
         try {
@@ -148,7 +216,7 @@ public class FormattableFormatter : Formatter {
     override fun write(value: Any, type: KClass<*>): String = format(value)
 
     override fun getContent(value: Any): ResponseContent {
-        if (value::class in Types) {
+        if (value.javaClass in JavaTypes) {
             return FormattableContent(value)
         }
 
