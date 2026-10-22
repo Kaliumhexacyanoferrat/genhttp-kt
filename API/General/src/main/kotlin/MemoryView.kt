@@ -20,7 +20,8 @@ public abstract class MemoryView {
 
     private val value: ByteBuffer
 
-    // computed lazily like String.hashCode(), racy but benign as the result is always the same
+    // computed on first use like String.hashCode() (racy but benign, as the result is always the same) for views on
+    // request data, eagerly for views created from arrays and strings (usually constants, which are compared often)
     private var hash: Int = 0
 
     private var hashIsZero: Boolean = false
@@ -47,6 +48,9 @@ public abstract class MemoryView {
      */
     protected constructor(value: ByteArray) {
         this.value = ByteBuffer.wrap(value).asReadOnlyBuffer()
+
+        hash = computeHash(this.value)
+        hashIsZero = hash == 0
     }
 
     /**
