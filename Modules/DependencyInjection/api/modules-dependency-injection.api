@@ -1,0 +1,52 @@
+public final class org/genhttp/modules/dependencyinjection/Dependent {
+	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/Dependent;
+	public final fun concern (Lkotlin/reflect/KClass;)Lorg/genhttp/api/content/ConcernBuilder;
+	public final fun handler (Lkotlin/reflect/KClass;)Lorg/genhttp/api/content/HandlerBuilder;
+}
+
+public abstract interface class org/genhttp/modules/dependencyinjection/DependentConcern {
+	public abstract fun handle (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/dependencyinjection/DependentController {
+	public static final fun addDependentController (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Lkotlin/reflect/KClass;Ljava/lang/String;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public abstract interface class org/genhttp/modules/dependencyinjection/DependentHandler {
+	public abstract fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/dependencyinjection/DependentInline {
+	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/DependentInline;
+	public final fun create (Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/functional/provider/InlineBuilder;
+	public static synthetic fun create$default (Lorg/genhttp/modules/dependencyinjection/DependentInline;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;ILjava/lang/Object;)Lorg/genhttp/modules/functional/provider/InlineBuilder;
+}
+
+public final class org/genhttp/modules/dependencyinjection/DependentWebservice {
+	public static final fun addDependentService (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Lkotlin/reflect/KClass;Ljava/lang/String;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
+}
+
+public final class org/genhttp/modules/dependencyinjection/Integration {
+	public static final fun addDependencyInjection (Lorg/genhttp/api/infrastructure/ServerHost;Lorg/koin/core/Koin;)Lorg/genhttp/api/infrastructure/ServerHost;
+	public static final fun getRequestScope ()Lorg/koin/core/qualifier/Qualifier;
+	public static final fun getServiceProvider (Lorg/genhttp/api/infrastructure/Server;)Lorg/koin/core/Koin;
+	public static final fun getServiceProvider (Lorg/genhttp/api/protocol/Request;)Lorg/koin/core/Koin;
+	public static final fun getServiceScope (Lorg/genhttp/api/protocol/Request;)Lorg/koin/core/scope/Scope;
+}
+
+public final class org/genhttp/modules/dependencyinjection/infrastructure/DependencyInjector : org/genhttp/modules/reflection/injectors/ParameterInjector {
+	public fun <init> ()V
+	public fun getValue (Lorg/genhttp/api/content/Handler;Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun supports (Lorg/genhttp/api/infrastructure/Server;Lkotlin/reflect/KClass;)Z
+}
+
+public final class org/genhttp/modules/dependencyinjection/infrastructure/HandlerResolver {
+	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/infrastructure/HandlerResolver;
+	public final fun obtain (Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/dependencyinjection/infrastructure/InstanceProvider {
+	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/infrastructure/InstanceProvider;
+	public final fun provide (Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
