@@ -1,0 +1,101 @@
+public final class org/genhttp/modules/openapi/ApiDescription {
+	public static final field INSTANCE Lorg/genhttp/modules/openapi/ApiDescription;
+	public final fun create ()Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+	public final fun with (Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+}
+
+public final class org/genhttp/modules/openapi/ApiDiscovery {
+	public static final field INSTANCE Lorg/genhttp/modules/openapi/ApiDiscovery;
+	public final fun default ()Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder;
+	public final fun empty ()Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder;
+}
+
+public abstract interface class org/genhttp/modules/openapi/ApiExplorer {
+	public abstract fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public abstract fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/Extensions {
+	public static final fun addOpenApi (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public static final fun addOpenApi (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+}
+
+public final class org/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry {
+	public fun <init> (Ljava/util/List;)V
+	public final fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder : org/genhttp/api/infrastructure/Builder {
+	public fun <init> ()V
+	public final fun add (Lorg/genhttp/modules/openapi/ApiExplorer;)Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistryBuilder;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;
+}
+
+public final class org/genhttp/modules/openapi/discovery/ConcernExplorer : org/genhttp/modules/openapi/ApiExplorer {
+	public fun <init> ()V
+	public fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/discovery/InheritedDocumentation {
+	public static final field Companion Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation$Companion;
+	public final fun getDocumentation (Lorg/genhttp/api/protocol/RequestMethod;)Ljava/util/List;
+	public final fun push (Lorg/genhttp/api/content/services/DocumentedConcern;)Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;
+}
+
+public final class org/genhttp/modules/openapi/discovery/InheritedDocumentation$Companion {
+	public final fun getEmpty ()Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;
+}
+
+public final class org/genhttp/modules/openapi/discovery/LayoutExplorer : org/genhttp/modules/openapi/ApiExplorer {
+	public fun <init> ()V
+	public fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/discovery/MethodCollectionExplorer : org/genhttp/modules/openapi/ApiExplorer {
+	public fun <init> ()V
+	public fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/discovery/MethodHandlerExplorer : org/genhttp/modules/openapi/ApiExplorer {
+	public fun <init> ()V
+	public fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/discovery/OpenApiExtensions {
+	public static final fun buildPath (Ljava/lang/String;Ljava/util/List;Z)Ljava/lang/String;
+	public static final fun getPathItem (Lio/swagger/v3/oas/models/OpenAPI;Ljava/util/List;Lorg/genhttp/modules/reflection/operations/Operation;)Lio/swagger/v3/oas/models/PathItem;
+	public static final fun mightBeNull (Lkotlin/reflect/KType;)Z
+}
+
+public final class org/genhttp/modules/openapi/discovery/SchemaManager {
+	public final fun getOrCreateSchema (Lkotlin/reflect/KClass;)Lio/swagger/v3/oas/models/media/Schema;
+	public final fun getOrCreateSchema (Lkotlin/reflect/KType;)Lio/swagger/v3/oas/models/media/Schema;
+}
+
+public final class org/genhttp/modules/openapi/discovery/ServiceExplorer : org/genhttp/modules/openapi/ApiExplorer {
+	public fun <init> ()V
+	public fun canExplore (Lorg/genhttp/api/content/Handler;)Z
+	public fun explore (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/content/Handler;Ljava/util/List;Lio/swagger/v3/oas/models/OpenAPI;Lorg/genhttp/modules/openapi/discovery/SchemaManager;Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/handler/OpenApiConcern : org/genhttp/api/content/Concern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;ZLkotlin/jvm/functions/Function2;)V
+	public fun getContent ()Lorg/genhttp/api/content/Handler;
+	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/genhttp/modules/openapi/handler/OpenApiConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+	public fun <init> (Lorg/genhttp/modules/openapi/discovery/ApiDiscoveryRegistry;)V
+	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public final fun caching (Z)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+	public final fun postProcessor (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+	public final fun title (Ljava/lang/String;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+	public final fun version (Ljava/lang/String;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+}
+
