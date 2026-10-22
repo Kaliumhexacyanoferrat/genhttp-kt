@@ -10,11 +10,11 @@ done.
 | 2  | API                           | done        | Complete port, ABI dump in `API/General/api/api.api`; API tests are ported with the acceptance suite in stage 4 |
 | 3  | Engine core                   | done        | Engine (NIO + virtual threads + coroutines, SSLEngine TLS), IO, Pages (Pebble), Conversion (Jackson 3), ErrorHandling, Redirects, Layouting |
 | 4  | Testing & engine acceptance   | done        | 313 acceptance tests green (Engine, Api, IO, Layouting, Redirects, Conversion, ErrorHandling, Compression, Security, ClientCaching); a few IO/Layouting test files wait for unported modules (`pendingTests`) |
-| 5  | Reflection frameworks         | in progress | Reflection, Functional, Webservices, Controllers ported; their tests are being ported by agents in worktrees |
-| 6  | API documentation             | open        | |
-| 7  | Cross-cutting modules         | open        | |
-| 8  | Content modules               | open        | |
-| 9  | Connection modules            | open        | |
+| 5  | Reflection frameworks         | done        | Reflection, Functional, Webservices, Controllers incl. tests (570 acceptance tests green in total) |
+| 6  | API documentation             | in progress | OpenApi ported; ApiBrowsing and the OpenApi tests are being ported |
+| 7  | Cross-cutting modules         | in progress | Authentication, I18n, Inspection ported; DependencyInjection (Koin, see `docs/specs/dependency-injection.md`) and the tests are being ported |
+| 8  | Content modules               | in progress | Files, Archives, DirectoryBrowsing, VirtualHosting ported; StaticWebsites, SinglePageApplications, LoadBalancing and the tests are being ported |
+| 9  | Connection modules            | in progress | Websockets, ServerSentEvents ported; ReverseProxy and the tests are being ported |
 | 10 | Distribution                  | open        | |
 | 11 | Coverage & platforms          | open        | |
 | 12 | API parity pass               | open        | |
@@ -41,9 +41,10 @@ done.
 Agents work in git worktrees (`.claude/worktrees/*`, branches `worktree-agent-*`); merge their branches when done.
 Running when the session ended (check `git branch` for unmerged `worktree-agent-*` branches):
 
-- Tests: Reflection + Functional, Webservices + Controllers (+ enabling ProtobufTests).
-- Modules: Websockets; OpenApi; Files + Archives + DirectoryBrowsing + VirtualHosting; I18n + Inspection +
-  ServerSentEvents + Authentication.
+- Modules: ApiBrowsing + SinglePageApplications + StaticWebsites + LoadBalancing (without `proxy(...)`, add it after
+  ReverseProxy is merged); ReverseProxy; DependencyInjection.
+- Tests: Files + Archives + DirectoryBrowsing + VirtualHosting + Inspection + I18n; OpenApi; Websockets;
+  Authentication + ServerSentEvents.
 
-Then: ApiBrowsing, SinglePageApplications, StaticWebsites, ReverseProxy, DependencyInjection, LoadBalancing (Gradle
-projects already exist), the tests of all these modules, then stage 10 (packages, playground, benchmarks, release).
+Then: tests of the last modules (ApiBrowsing, SPA, StaticWebsites, ReverseProxy, DependencyInjection, LoadBalancing),
+enable `pendingTests`, stage 10 (packages, playground, benchmarks, release), coverage, API parity pass.
