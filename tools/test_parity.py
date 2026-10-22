@@ -31,7 +31,7 @@ SUITES = {
                    os.path.join(ROOT, "Testing", "Acceptance", "src", "test", "kotlin")),
 }
 
-# upstream folders that are intentionally not ported (see PORTING.md deviation log)
+# upstream folders that are intentionally not ported (see docs/DEVIATIONS.md)
 EXCLUDED_UPSTREAM = [
     os.path.join("Engine", "Kestrel"),
     os.path.join("Engine", "Ioxide"),
@@ -149,7 +149,7 @@ def scan_kotlin(directory, filter_text):
                 continue
             path = os.path.join(root, file)
             rel = os.path.relpath(path, directory)
-            # tests without upstream counterpart (see PORTING.md)
+            # tests without upstream counterpart (see docs/PORTING.md)
             if rel.replace(os.sep, "/").startswith("additional/"):
                 continue
             text = open(path, encoding="utf-8").read()

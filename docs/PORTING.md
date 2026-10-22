@@ -241,7 +241,7 @@ expects classpath resources to behave:
 - Acceptance tests (`Testing/Acceptance`) are the primary test suite, exactly like upstream. Unit tests only where
   upstream has them (Glyph11) or where acceptance tests cannot reach code.
 - Each upstream test class becomes a Kotlin class with the same name in the mirrored package; each test method keeps
-  its name in camelCase (`TestBuilder` → `testBuilder`). `tools/test-parity` verifies this mechanically.
+  its name in camelCase (`TestBuilder` → `testBuilder`). `tools/test_parity.py` verifies this mechanically.
 - `[MultiEngineTest]` → `@MultiEngineTest` (parameterized over `ServerEngine`), `[MultiEngineFrameworkTest]` →
   `@MultiEngineFrameworkTest` (engine × `ExecutionMode`).
 - Tests are never weakened to make an implementation pass. A test that cannot be ported 1:1 for a platform reason is
@@ -252,5 +252,5 @@ expects classpath resources to behave:
 
 ## Deviation log
 
-Every deviation from upstream (API or behavior) is recorded in [docs/DEVIATIONS.md](docs/DEVIATIONS.md). Search it
+Every deviation from upstream (API or behavior) is recorded in [DEVIATIONS.md](DEVIATIONS.md). Search it
 (`grep -n "<Module>" docs/DEVIATIONS.md`) instead of reading it as a whole.

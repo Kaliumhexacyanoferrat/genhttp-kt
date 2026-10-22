@@ -1,17 +1,11 @@
 # genhttp-kt
 
-genhttp-kt is a lightweight, modular web server for Kotlin with a strong focus on developer experience. It is a port of
-the [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP) web server to modern Kotlin and the JVM, allowing
-developers to quickly create web services and concentrate on the functionality rather than on configuration files or
-complex concepts.
+genhttp-kt is a lightweight, modular web server for Kotlin with a strong focus on developer experience. It allows
+developers to quickly create web services on the JVM and concentrate on the functionality rather than on configuration
+files or complex concepts. genhttp-kt is the Kotlin port of [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP)
+(see [About the Port](#about-the-port)).
 
-> [!NOTE]
-> genhttp-kt is an automated port of GenHTTP, generated and maintained by [Claude](https://claude.ai) as a proof of
-> concept. GenHTTP is the source of truth: changes are ported from upstream by an agent following the rules in
-> [SYNC.md](SYNC.md). The public API mirrors GenHTTP, so the [GenHTTP documentation](https://genhttp.org/documentation/)
-> applies to this project as well.
-
-[![Build](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml/badge.svg)](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml) [![Upstream](https://img.shields.io/badge/upstream-GenHTTP-AB54FF)](https://github.com/Kaliumhexacyanoferrat/GenHTTP) [![View - Documentation](https://img.shields.io/badge/view-Documentation-AB54FF)](https://genhttp.org/documentation/) [![Discord](https://discordapp.com/api/guilds/1177529388229734410/widget.png?style=shield)](https://discord.gg/PRkwKrnrB4)
+[![Build](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml/badge.svg)](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml) [![View - Documentation](https://img.shields.io/badge/view-Documentation-AB54FF)](https://genhttp.org/documentation/) [![Discord](https://discordapp.com/api/guilds/1177529388229734410/widget.png?style=shield)](https://discord.gg/PRkwKrnrB4)
 
 ## Getting Started
 
@@ -61,39 +55,18 @@ Running this snippet will provide the following endpoints:
 If you only need the engine and the basic modules (IO, layouting and best practices), depend on `genhttp-core` instead
 and add the modules you need individually (`genhttp-modules-<name>`).
 
-## Coming from GenHTTP
-
-Code written for GenHTTP translates mechanically:
-
-| GenHTTP (C#)                                   | genhttp-kt (Kotlin)                                 |
-|------------------------------------------------|-----------------------------------------------------|
-| `IHandler`, `IRequest`, `IResponseBuilder`     | `Handler`, `Request`, `ResponseBuilder`             |
-| `ValueTask<IResponse?> HandleAsync(...)`       | `suspend fun handle(...): Response?`                |
-| `Layout.Create().Add("api", api)`              | `Layout.create().add("api", api)`                   |
-| `.Get((int a, int b) => a + b)`                | `get { a: Int, b: Int -> a + b }`                   |
-| `[ResourceMethod(RequestMethod.Post)]`         | `@ResourceMethod(Method.Post)`                      |
-| `Resource.FromAssembly("index.html")`          | `Resource.fromClasspath("index.html")`              |
-| `Stream`                                       | `InputStream` / `OutputStream`                      |
-
-[PORTING.md](PORTING.md) contains the complete mapping, [docs/DEVIATIONS.md](docs/DEVIATIONS.md) lists every place
-where the port intentionally differs.
-
 ## Samples
 
 The [playground](./Playground/) project provides a quick starting point to view sample code. See
-[the GenHTTP documentation](https://genhttp.org/documentation/content/) for all available capabilities.
-
-## Engine
-
-genhttp-kt ships with its own HTTP/1.1 engine, a port of GenHTTP's internal engine. It runs every connection as a
-coroutine on virtual threads, uses NIO channels for I/O and parses requests with a hardened parser ported from
-[Glyph11](https://github.com/dotnet-web-stack/Glyph11). Modules are engine-independent, exactly like in GenHTTP.
+[the GenHTTP documentation](https://genhttp.org/documentation/content/) for all available capabilities. The
+documentation uses C#, see [Coming from GenHTTP](docs/PORT.md#coming-from-genhttp) for how its samples translate to
+Kotlin.
 
 ## Support
 
 If you encounter issues implementing your application, feel free to
-[join the GenHTTP Discord community](https://discord.gg/PRkwKrnrB4) to get help. Issues specific to the Kotlin port can
-be reported in [this repository](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/issues).
+[join the GenHTTP Discord community](https://discord.gg/PRkwKrnrB4) to get help. Issues specific to genhttp-kt can be
+reported in [this repository](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/issues).
 
 ## Building the Server
 
@@ -107,10 +80,20 @@ cd genhttp-kt
 
 This will build the playground project with all the server dependencies and launch the server process on port 8080.
 
-## Versioning
+## About the Port
 
-Versions follow GenHTTP: `11.1.0.0` is the first release of genhttp-kt based on GenHTTP `11.1.0`, `11.1.0.1` would be
-a port-only release on the same upstream version. See [SYNC.md](SYNC.md) for details.
+genhttp-kt is an automated port of GenHTTP, generated and maintained by [Claude](https://claude.ai) as a proof of
+concept: can a framework be kept in sync across ecosystems by agents? GenHTTP stays the source of truth and genhttp-kt
+follows it commit by commit. The public API and behavior mirror GenHTTP, expressed in idiomatic Kotlin (coroutines,
+NIO and virtual threads), so the [GenHTTP documentation](https://genhttp.org/documentation/) applies to this project
+as well.
+
+Versions follow GenHTTP: `11.1.0.0` is based on GenHTTP `11.1.0`, the last component counts port-only releases. Features
+and behavioral changes are contributed to GenHTTP first and reach genhttp-kt with the next sync (see
+[CONTRIBUTING.md](CONTRIBUTING.md)).
+
+[docs/PORT.md](docs/PORT.md) describes how C# translates to Kotlin, how the engine works, how the port is kept in sync
+and verified, and where it intentionally differs from GenHTTP.
 
 ## Thanks
 

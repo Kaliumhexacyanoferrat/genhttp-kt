@@ -9,7 +9,7 @@ source of truth for the public API and the behavior of the server. This has some
 
 - **Features and behavioral changes** that are not specific to Kotlin or the JVM should be contributed to
   [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP) first. They will then be ported to genhttp-kt by the
-  regular synchronization (see [SYNC.md](SYNC.md)).
+  regular synchronization (see [docs/SYNC.md](docs/SYNC.md)).
 - **Port-specific contributions** are welcome here, for example bugs that only exist in the Kotlin port, improvements
   of the Kotlin/JVM integration (coroutines, NIO, Gradle, Maven Central publishing) or better Kotlin idioms that do not
   change the API surface.
@@ -33,7 +33,7 @@ For a pull request to be merged, the following rules need to be fulfilled:
 - The test coverage does not drop below 90 %
 - Public API declarations are documented (KDoc) and the ABI dumps (`api/*.api`) are updated (`./gradlew updateKotlinAbi`)
 - `Handler` and `Concern` instances can be created using a builder
-- The changes follow the rules in [PORTING.md](PORTING.md); deviations from GenHTTP are documented in the [deviation log](docs/DEVIATIONS.md)
+- The changes follow the rules in [docs/PORTING.md](docs/PORTING.md); deviations from GenHTTP are documented in the [deviation log](docs/DEVIATIONS.md)
 - Architecture principles as described in the following section have not been violated
 
 ## Project Structure

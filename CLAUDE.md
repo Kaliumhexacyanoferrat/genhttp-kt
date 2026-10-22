@@ -2,15 +2,16 @@
 
 Guidance for agents working on genhttp-kt, the Kotlin port of [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP).
 
-**Read first:** [STATUS.md](STATUS.md) (where the work stands), [PORTING.md](PORTING.md) (how C# maps to Kotlin —
-mandatory), [SYNC.md](SYNC.md) (how upstream changes are ported). The initial port follows [PLAN.md](PLAN.md).
+**Read first:** [docs/PORTING.md](docs/PORTING.md) (how C# maps to Kotlin — mandatory), [docs/SYNC.md](docs/SYNC.md)
+(how upstream changes are ported). [upstream.properties](upstream.properties) records the last ported upstream commits,
+[docs/PORT.md](docs/PORT.md) gives an overview of the port.
 
 ## Why this project exists
 
 genhttp-kt is an automated port of GenHTTP to Kotlin, created by Claude as a proof of concept. It answers the question
 whether a framework can be kept in sync across ecosystems by agents: GenHTTP stays the source of truth, genhttp-kt
 follows it commit by commit. The port keeps GenHTTP's public API and behavior 1:1 while being idiomatic, modern Kotlin
-(coroutines, NIO, virtual threads). See the philosophy section of PORTING.md.
+(coroutines, NIO, virtual threads). See the philosophy section of docs/PORTING.md.
 
 ## Commands
 
@@ -41,7 +42,7 @@ Same layering as GenHTTP, enforced by Gradle dependencies:
 
 ## Rules
 
-- **Follow PORTING.md.** Naming (no `I` prefix, no `Async` suffix), type mapping, fluent builders, reflection approach.
+- **Follow docs/PORTING.md.** Naming (no `I` prefix, no `Async` suffix), type mapping, fluent builders, reflection approach.
 - **API parity is the top priority.** Every public type and member of upstream exists here with the translated name,
   same parameters, defaults and nullability. When unsure, read the upstream source.
 - **Tests mirror upstream 1:1** (same class and method names, same assertions). Never weaken, skip or delete a test to
@@ -52,7 +53,7 @@ Same layering as GenHTTP, enforced by Gradle dependencies:
   exposes publicly stay public.
 - Keep `api/*.api` dumps in sync (`./gradlew updateKotlinAbi`) and review the diff — it is the public surface.
 - Every deviation from upstream in spirit or behavior is added to the deviation log ([docs/DEVIATIONS.md](docs/DEVIATIONS.md)).
-- Commits reference upstream commits with `Upstream-Commit:` trailers when porting upstream changes (see SYNC.md).
+- Commits reference upstream commits with `Upstream-Commit:` trailers when porting upstream changes (see docs/SYNC.md).
 
 ## Delegating to sub-agents
 
@@ -61,4 +62,4 @@ When the lead session delegates module work:
 1. One agent ports the upstream tests only; another implements the module and must not modify test files.
 2. The lead verifies `git diff --stat` (no test changes in implementation work), runs `python tools/test_parity.py`,
    the full build, and reviews production diffs.
-3. Agents get the upstream file list, the relevant PORTING.md rules and the exact target paths/packages.
+3. Agents get the upstream file list, the relevant docs/PORTING.md rules and the exact target paths/packages.

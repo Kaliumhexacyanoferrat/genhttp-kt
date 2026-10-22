@@ -4,12 +4,12 @@ You port GenHTTP modules (C#) to Kotlin for genhttp-kt. Quality bar: idiomatic m
 mirror upstream 1:1 (every public type, function, property, parameter, default value and nullability) after applying
 the translation rules.
 
-- Repository: `C:\Work\Projects\GenHTTP\genhttp-kt` (Gradle wrapper, Kotlin 2.4.21, JDK 25, explicitApi, warnings are errors)
-- Upstream: `C:\Work\Projects\GenHTTP\GenHTTP` (ignore `bin`/`obj`)
+- Repository: this checkout (Gradle wrapper, Kotlin 2.4.21, JDK 25, explicitApi, warnings are errors)
+- Upstream: `../GenHTTP` (ignore `bin`/`obj`)
 
 ## Read first (mandatory)
 
-1. `PORTING.md` — the porting rulebook (naming, type mapping, fluent builders, classpath, files/JvmName rule).
+1. `docs/PORTING.md` — the porting rulebook (naming, type mapping, fluent builders, classpath, files/JvmName rule).
 2. The ported API: `API/General/src/main/kotlin` (ABI summary in `API/General/api/api.api`).
 3. The ported modules your module depends on (their `src/main/kotlin` and `api/*.api`), e.g. `Modules/IO`.
 

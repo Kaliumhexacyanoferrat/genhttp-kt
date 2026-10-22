@@ -29,7 +29,7 @@ class ResourceTreeTests {
     fun testByAssembly() = test {
         // the root of the classpath takes the place of the executing assembly; unlike an assembly, the classpath
         // root merges all roots of the test runtime (classes, resources, ...), so instead of exactly one node
-        // (the "Resources" folder of the assembly) the embedded "Resources" folder must be found (see PORTING.md)
+        // (the "Resources" folder of the assembly) the embedded "Resources" folder must be found (see docs/DEVIATIONS.md)
         val tree = ResourceTree.fromClasspath("").build()
 
         assertEquals(1, tree.getNodes().count { it.name == "Resources" })

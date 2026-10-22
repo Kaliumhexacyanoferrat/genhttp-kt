@@ -1,6 +1,6 @@
 name: Upstream Watch
 
-# Checks GenHTTP and Glyph11 for commits that have not been ported yet (see SYNC.md and upstream.properties)
+# Checks GenHTTP and Glyph11 for commits that have not been ported yet (see docs/SYNC.md and upstream.properties)
 # and keeps an issue labeled "upstream-sync" up to date with the list of pending commits.
 
 on:
@@ -56,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPORT: ${{ steps.pending.outputs.report }}
         run: |
-          body=$(printf "The following upstream commits have not been ported yet. Follow [SYNC.md](../blob/main/SYNC.md) to port them.\n\n%s" "$REPORT")
+          body=$(printf "The following upstream commits have not been ported yet. Follow [SYNC.md](../blob/main/docs/SYNC.md) to port them.\n\n%s" "$REPORT")
 
           gh label create upstream-sync --color AB54FF --description "Upstream changes to be ported" 2>/dev/null || true
 

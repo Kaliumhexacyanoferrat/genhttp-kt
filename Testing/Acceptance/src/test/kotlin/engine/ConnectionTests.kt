@@ -59,7 +59,7 @@ class ConnectionTests {
 
         TestHost.run(handler, engine = engine).use { runner ->
             // the JDK client refuses 101 responses to requests that did not ask for an upgrade, so read the
-            // response header from a raw connection (see PORTING.md)
+            // response header from a raw connection (see docs/DEVIATIONS.md)
             val response = rawHeader(runner.port)
 
             assertEquals(ResponseStatus.SwitchingProtocols.code, response.first)

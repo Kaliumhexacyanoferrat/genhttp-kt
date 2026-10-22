@@ -12,7 +12,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | I/O | `Stream` → `InputStream`/`OutputStream`, `IBufferWriter` → `WritableByteChannel`, `PipeReader` → `InputStream` | JVM standard types, usable from coroutines because connections run on virtual threads |
 | Memory | `ReadOnlyMemory<byte>` → read-only `ByteBuffer` | JDK standard memory view |
 | Certificates | `X509Certificate2` → `KeyStore.PrivateKeyEntry`; .NET TLS enums replaced by small API enums | The JDK separates keys and certificates |
-| Reflection | Roslyn code generation replaced by kotlin-reflect; inline handlers take suspend lambdas or function references | See [Reflection](#reflection) |
+| Reflection | Roslyn code generation replaced by kotlin-reflect; inline handlers take suspend lambdas or function references | See [Reflection](PORTING.md#reflection) |
 | Reflection | Parameter default values are not readable; optional parameters are omitted instead | kotlin-reflect limitation |
 | Resources | `FromAssembly` → `fromClasspath` | No assemblies on the JVM |
 | Templates | Cottle syntax replaced by Pebble syntax for `Renderer.from(...)` templates | No Cottle implementation on the JVM |
@@ -53,7 +53,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | LoadBalancing | `PriorityEvaluation` is a typealias `(Request) -> Priority` | Delegates map to function types |
 | Engine | Implementation clashes in Engine/Shared: `ServerHost` → `AbstractServerHost`, `ClientConnection` → `RemoteClientConnection`, `KeyValueList` → `GlyphKeyValueList`, `PropertyBag` → `MapPropertyBag` | The API interfaces use these names (`I` prefix dropped) |
 | Files | `FileAssetsBuilder.refreshInterval(...)` is accepted but has no effect | Upstream it only affects the Ioxide engine |
-| DependencyInjection | Koin replaces Microsoft.Extensions.DependencyInjection (`IServiceProvider` → `Koin`, `IServiceScope` → `Scope`); scoped services are registered in `scope(RequestScope) { scoped { } }`; `ActivatorUtilities` is replaced by an internal activator (primary constructor, parameters resolved by class) | See `docs/specs/dependency-injection.md` |
+| DependencyInjection | Koin replaces Microsoft.Extensions.DependencyInjection (`IServiceProvider` → `Koin`, `IServiceScope` → `Scope`); scoped services are registered in `scope(RequestScope) { scoped { } }`; `ActivatorUtilities` is replaced by an internal activator (primary constructor, parameters resolved by class) | See [specs/dependency-injection.md](specs/dependency-injection.md) |
 | Tests | `IoxideFilesTests` are not ported | They only run on the Ioxide engine upstream |
 | ReverseProxy | The JDK `HttpClient` replaces `HttpClient`/`SocketsHttpHandler`: `adjustHandler` takes `(HttpClient.Builder) -> Unit`, `adjustClient` runs on the built client; the read timeout is applied per request (`readTimeout` parameter on `ReverseProxyProvider`/`HttpProxy`) | The JDK client is immutable and has no handler type |
 | ReverseProxy | `Expect`, `Transfer-Encoding` and `Content-Length` request headers are not copied (the body framing is derived from the body publisher); the JDK client adds a `User-Agent` if the client sent none | Restricted headers of the JDK client |

@@ -1,7 +1,7 @@
 name: Release
 
 # Publishes all artifacts to Maven Central (Central Portal) with the version derived from upstream.properties
-# (<genhttp.version>.<port.revision>, see SYNC.md), then tags the commit and creates a GitHub release.
+# (<genhttp.version>.<port.revision>, see docs/SYNC.md), then tags the commit and creates a GitHub release.
 #
 # Required secrets:
 #   MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD  - user token of the Central Portal (namespace org.genhttp)

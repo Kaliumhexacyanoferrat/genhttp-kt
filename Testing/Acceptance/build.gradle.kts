@@ -42,7 +42,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
 }
 
-// tests that depend on modules which have not been ported yet (see STATUS.md)
+// tests that depend on modules which have not been ported yet
 val pendingTests = listOf<String>()
 
 sourceSets.test {

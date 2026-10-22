@@ -87,7 +87,7 @@ class BindingTests {
     /**
      * Checks whether the server can be reached via the given address. The JDK cannot create IPv6-only sockets,
      * so the engine accepts IPv4 connections on such endpoints at the TCP level but closes them immediately.
-     * Therefore, this check requires the server to actually answer a request (see PORTING.md).
+     * Therefore, this check requires the server to actually answer a request (see docs/DEVIATIONS.md).
      */
     private fun canConnect(address: InetAddress, port: Int, timeoutMs: Int = 500): Boolean {
         try {

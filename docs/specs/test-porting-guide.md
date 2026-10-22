@@ -1,8 +1,7 @@
 # Porting acceptance tests
 
-Upstream: `C:\Work\Projects\GenHTTP\GenHTTP\Testing\Acceptance` (MSTest). Target:
-`C:\Work\Projects\GenHTTP\genhttp-kt\Testing\Acceptance\src\test\kotlin` (JUnit 6 + kotlin.test), Gradle project
-`:testing-acceptance`.
+Upstream: `../GenHTTP/Testing/Acceptance` (MSTest). Target: `Testing/Acceptance/src/test/kotlin`
+(JUnit 6 + kotlin.test), Gradle project `:testing-acceptance`.
 
 ## Hard rules
 
@@ -65,7 +64,7 @@ Upstream: `C:\Work\Projects\GenHTTP\GenHTTP\Testing\Acceptance` (MSTest). Target
 | `Inline.Create().Get((int a) => ...)`                                | `Inline.create().get { a: Int -> ... }` (suspend lambdas)                  |
 | `ServerEngine.Kestrel` / `Ioxide` specific branches                  | drop (only the internal engine exists); keep the generic part              |
 
-API naming follows PORTING.md (no `I` prefix, camelCase, `Async` dropped, companion factories such as
+API naming follows docs/PORTING.md (no `I` prefix, camelCase, `Async` dropped, companion factories such as
 `Resource.fromString`, `Handler.from`, `Content.from`, fluent builders). Read the ported production code of the module
 under test (`src/main/kotlin` and `api/*.api`) to find the exact Kotlin names.
 
