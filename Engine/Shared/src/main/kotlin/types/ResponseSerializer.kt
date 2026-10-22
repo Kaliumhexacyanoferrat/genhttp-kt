@@ -44,12 +44,12 @@ public object ResponseSerializer {
         }
 
         if (isUpgrade) {
-            writer.writeAscii("Connection: Upgrade\r\n")
+            writer.write(ConnectionUpgrade)
         } else if (isHttp10) {
-            writer.writeAscii(if (keepAlive) "Connection: Keep-Alive\r\n" else "Connection: Close\r\n")
+            writer.write(if (keepAlive) ConnectionKeepAlive else ConnectionClose)
         } else if (!keepAlive) {
             // HTTP/1.1 connections are persistent by default so we do not need to send a Keep-Alive header
-            writer.writeAscii("Connection: Close\r\n")
+            writer.write(ConnectionClose)
         }
 
         val content = response.content
@@ -58,30 +58,30 @@ public object ResponseSerializer {
             val type = content.type
 
             if (type != null) {
-                writer.writeAscii("Content-Type: ")
+                writer.write(ContentTypeName)
                 writer.write(type.bytes)
-                writer.writeAscii("\r\n")
+                writer.write(LineEnd)
             }
 
             val length = content.length
 
             if (length != null) {
-                writer.writeAscii("Content-Length: ")
+                writer.write(ContentLengthName)
                 writer.writeNumber(length)
-                writer.writeAscii("\r\n")
+                writer.write(LineEnd)
             } else if (!isUpgrade) {
-                writer.writeAscii("Transfer-Encoding: chunked\r\n")
+                writer.write(TransferEncodingChunked)
             }
 
             val encoding = content.encoding
 
             if (encoding != null) {
-                writer.writeAscii("Content-Encoding: ")
+                writer.write(ContentEncodingName)
                 writer.write(encoding.duplicate())
-                writer.writeAscii("\r\n")
+                writer.write(LineEnd)
             }
         } else {
-            writer.writeAscii("Content-Length: 0\r\n")
+            writer.write(ContentLengthZero)
         }
 
         val headers = response.headers
@@ -90,10 +90,32 @@ public object ResponseSerializer {
             val (key, value) = headers.getMemoryEntry(i)
 
             writer.write(key.duplicate())
-            writer.writeAscii(": ")
+            writer.write(Separator)
             writer.write(value.duplicate())
-            writer.writeAscii("\r\n")
+            writer.write(LineEnd)
         }
     }
+
+    private val ConnectionUpgrade = ascii("Connection: Upgrade\r\n")
+
+    private val ConnectionKeepAlive = ascii("Connection: Keep-Alive\r\n")
+
+    private val ConnectionClose = ascii("Connection: Close\r\n")
+
+    private val ContentTypeName = ascii("Content-Type: ")
+
+    private val ContentLengthName = ascii("Content-Length: ")
+
+    private val ContentLengthZero = ascii("Content-Length: 0\r\n")
+
+    private val ContentEncodingName = ascii("Content-Encoding: ")
+
+    private val TransferEncodingChunked = ascii("Transfer-Encoding: chunked\r\n")
+
+    private val Separator = ascii(": ")
+
+    private val LineEnd = ascii("\r\n")
+
+    private fun ascii(value: String): ByteArray = value.toByteArray(Charsets.US_ASCII)
 
 }

@@ -19,8 +19,7 @@ public object DateHeader {
      * Returns the `Date` header line ("Date: ...\r\n") for the current second.
      */
     public fun getValue(): ByteArray {
-        val now = Instant.now()
-        val second = now.epochSecond
+        val second = System.currentTimeMillis() / 1000
 
         val current = cached
 
@@ -28,7 +27,7 @@ public object DateHeader {
             return current.second
         }
 
-        val value = "Date: ${format.format(now)}\r\n".toByteArray(Charsets.US_ASCII)
+        val value = "Date: ${format.format(Instant.ofEpochSecond(second))}\r\n".toByteArray(Charsets.US_ASCII)
         cached = second to value
 
         return value

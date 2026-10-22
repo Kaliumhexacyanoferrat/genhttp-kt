@@ -52,7 +52,11 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * Writes the given bytes.
      */
     public fun write(bytes: ByteArray, offset: Int = 0, length: Int = bytes.size) {
-        write(ByteBuffer.wrap(bytes, offset, length))
+        if (length <= buffer.remaining()) {
+            buffer.put(bytes, offset, length)
+        } else {
+            write(ByteBuffer.wrap(bytes, offset, length))
+        }
     }
 
     /**
@@ -70,7 +74,32 @@ public class ConnectionWriter(private val channel: WritableByteChannel, capacity
      * Writes the decimal representation of the given number.
      */
     public fun writeNumber(value: Long) {
-        writeAscii(value.toString())
+        if (value < 0) {
+            writeAscii(value.toString())
+            return
+        }
+
+        var digits = 1
+        var limit = 10L
+
+        while (digits < 19 && value >= limit) {
+            digits++
+            limit *= 10
+        }
+
+        if (digits > buffer.remaining()) {
+            flush()
+        }
+
+        var remaining = value
+        val start = buffer.position()
+
+        for (i in digits - 1 downTo 0) {
+            buffer.put(start + i, ('0'.code + (remaining % 10).toInt()).toByte())
+            remaining /= 10
+        }
+
+        buffer.position(start + digits)
     }
 
     /**
