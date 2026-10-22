@@ -86,18 +86,8 @@ public class MemoryConsumptionStrategy {
     private fun readChunked(): ByteBuffer {
         val stream = ChunkedBodyStream(reader)
         val target = ByteArrayOutputStream()
-        val buffer = ByteArray(16 * 1024)
 
-        while (true) {
-            val read = stream.read(buffer, 0, buffer.size)
-
-            if (read < 0) {
-                break
-            }
-
-            target.write(buffer, 0, read)
-        }
-
+        stream.transferTo(target)
         stream.drain()
 
         return ByteBuffer.wrap(target.toByteArray()).asReadOnlyBuffer().also { memory = it }

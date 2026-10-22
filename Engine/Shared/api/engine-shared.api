@@ -123,6 +123,7 @@ public final class org/genhttp/engine/shared/io/ConnectionReader {
 	public synthetic fun <init> (Ljava/nio/channels/ReadableByteChannel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun asInputStream ()Ljava/io/InputStream;
 	public final fun consume (I)V
+	public final fun copyTo (Ljava/io/OutputStream;II)V
 	public final fun data ()Ljava/nio/ByteBuffer;
 	public final fun fill ()I
 	public final fun getAvailable ()I
@@ -313,6 +314,7 @@ public final class org/genhttp/engine/shared/types/body/ChunkedBodyStream : java
 	public fun drain ()V
 	public fun read ()I
 	public fun read ([BII)I
+	public fun transferTo (Ljava/io/OutputStream;)J
 }
 
 public abstract interface class org/genhttp/engine/shared/types/body/DrainableStream {

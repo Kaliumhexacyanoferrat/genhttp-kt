@@ -6,6 +6,8 @@ import org.genhttp.engine.shared.io.ConnectionReader
 import org.genhttp.glyph11.HttpParseException
 import org.genhttp.glyph11.parser.ChunkResult
 
+import java.io.OutputStream
+
 import org.genhttp.glyph11.parser.ChunkedBodyStream as ChunkParser
 
 /**
@@ -91,6 +93,56 @@ public class ChunkedBodyStream(private val reader: ConnectionReader) : java.io.I
         } catch (e: HttpParseException) {
             throw ProviderException(ResponseStatus.fromCode(e.statusCode) ?: ResponseStatus.BadRequest, "Failed to read chunked encoded body", e)
         }
+    }
+
+    /**
+     * Writes the remaining content to the given stream, directly from the buffer of the connection.
+     */
+    override fun transferTo(out: OutputStream): Long {
+        var transferred = 0L
+
+        val pending = overflow
+
+        if (pending != null && overflowLength > 0) {
+            out.write(pending, overflowOffset, overflowLength)
+            transferred += overflowLength
+
+            overflow = null
+            overflowOffset = 0
+            overflowLength = 0
+        }
+
+        try {
+            while (!completed) {
+                if (reader.available == 0 && reader.fill() < 0) {
+                    break
+                }
+
+                when (parser.tryReadChunk(reader.data())) {
+                    ChunkResult.Completed -> {
+                        reader.consume(parser.bytesConsumed)
+                        completed = true
+                    }
+
+                    ChunkResult.NeedMoreData -> {
+                        if (reader.fill() < 0) {
+                            throw ProviderException(ResponseStatus.BadRequest, "Unexpected end of chunked body")
+                        }
+                    }
+
+                    ChunkResult.Chunk -> {
+                        reader.copyTo(out, parser.dataOffset, parser.dataLength)
+                        transferred += parser.dataLength
+
+                        reader.consume(parser.bytesConsumed)
+                    }
+                }
+            }
+        } catch (e: HttpParseException) {
+            throw ProviderException(ResponseStatus.fromCode(e.statusCode) ?: ResponseStatus.BadRequest, "Failed to read chunked encoded body", e)
+        }
+
+        return transferred
     }
 
     override fun drain() {

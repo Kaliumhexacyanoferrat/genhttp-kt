@@ -4,6 +4,7 @@ import org.genhttp.api.infrastructure.BufferSize
 
 import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.channels.ReadableByteChannel
 
@@ -111,6 +112,16 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
         consume(count)
 
         return count
+    }
+
+    /**
+     * Writes `length` buffered bytes, starting `offset` bytes after the first unconsumed byte, to the given stream
+     * (without consuming them).
+     */
+    public fun copyTo(target: OutputStream, offset: Int, length: Int) {
+        require(offset >= 0 && length >= 0 && offset + length <= available) { "Cannot copy $length bytes at $offset, only $available available" }
+
+        target.write(buffer, start + offset, length)
     }
 
     /**
