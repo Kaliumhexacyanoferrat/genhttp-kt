@@ -36,7 +36,9 @@ public class ImperativeWebsocketContent(
 
         val connection = WebsocketConnection(request, sink, settings)
 
-        handler.handle(connection)
+        connection.pump {
+            handler.handle(connection)
+        }
     }
 
 }

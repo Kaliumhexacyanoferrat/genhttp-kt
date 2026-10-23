@@ -38,6 +38,12 @@ public class ReactiveWebsocketContent(
 
         val connection = WebsocketConnection(request, sink, settings)
 
+        connection.pump {
+            serve(connection)
+        }
+    }
+
+    private suspend fun serve(connection: WebsocketConnection) {
         handler.onConnected(connection)
 
         while (request.server.running) {

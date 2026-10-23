@@ -13,13 +13,19 @@ import java.nio.channels.WritableByteChannel
 /**
  * Buffered, blocking writer on a connection channel (the counterpart of the `PipeWriter` used by GenHTTP).
  *
- * Data is collected in a direct buffer and sent to the channel when the buffer is full or when [flush] is called.
- * The buffer is rented from a pool as soon as data is written and returned when it has been flushed.
- * Failures to write to the underlying channel (the client went away) are reported as [ConnectionClosedException].
+ * Data is collected in a buffer and sent to the client when the buffer is full or when [flush] is called. The buffer
+ * is rented from the [WriteTarget] as soon as data is written and handed back when it has been flushed (by default,
+ * a pooled direct buffer that is written to the channel of the connection). Failures to send data (the client went
+ * away) are reported as [ConnectionClosedException].
  *
  * Closing the writer has no effect, the connection is owned by the engine.
  */
-public class ConnectionWriter(private val channel: WritableByteChannel, private val capacity: Int = BufferSize.Write) : WritableByteChannel, Flushable {
+public class ConnectionWriter(private val target: WriteTarget, private val capacity: Int = BufferSize.Write) : WritableByteChannel, Flushable {
+
+    /**
+     * Creates a writer collecting data in pooled direct buffers that are written to the given channel.
+     */
+    public constructor(channel: WritableByteChannel, capacity: Int = BufferSize.Write) : this(ChannelWriteTarget(channel), capacity)
 
     // only rented while there is data to be sent
     private var current: ByteBuffer? = null
@@ -176,30 +182,33 @@ public class ConnectionWriter(private val channel: WritableByteChannel, private 
     override fun flush() {
         val buffer = current ?: return
 
-        try {
-            if (buffer.position() > 0) {
-                buffer.flip()
-                send(buffer)
-            }
-        } finally {
-            current = null
-            WriteBuffers.release(buffer)
+        current = null
+
+        if (buffer.position() == 0) {
+            target.release(buffer)
+            return
         }
+
+        buffer.flip()
+
+        transmit { target.send(buffer) }
     }
 
-    override fun isOpen(): Boolean = channel.isOpen
+    override fun isOpen(): Boolean = target.isOpen
 
     override fun close() {
         // owned by the connection
     }
 
-    private fun buffer(): ByteBuffer = current ?: WriteBuffers.rent(capacity).also { current = it }
+    private fun buffer(): ByteBuffer = current ?: target.rent(capacity).also { current = it }
 
     private fun send(data: ByteBuffer) {
+        transmit { target.write(data) }
+    }
+
+    private inline fun transmit(action: () -> Unit) {
         try {
-            while (data.hasRemaining()) {
-                channel.write(data)
-            }
+            action()
         } catch (e: ConnectionClosedException) {
             throw e
         } catch (e: IOException) {

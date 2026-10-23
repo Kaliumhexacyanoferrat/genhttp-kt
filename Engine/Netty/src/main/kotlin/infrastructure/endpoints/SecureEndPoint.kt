@@ -2,9 +2,11 @@ package org.genhttp.engine.netty.infrastructure.endpoints
 
 import io.netty.buffer.ByteBufAllocator
 import io.netty.channel.ChannelPipeline
+import io.netty.handler.ssl.OpenSsl
 import io.netty.handler.ssl.SniHandler
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslHandler
+import io.netty.handler.ssl.SslProvider
 
 import org.genhttp.api.infrastructure.SslPolicyError
 import org.genhttp.engine.netty.infrastructure.NettyServer
@@ -25,9 +27,15 @@ internal class SecureEndPoint(
     val options: SecurityConfiguration
 ) : SocketEndPoint(server, address, port, dualStack) {
 
-    private val mapping = CertificateMapping(options)
+    private val mapping = CertificateMapping(options, server.options.tcp)
 
     private val handshakeTimeout = server.options.tcp.handshakeTimeout.inWholeMilliseconds
+
+    init {
+        if (server.options.tcp.cipherSuites != null && mapping.provider == SslProvider.OPENSSL && OpenSsl.versionString().contains("BoringSSL")) {
+            logger.warn("BoringSSL does not allow to configure the TLS 1.3 cipher suites, they are not restricted to '{}'", server.options.tcp.cipherSuites)
+        }
+    }
 
     override val secure: Boolean
         get() = true
@@ -44,7 +52,7 @@ internal class SecureEndPoint(
     }
 
     override fun describeSettings(): String =
-        "${super.describeSettings()}, Protocols: ${options.protocols.joinToString { it.protocolName }}, " +
+        "${super.describeSettings()}, TLS: ${mapping.provider}, Protocols: ${options.protocols.joinToString { it.protocolName }}, " +
                 "ClientCertificate: ${if (options.certificateValidator?.requireCertificate == true) "Required" else "Optional"}"
 
     /**

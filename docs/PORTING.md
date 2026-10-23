@@ -179,7 +179,10 @@ The execution model depends on the engine, like upstream (internal engine vs. io
   that accepted it: resumptions on the loop continue inline, resumptions elsewhere are handed back to the loop, timers
   (`delay`, `withTimeout`) are scheduled on the loop. Handlers must not block (like ioxide), suspending is fine.
   Request bodies are buffered completely before the handler runs, so the blocking `InputStream` of the body never
-  waits. Upgraded connections (websockets) are served on a virtual thread with blocking bridges to the loop.
+  waits. Responses are written into buffers of Netty's allocator and flushed when the read that caused them completes.
+  The response of an upgrade is written on a virtual thread; its stream implements `SuspendingInput`, so content that
+  supports it (websockets) moves to the event loop and reads without blocking, other content reads blocking on the
+  virtual thread.
 
 ## Builders
 

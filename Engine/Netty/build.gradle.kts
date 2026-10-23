@@ -22,4 +22,11 @@ dependencies {
         runtimeOnly(variantOf(libs.netty.epoll.native) { classifier(platform) })
         runtimeOnly(variantOf(libs.netty.iouring.native) { classifier(platform) })
     }
+
+    // OpenSSL (BoringSSL) for TLS, the JDK provider is used on other platforms
+    runtimeOnly(libs.netty.tcnative.classes)
+
+    for (platform in listOf("linux-x86_64", "linux-aarch_64", "osx-x86_64", "osx-aarch_64", "windows-x86_64")) {
+        runtimeOnly(variantOf(libs.netty.tcnative.boringssl) { classifier(platform) })
+    }
 }

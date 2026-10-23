@@ -36,21 +36,36 @@ public final class org/genhttp/engine/netty/Host {
 
 public final class org/genhttp/engine/netty/TcpTransportOptions {
 	public fun <init> ()V
-	public synthetic fun <init> (JIJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JIJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLjava/lang/String;Ljava/lang/String;Lorg/genhttp/engine/netty/TlsProvider;IJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLjava/lang/String;Ljava/lang/String;Lorg/genhttp/engine/netty/TlsProvider;IJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-UwyO8pc ()J
-	public final fun component2 ()I
-	public final fun component3-UwyO8pc ()J
-	public final fun component4-UwyO8pc ()J
-	public final fun copy-G0Aaw2w (JIJJ)Lorg/genhttp/engine/netty/TcpTransportOptions;
-	public static synthetic fun copy-G0Aaw2w$default (Lorg/genhttp/engine/netty/TcpTransportOptions;JIJJILjava/lang/Object;)Lorg/genhttp/engine/netty/TcpTransportOptions;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lorg/genhttp/engine/netty/TlsProvider;
+	public final fun component5 ()I
+	public final fun component6-UwyO8pc ()J
+	public final fun component7-UwyO8pc ()J
+	public final fun copy-OjB10qU (JLjava/lang/String;Ljava/lang/String;Lorg/genhttp/engine/netty/TlsProvider;IJJ)Lorg/genhttp/engine/netty/TcpTransportOptions;
+	public static synthetic fun copy-OjB10qU$default (Lorg/genhttp/engine/netty/TcpTransportOptions;JLjava/lang/String;Ljava/lang/String;Lorg/genhttp/engine/netty/TlsProvider;IJJILjava/lang/Object;)Lorg/genhttp/engine/netty/TcpTransportOptions;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCipherList ()Ljava/lang/String;
+	public final fun getCipherSuites ()Ljava/lang/String;
 	public final fun getHandshakeTimeout-UwyO8pc ()J
 	public final fun getIdleTimeout-UwyO8pc ()J
 	public final fun getListenBacklog ()I
 	public final fun getSendTimeout-UwyO8pc ()J
+	public final fun getTlsProvider ()Lorg/genhttp/engine/netty/TlsProvider;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/engine/netty/TlsProvider : java/lang/Enum {
+	public static final field Auto Lorg/genhttp/engine/netty/TlsProvider;
+	public static final field Jdk Lorg/genhttp/engine/netty/TlsProvider;
+	public static final field OpenSsl Lorg/genhttp/engine/netty/TlsProvider;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/engine/netty/TlsProvider;
+	public static fun values ()[Lorg/genhttp/engine/netty/TlsProvider;
 }
 
 public final class org/genhttp/engine/netty/Transport : java/lang/Enum {

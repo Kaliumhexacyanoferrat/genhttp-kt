@@ -57,6 +57,8 @@ netty-epoll = { module = "io.netty:netty-transport-classes-epoll" }
 netty-epoll-native = { module = "io.netty:netty-transport-native-epoll" }
 netty-iouring = { module = "io.netty:netty-transport-classes-io_uring" }
 netty-iouring-native = { module = "io.netty:netty-transport-native-io_uring" }
+netty-tcnative-classes = { module = "io.netty:netty-tcnative-classes" }
+netty-tcnative-boringssl = { module = "io.netty:netty-tcnative-boringssl-static" }
 
 # build-logic
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

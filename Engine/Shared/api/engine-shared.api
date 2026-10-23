@@ -118,24 +118,28 @@ public final class org/genhttp/engine/shared/infrastructure/logging/RequestLoggi
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
 }
 
-public final class org/genhttp/engine/shared/io/ConnectionReader {
+public class org/genhttp/engine/shared/io/ConnectionReader {
 	public fun <init> (Ljava/nio/channels/ReadableByteChannel;I)V
 	public synthetic fun <init> (Ljava/nio/channels/ReadableByteChannel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun asInputStream ()Ljava/io/InputStream;
+	public fun asInputStream ()Ljava/io/InputStream;
 	public final fun consume (I)V
 	public final fun copyTo (Ljava/io/OutputStream;II)V
 	public final fun data ()Ljava/nio/ByteBuffer;
 	public final fun fill ()I
 	public final fun getAvailable ()I
+	public final fun getCapacity ()I
 	public final fun isCompleted ()Z
 	public final fun peek ()Ljava/nio/ByteBuffer;
 	public final fun read ([BII)I
 	public final fun readExactly (I)[B
+	public final fun reset ()V
 }
 
 public final class org/genhttp/engine/shared/io/ConnectionWriter : java/io/Flushable, java/nio/channels/WritableByteChannel {
 	public fun <init> (Ljava/nio/channels/WritableByteChannel;I)V
 	public synthetic fun <init> (Ljava/nio/channels/WritableByteChannel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/genhttp/engine/shared/io/WriteTarget;I)V
+	public synthetic fun <init> (Lorg/genhttp/engine/shared/io/WriteTarget;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun close ()V
 	public final fun copyFrom (Ljava/nio/ByteBuffer;)V
 	public fun flush ()V
@@ -149,6 +153,14 @@ public final class org/genhttp/engine/shared/io/ConnectionWriter : java/io/Flush
 	public final fun writeAscii (Ljava/lang/String;)V
 	public final fun writeByte (I)V
 	public final fun writeNumber (J)V
+}
+
+public abstract interface class org/genhttp/engine/shared/io/WriteTarget {
+	public abstract fun isOpen ()Z
+	public abstract fun release (Ljava/nio/ByteBuffer;)V
+	public abstract fun rent (I)Ljava/nio/ByteBuffer;
+	public abstract fun send (Ljava/nio/ByteBuffer;)V
+	public abstract fun write (Ljava/nio/ByteBuffer;)V
 }
 
 public final class org/genhttp/engine/shared/security/SimpleCertificateProvider : org/genhttp/api/infrastructure/CertificateProvider {

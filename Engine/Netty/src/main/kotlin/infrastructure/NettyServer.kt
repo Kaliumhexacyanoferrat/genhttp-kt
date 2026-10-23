@@ -19,6 +19,7 @@ import org.genhttp.api.infrastructure.PropertyBag
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.engine.netty.EngineOptions
+import org.genhttp.engine.netty.context.ConnectionPool
 import org.genhttp.engine.netty.infrastructure.endpoints.ServerEndPoints
 import org.genhttp.engine.shared.infrastructure.ServerConfiguration
 import org.genhttp.engine.shared.types.MapPropertyBag
@@ -27,6 +28,7 @@ import org.slf4j.ILoggerFactory
 
 import java.util.IdentityHashMap
 import java.util.Locale
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
 
 import kotlin.time.Duration.Companion.seconds
@@ -61,7 +63,7 @@ internal class NettyServer(
     private var group: MultiThreadIoEventLoopGroup? = null
 
     // read-only after the start, so it can be read by all loops
-    private var dispatchers: Map<EventLoop, EventLoopDispatcher> = emptyMap()
+    private var loops: Map<EventLoop, LoopState> = emptyMap()
 
     @Volatile
     private var disposed = false
@@ -104,9 +106,9 @@ internal class NettyServer(
         try {
             val loops = group.map { it as EventLoop }
 
-            dispatchers = IdentityHashMap<EventLoop, EventLoopDispatcher>().apply {
+            this@NettyServer.loops = IdentityHashMap<EventLoop, LoopState>().apply {
                 for (loop in loops) {
-                    put(loop, EventLoopDispatcher(loop))
+                    put(loop, LoopState(EventLoopDispatcher(loop), ConnectionPool(this@NettyServer, loop)))
                 }
             }
 
@@ -142,10 +144,24 @@ internal class NettyServer(
      * Handles a connection by running the given function as a coroutine on the event loop of the connection.
      */
     fun launch(loop: EventLoop, block: suspend CoroutineScope.() -> Unit) {
-        val dispatcher = dispatchers[loop] ?: EventLoopDispatcher(loop)
-
-        scope.launch(dispatcher, block = block)
+        scope.launch(dispatcher(loop), block = block)
     }
+
+    /**
+     * The dispatcher running coroutines on the given event loop.
+     */
+    fun dispatcher(loop: EventLoop): EventLoopDispatcher = loops[loop]?.dispatcher ?: EventLoopDispatcher(loop)
+
+    /**
+     * The pool of the connection state of the given event loop.
+     */
+    fun connections(loop: EventLoop): ConnectionPool =
+        loops[loop]?.connections ?: throw IllegalStateException("The event loop does not belong to the server")
+
+    /**
+     * What the server keeps per event loop.
+     */
+    private class LoopState(val dispatcher: EventLoopDispatcher, val connections: ConnectionPool)
 
     // endregion
 
@@ -158,7 +174,12 @@ internal class NettyServer(
             // stops accepting new connections
             _endPoints.close()
 
-            // stops the connections waiting for requests and the handlers that are suspended
+            // closes the connections (the drivers waiting for requests end with them)
+            withContext(NonCancellable + Dispatchers.IO) {
+                closeConnections()
+            }
+
+            // stops the handlers that are suspended
             scope.cancel()
 
             // closes the remaining connections and stops the threads of the loops (completes even if the caller is
@@ -169,6 +190,23 @@ internal class NettyServer(
 
             withContext(NonCancellable + Dispatchers.IO) {
                 shutdown(group)
+            }
+        }
+    }
+
+    private suspend fun closeConnections() {
+        val closing = loops.map { (loop, state) ->
+            try {
+                loop.submit { state.connections.closeAll() }
+            } catch (_: RejectedExecutionException) {
+                // the loop has been shut down already
+                null
+            }
+        }
+
+        withTimeoutOrNull(ShutdownTimeout) {
+            for (future in closing) {
+                future?.awaitDone()
             }
         }
     }

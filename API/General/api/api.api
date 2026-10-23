@@ -777,3 +777,8 @@ public final class org/genhttp/api/protocol/SameSite : java/lang/Enum {
 	public static fun values ()[Lorg/genhttp/api/protocol/SameSite;
 }
 
+public abstract interface class org/genhttp/api/protocol/SuspendingInput {
+	public abstract fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public abstract fun readSuspending ([BIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

@@ -13,7 +13,6 @@ import org.genhttp.api.protocol.RequestMethod
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.api.protocol.getEntry
 import org.genhttp.engine.netty.context.ConnectionContext
-import org.genhttp.engine.shared.io.ConnectionReader
 import org.genhttp.engine.shared.types.ConnectionExceptions
 import org.genhttp.engine.shared.types.HttpRequest
 import org.genhttp.engine.shared.types.HttpResponseBuilder
@@ -25,6 +24,10 @@ import org.genhttp.modules.io.strings.StringContent
 import org.slf4j.Logger
 
 import java.util.concurrent.Executors
+
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.intercepted
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 /**
  * Serves HTTP/1.1 on one connection, request after request (`Http1Driver` of the ioxide engine in GenHTTP).
@@ -38,10 +41,14 @@ internal class Http1Driver(private val context: ConnectionContext) {
 
     private val body = BodyBuffering()
 
-    // the reader grew for a large request and is replaced as soon as it is empty
-    private var oversized = false
-
     // region Functionality
+
+    /**
+     * Resets the state, so that the driver can serve another connection.
+     */
+    fun reset() {
+        body.reset()
+    }
 
     suspend fun run() {
         // only resolved if an actual error needs to be logged, so well behaved connections never pay for it
@@ -80,8 +87,24 @@ internal class Http1Driver(private val context: ConnectionContext) {
 
         try {
             while (context.server.running) {
-                if (!dataRemaining && receive() < 0 && !pending) {
-                    break
+                if (!dataRemaining) {
+                    val inbound = context.inbound
+
+                    if (inbound.mustWait()) {
+                        // passes the responses to the channel before waiting, which flushes them when the read
+                        // completes (so pipelined requests received at once are answered with a single flush)
+                        context.writer.flush()
+
+                        // suspends without allocating a continuation for the wait (resumed inline by the loop)
+                        suspendCoroutineUninterceptedOrReturn { continuation ->
+                            inbound.park(continuation.intercepted())
+                            COROUTINE_SUSPENDED
+                        }
+                    }
+
+                    if (context.reader.fill() < 0 && !pending) {
+                        break
+                    }
                 }
 
                 dataRemaining = false
@@ -117,10 +140,6 @@ internal class Http1Driver(private val context: ConnectionContext) {
                 pending = false
                 body.reset()
 
-                if (reader.available > BufferSize.Read) {
-                    oversized = true
-                }
-
                 // the request header stays valid in the buffer until the body is read
                 reader.consume(headerLength)
 
@@ -141,6 +160,12 @@ internal class Http1Driver(private val context: ConnectionContext) {
                 request.drain()
                 request.reset()
 
+                if (!context.channel.isWritable) {
+                    // the client does not read its responses, so its requests are not handled until it does
+                    context.writer.flush()
+                    context.outbound.awaitWritable()
+                }
+
                 if (reader.available > 0) {
                     // pipeline mode (more data available)
                     dataRemaining = true
@@ -149,16 +174,14 @@ internal class Http1Driver(private val context: ConnectionContext) {
                         break
                     }
 
-                    if (oversized) {
-                        // do not hold the memory of a large request while the connection is idle (the request
-                        // references the buffer as well)
-                        context.reader = ConnectionReader(context.inbound)
+                    if (reader.capacity > BufferSize.Read) {
+                        // the reader grew for a large request: do not hold its memory while the connection is idle
+                        // (the request references the buffer as well)
+                        context.reader = context.newReader()
                         context.request = HttpRequest()
 
                         request = context.request
                         into = request.source
-
-                        oversized = false
                     }
                 }
             }
@@ -179,26 +202,9 @@ internal class Http1Driver(private val context: ConnectionContext) {
         }
     }
 
-    /**
-     * Reads more data into the reader, suspending until the event loop received some.
-     *
-     * @return The number of bytes read, or -1 if the end of the input has been reached
-     */
-    private suspend fun receive(): Int {
-        val inbound = context.inbound
-
-        if (!inbound.hasData && !inbound.isCompleted) {
-            // passes the responses to the channel before waiting, which flushes them after the current events (so
-            // pipelined requests received at once are answered with a single flush)
-            context.writer.flush()
-
-            inbound.await()
-        }
-
-        return context.reader.fill()
-    }
-
-    internal suspend fun handleRequest(request: HttpRequest): Connection {
+    // inlined, so that requests do not allocate a continuation
+    @Suppress("NOTHING_TO_INLINE")
+    private suspend inline fun handleRequest(request: HttpRequest): Connection {
         val header = request.header
 
         val headRequest = header.method == RequestMethod.Head

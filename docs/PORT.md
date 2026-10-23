@@ -61,10 +61,12 @@ The Netty engine (see [the design](specs/netty-engine.md)):
 - Every connection runs as a coroutine on the loop that accepted it. The coroutine suspends until the loop delivers
   data, data received by the loop resumes it inline, coroutines that resume on other threads are handed back to their
   loop, timers stay on the loop. Handlers must not block (like with ioxide), suspending is fine.
-- Request bodies are buffered completely before the handler runs, upgraded connections (websockets) are served on
-  virtual threads with blocking bridges to the loop. Pipelined responses are sent with a single flush.
-- TLS is terminated by Netty's `SniHandler`, the certificate is selected per SNI host name through the
-  `CertificateProvider` of the endpoint.
+- Request bodies are buffered completely before the handler runs. Responses are written into buffers of Netty's
+  allocator without copying, pipelined responses are sent with a single flush. Websockets run on the loop as well,
+  reading the upgraded connection through the `SuspendingInput` API addition. The state of connections is pooled per
+  loop.
+- TLS is terminated by Netty's `SniHandler` with OpenSSL (BoringSSL) or the JDK provider, the certificate is selected
+  per SNI host name through the `CertificateProvider` of the endpoint.
 - Parsing (glyph11-kt), the request and response types and the serialization are shared with the internal engine
   (`Engine/Shared`).
 

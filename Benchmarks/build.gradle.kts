@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":modules-files"))
     implementation(project(":modules-functional"))
     implementation(project(":modules-webservices"))
+    implementation(project(":modules-websockets"))
     implementation(libs.kotlinx.benchmark.runtime)
 }
 

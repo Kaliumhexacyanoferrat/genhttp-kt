@@ -12,11 +12,8 @@ import io.netty.util.ReferenceCountUtil
 import org.genhttp.engine.netty.context.ConnectionContext
 import org.genhttp.engine.netty.infrastructure.NettyServer
 import org.genhttp.engine.netty.infrastructure.endpoints.SocketEndPoint
-import org.genhttp.engine.netty.io.InboundChannel
-import org.genhttp.engine.netty.io.OutboundChannel
 import org.genhttp.engine.shared.types.ConnectionExceptions
 
-import java.net.InetSocketAddress
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -29,49 +26,44 @@ import javax.net.ssl.SSLPeerUnverifiedException
  */
 internal class ConnectionHandler(private val server: NettyServer, private val endPoint: SocketEndPoint) : ChannelInboundHandlerAdapter() {
 
-    private var inbound: InboundChannel? = null
-
-    private var outbound: OutboundChannel? = null
+    private var context: ConnectionContext? = null
 
     private var started = false
 
     // region Lifecycle
 
     override fun handlerAdded(ctx: ChannelHandlerContext) {
-        inbound = InboundChannel(ctx.channel())
-        outbound = OutboundChannel(ctx, server.options.tcp.sendTimeout.inWholeMilliseconds)
+        val context = server.connections(ctx.channel().eventLoop()).acquire()
+
+        context.attach(ctx, endPoint)
+
+        this.context = context
     }
 
     override fun handlerRemoved(ctx: ChannelHandlerContext) {
-        inbound?.release()
+        context?.detach()
+        context = null
     }
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         if (!endPoint.secure) {
-            start(ctx, null)
+            start(null)
         }
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
-        inbound?.complete(closed = true)
-        outbound?.writabilityChanged()
+        context?.let {
+            it.inbound.complete(closed = true)
+            it.outbound.writabilityChanged()
+        }
     }
 
-    private fun start(ctx: ChannelHandlerContext, clientCertificate: X509Certificate?) {
-        val inbound = inbound ?: return
-        val outbound = outbound ?: return
+    private fun start(clientCertificate: X509Certificate?) {
+        val context = context ?: return
 
         started = true
 
-        val channel = ctx.channel()
-
-        val remoteAddress = (channel.remoteAddress() as? InetSocketAddress)?.address
-
-        val context = ConnectionContext(server, endPoint, channel, inbound, outbound, clientCertificate, remoteAddress)
-
-        server.launch(channel.eventLoop()) {
-            Http1Driver(context).run()
-        }
+        context.start(clientCertificate)
     }
 
     // endregion
@@ -79,17 +71,23 @@ internal class ConnectionHandler(private val server: NettyServer, private val en
     // region Events
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        val inbound = inbound
+        val context = context
 
-        if (msg is ByteBuf && inbound != null) {
-            inbound.offer(msg)
+        if (msg is ByteBuf && context != null) {
+            // responses written by the driver (resumed inline) are flushed when the read completes
+            context.outbound.readStarted()
+            context.inbound.offer(msg)
         } else {
             ReferenceCountUtil.release(msg)
         }
     }
 
+    override fun channelReadComplete(ctx: ChannelHandlerContext) {
+        context?.outbound?.readCompleted()
+    }
+
     override fun channelWritabilityChanged(ctx: ChannelHandlerContext) {
-        outbound?.writabilityChanged()
+        context?.outbound?.writabilityChanged()
     }
 
     override fun userEventTriggered(ctx: ChannelHandlerContext, evt: Any) {
@@ -97,7 +95,7 @@ internal class ConnectionHandler(private val server: NettyServer, private val en
             is SslHandshakeCompletionEvent -> handshakeCompleted(ctx, evt)
 
             // the client will not send more data, but still reads the responses
-            is ChannelInputShutdownEvent -> inbound?.complete(closed = false)
+            is ChannelInputShutdownEvent -> context?.inbound?.complete(closed = false)
 
             is IdleStateEvent -> ctx.close()
 
@@ -123,7 +121,7 @@ internal class ConnectionHandler(private val server: NettyServer, private val en
             return
         }
 
-        start(ctx, certificate)
+        start(certificate)
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {

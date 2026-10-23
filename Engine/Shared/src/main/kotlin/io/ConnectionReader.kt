@@ -18,7 +18,7 @@ import java.nio.channels.ReadableByteChannel
  * Reads block the calling thread, which is intended to be a virtual thread. Timeouts are enforced by the engine by
  * closing the channel, which aborts a blocked read.
  */
-public class ConnectionReader(private val channel: ReadableByteChannel, initialCapacity: Int = BufferSize.Read) {
+public open class ConnectionReader(private val channel: ReadableByteChannel, initialCapacity: Int = BufferSize.Read) {
 
     private var buffer: ByteArray = ByteArray(initialCapacity)
 
@@ -45,6 +45,12 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
      */
     public val available: Int
         get() = end - start
+
+    /**
+     * The size of the buffer of the reader, which grows for requests that do not fit into it.
+     */
+    public val capacity: Int
+        get() = buffer.size
 
     /**
      * A view on the buffered bytes that have not been consumed yet (position 0, limit [available]).
@@ -172,10 +178,22 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
     }
 
     /**
+     * Discards the buffered data and the end of the stream, so that the reader (and its buffer) can be reused for
+     * another connection reading from the same channel.
+     */
+    public fun reset() {
+        start = 0
+        end = 0
+        isCompleted = false
+    }
+
+    /**
      * Exposes the remaining connection content (buffered data first) as an input stream, e.g. after a protocol
      * upgrade. Closing the stream has no effect.
+     *
+     * Engines may return a stream with additional capabilities (e.g. `SuspendingInput`).
      */
-    public fun asInputStream(): InputStream = ReaderStream(this)
+    public open fun asInputStream(): InputStream = ReaderStream(this)
 
     private fun ensureSpace() {
         if (end < buffer.size) {

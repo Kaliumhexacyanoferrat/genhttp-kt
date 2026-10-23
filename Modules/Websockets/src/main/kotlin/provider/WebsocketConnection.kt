@@ -1,9 +1,11 @@
 package org.genhttp.modules.websockets.provider
 
 import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.ResponseSink
+import org.genhttp.api.protocol.SuspendingInput
 import org.genhttp.modules.websockets.ImperativeConnection
 import org.genhttp.modules.websockets.ReactiveConnection
 import org.genhttp.modules.websockets.WebsocketFrame
@@ -42,6 +44,9 @@ public class WebsocketConnection(
 
     private val input = request.upgrade()
 
+    // engines serving connections on event loops allow to read without blocking a thread
+    private val suspendingInput = input as? SuspendingInput
+
     // The buffered input. The region [dataStart, dataEnd) is retained, [parseStart, dataEnd) has not been decoded yet.
     private var buffer = ByteArray(MaxFrameSize)
 
@@ -70,6 +75,16 @@ public class WebsocketConnection(
     private lateinit var frame: ParsedWebsocketFrame
 
     // region Functionality
+
+    /**
+     * Runs the message pump of the connection, on the thread receiving the data of the connection if the engine
+     * allows to read it without blocking (see [SuspendingInput]).
+     */
+    internal suspend fun <T> pump(block: suspend () -> T): T {
+        val suspending = suspendingInput ?: return block()
+
+        return withContext(suspending.dispatcher) { block() }
+    }
 
     override suspend fun write(payload: ByteBuffer, opcode: FrameType, fin: Boolean, flush: Boolean) {
         Frame.write(writer, payload, opcode = opcode.ordinal.toByte(), fin = fin)
@@ -289,7 +304,8 @@ public class WebsocketConnection(
     private suspend fun fill() {
         prepareSpace()
 
-        val read = runInterruptible { input.read(buffer, dataEnd, buffer.size - dataEnd) }
+        val read = suspendingInput?.readSuspending(buffer, dataEnd, buffer.size - dataEnd)
+            ?: runInterruptible { input.read(buffer, dataEnd, buffer.size - dataEnd) }
 
         if (read < 0) {
             completed = true
