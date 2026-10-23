@@ -16,7 +16,7 @@ genhttp-kt requires JDK 25 or newer. Add a dependency on `genhttp-full` to your 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("org.genhttp:genhttp-full:11.1.0.2")
+    implementation("org.genhttp:genhttp-full:11.1.0.3")
 }
 ```
 
