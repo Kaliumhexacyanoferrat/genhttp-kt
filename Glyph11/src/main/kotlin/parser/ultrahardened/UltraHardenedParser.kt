@@ -54,7 +54,7 @@ public object UltraHardenedParser {
         request: BinaryRequest,
         limits: ParserLimits = ParserLimits.Default,
     ): Int {
-        val span = ByteSpan(input)
+        val span = ByteSpan(input, request.views)
 
         val headerEnd = span.indexOf(ParserConstants.CrlfCrlf)
         if (headerEnd < 0) return -1

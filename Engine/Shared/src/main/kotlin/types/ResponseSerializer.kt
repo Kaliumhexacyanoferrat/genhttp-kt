@@ -59,7 +59,7 @@ public object ResponseSerializer {
 
             if (type != null) {
                 writer.write(ContentTypeName)
-                writer.write(type.bytes)
+                writer.write(type)
                 writer.write(LineEnd)
             }
 
@@ -77,7 +77,7 @@ public object ResponseSerializer {
 
             if (encoding != null) {
                 writer.write(ContentEncodingName)
-                writer.write(encoding.duplicate())
+                writer.copyFrom(encoding)
                 writer.write(LineEnd)
             }
         } else {
@@ -89,9 +89,9 @@ public object ResponseSerializer {
         for (i in 0 until headers.count) {
             val (key, value) = headers.getMemoryEntry(i)
 
-            writer.write(key.duplicate())
+            writer.copyFrom(key)
             writer.write(Separator)
-            writer.write(value.duplicate())
+            writer.copyFrom(value)
             writer.write(LineEnd)
         }
     }

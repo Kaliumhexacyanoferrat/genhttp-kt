@@ -39,7 +39,7 @@ public object FlexibleParser {
      * terminator was not found and more data is needed.
      */
     public fun tryExtractFullHeader(input: ByteBuffer, request: BinaryRequest): Int {
-        val span = ByteSpan(input)
+        val span = ByteSpan(input, request.views)
 
         val headerEnd = span.indexOf(CrlfCrlf)
         if (headerEnd < 0) return -1

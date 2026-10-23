@@ -17,6 +17,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | Resources | `FromAssembly` → `fromClasspath` | No assemblies on the JVM |
 | Templates | Cottle syntax replaced by Pebble syntax for `Renderer.from(...)` templates | No Cottle implementation on the JVM |
 | Glyph11 | Parses contiguous `ByteBuffer`s only (no `ReadOnlySequence` overloads) | The engine always provides a contiguous buffer |
+| Glyph11 | The views on the fields of a request parsed from an array-backed buffer are recycled by `BinaryRequest.clear()` (re-pointed to the fields of the next request parsed from the same array) and start at the offset of the field in the input instead of position 0 | Views are objects on the JVM, recycling them keeps parsing allocation-free (`ReadOnlyMemory<byte>` is a struct upstream) |
 | API | `IHandlerBuilder<TBuilder>` → `HandlerBuilder.WithConcerns<TBuilder>` | Kotlin cannot overload an interface name by generic arity |
 | API | `Forwarding.For` → `Forwarding.forAddress` | `for` is a hard keyword in Kotlin |
 | API | `DocumentationAttribute` base class → `@Documentation` meta-annotation; `OperationDocumentation.entries` is a `List<Annotation>` | Kotlin annotations cannot inherit |
@@ -28,6 +29,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `IServer.DisposeAsync()` → `suspend fun close()`; `IEndPoint : IDisposable` → `EndPoint : AutoCloseable` | Kotlin lifecycle conventions |
 | API | `IPropertyBag.TryGet<T>(key, out T)` → `tryGet(key, KClass<T>): T?` plus a reified `tryGet<T>(key)` extension | No out parameters |
 | API | `MemoryView == ReadOnlyMemory` → `contentEquals(ByteBuffer)` | Kotlin `==` only compares with `Any?` |
+| API | `MemoryView.copyTo(ByteBuffer)` added | Upstream exposes the memory of a view directly; `bytes` has to return a new buffer on every access, `copyTo` copies the content without creating one |
 | Engine | Read timeouts (initial request, keep-alive, TLS handshake) are enforced by a watchdog that checks the deadlines of waiting connections once per second and closes expired connections, instead of a cancellation token per read; timeouts fire up to a second late | A timer per read costs a timer to schedule and cancel on every read, publishing a deadline is a single atomic update; reads block their virtual thread, so they are aborted by closing the connection anyway |
 | Engine | The `Date` header is rendered by a background thread at the start of every second instead of checking the clock for every response (like Kestrel does) | Reading the clock costs about 30 ns per response on virtualized hosts |
 | Engine | Endpoints with `dualStack = false` on IPv6 accept IPv4 connections at the TCP level but close them immediately | The JDK cannot set `IPV6_V6ONLY`; the binding tests therefore check that a request is answered instead of a bare TCP connect |

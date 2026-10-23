@@ -58,7 +58,7 @@ public class HttpRequestHeader(private val request: HttpRequest) : RequestHeader
         val source = request.source
 
         _path = ByteString(source.path)
-        _target.apply(_path)
+        _target.apply(source.path)
 
         // the well-known values are shared, which saves the allocations and lets comparisons succeed by identity
         _protocol = find(source.version, KnownProtocols) ?: HttpProtocol(source.version)

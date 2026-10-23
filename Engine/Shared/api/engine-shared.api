@@ -128,6 +128,7 @@ public final class org/genhttp/engine/shared/io/ConnectionReader {
 	public final fun fill ()I
 	public final fun getAvailable ()I
 	public final fun isCompleted ()Z
+	public final fun peek ()Ljava/nio/ByteBuffer;
 	public final fun read ([BII)I
 	public final fun readExactly (I)[B
 }
@@ -136,11 +137,13 @@ public final class org/genhttp/engine/shared/io/ConnectionWriter : java/io/Flush
 	public fun <init> (Ljava/nio/channels/WritableByteChannel;I)V
 	public synthetic fun <init> (Ljava/nio/channels/WritableByteChannel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun close ()V
+	public final fun copyFrom (Ljava/nio/ByteBuffer;)V
 	public fun flush ()V
 	public final fun getPending ()I
 	public final fun getStream ()Ljava/io/OutputStream;
 	public fun isOpen ()Z
 	public fun write (Ljava/nio/ByteBuffer;)I
+	public final fun write (Lorg/genhttp/api/MemoryView;)V
 	public final fun write ([BII)V
 	public static synthetic fun write$default (Lorg/genhttp/engine/shared/io/ConnectionWriter;[BIIILjava/lang/Object;)V
 	public final fun writeAscii (Ljava/lang/String;)V

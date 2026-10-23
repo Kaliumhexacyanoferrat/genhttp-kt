@@ -42,7 +42,7 @@ class BenchmarkContext(request: String, handler: Handler) {
 
         reader.fill()
 
-        val bytesRead = UltraHardenedParser.tryExtractFullHeader(reader.data(), context.request.source, Limits)
+        val bytesRead = UltraHardenedParser.tryExtractFullHeader(reader.peek(), context.request.source, Limits)
 
         require(bytesRead >= 0) { "Given request could not be parsed." }
 

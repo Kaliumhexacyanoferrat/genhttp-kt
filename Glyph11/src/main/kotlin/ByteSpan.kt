@@ -13,8 +13,10 @@ internal val EmptyBuffer: ByteBuffer = ByteBuffer.allocate(0).asReadOnlyBuffer()
  *
  * Heap buffers are read through their backing array, all other buffers (direct, read-only) through
  * absolute `get` calls. All indexes are relative to the position the buffer had on creation.
+ *
+ * If a [pool] is given, [slice] serves views on heap buffers from it instead of creating new ones.
  */
-internal class ByteSpan(private val buffer: ByteBuffer) {
+internal class ByteSpan(private val buffer: ByteBuffer, private val pool: ViewPool? = null) {
 
     private val start: Int = buffer.position()
 
@@ -156,8 +158,17 @@ internal class ByteSpan(private val buffer: ByteBuffer) {
         return true
     }
 
-    /** Creates a read-only buffer covering exactly `[offset, offset + len)` of this span. */
+    /**
+     * Creates a read-only buffer whose content (position until limit) is exactly `[offset, offset + len)` of this span.
+     * Views served by the pool start at the position of the field within the backing array.
+     */
     fun slice(offset: Int, len: Int): ByteBuffer {
+        val a = array
+
+        if (pool != null && a != null) {
+            pool.view(a, arrayBase + offset, len)?.let { return it }
+        }
+
         val source = readOnly ?: buffer.asReadOnlyBuffer().also { readOnly = it }
 
         return source.slice(start + offset, len)

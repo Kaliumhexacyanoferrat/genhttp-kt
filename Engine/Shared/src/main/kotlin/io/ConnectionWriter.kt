@@ -1,5 +1,6 @@
 package org.genhttp.engine.shared.io
 
+import org.genhttp.api.MemoryView
 import org.genhttp.api.infrastructure.BufferSize
 import org.genhttp.api.infrastructure.ConnectionClosedException
 
@@ -48,6 +49,47 @@ public class ConnectionWriter(private val channel: WritableByteChannel, private 
 
         buffer().put(src)
         return count
+    }
+
+    /**
+     * Writes the content (position until limit) of the given buffer without changing the buffer, so that buffers
+     * shared with others do not need to be duplicated first.
+     */
+    public fun copyFrom(src: ByteBuffer) {
+        val count = src.remaining()
+
+        if (count > capacity - pending) {
+            flush()
+
+            if (count >= capacity) {
+                send(src.duplicate())
+                return
+            }
+        }
+
+        val buffer = buffer()
+        val position = buffer.position()
+
+        buffer.put(position, src, src.position(), count)
+        buffer.position(position + count)
+    }
+
+    /**
+     * Writes the bytes of the given view.
+     */
+    public fun write(view: MemoryView) {
+        val count = view.length
+
+        if (count > capacity - pending) {
+            flush()
+
+            if (count >= capacity) {
+                send(view.bytes)
+                return
+            }
+        }
+
+        view.copyTo(buffer())
     }
 
     /**

@@ -100,7 +100,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
 
                 dataRemaining = false
 
-                val bytesRead = UltraHardenedParser.tryExtractFullHeader(reader.data(), into, Limits)
+                val bytesRead = UltraHardenedParser.tryExtractFullHeader(reader.peek(), into, Limits)
 
                 if (bytesRead < 0) {
                     if (reader.isCompleted) {

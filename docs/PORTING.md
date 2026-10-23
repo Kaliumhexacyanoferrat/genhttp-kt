@@ -144,6 +144,9 @@ contain extension functions (C# static extension classes) carry `@file:JvmName("
   (`get(index)`) or `duplicate()` first. APIs that expose stored buffers (e.g. `MemoryView.bytes`) return a fresh
   `duplicate()`.
 - Engine-internal hot paths may access backing arrays directly (`hasArray()`), never public API consumers.
+- Views on request data are only valid while the request is handled: they may start at any position (the parser
+  recycles them for the next request on the connection, see the deviation log). Code that keeps request data beyond
+  that copies it (like `RetainedRequestHeader`).
 
 ### MemoryView types
 

@@ -1,5 +1,6 @@
 package org.genhttp.api
 
+import java.nio.BufferOverflowException
 import java.nio.ByteBuffer
 
 /**
@@ -18,7 +19,16 @@ import java.nio.ByteBuffer
  */
 public abstract class MemoryView {
 
+    // the content is `start until start + length` of this buffer, which is only accessed by absolute index: the view
+    // neither creates a buffer of its own nor depends on the position of the buffer (which its creator may move)
     private val value: ByteBuffer
+
+    private val start: Int
+
+    /**
+     * The number of bytes in this view.
+     */
+    public val length: Int
 
     // computed on first use like String.hashCode() (racy but benign, as the result is always the same) for views on
     // request data, eagerly for views created from arrays and strings (usually constants, which are compared often)
@@ -35,10 +45,11 @@ public abstract class MemoryView {
      * @param value The memory to create a view on
      */
     protected constructor(value: ByteBuffer) {
-        val slice = value.slice()
+        // views on request data are read-only already
+        this.value = if (value.isReadOnly) value else value.asReadOnlyBuffer()
 
-        // views sliced from request data are read-only already
-        this.value = if (slice.isReadOnly) slice else slice.asReadOnlyBuffer()
+        start = value.position()
+        length = value.remaining()
     }
 
     /**
@@ -49,7 +60,10 @@ public abstract class MemoryView {
     protected constructor(value: ByteArray) {
         this.value = ByteBuffer.wrap(value).asReadOnlyBuffer()
 
-        hash = computeHash(this.value)
+        start = 0
+        length = value.size
+
+        hash = computeHash(this.value, start, length)
         hashIsZero = hash == 0
     }
 
@@ -70,19 +84,33 @@ public abstract class MemoryView {
      * A new buffer instance is returned on every access, so callers may freely move its position.
      */
     public val bytes: ByteBuffer
-        get() = value.duplicate()
-
-    /**
-     * The number of bytes in this view.
-     */
-    public val length: Int
-        get() = value.remaining()
+        get() = memory().slice(start, length)
 
     /**
      * Whether this view does not contain any bytes.
      */
     public val isEmpty: Boolean
-        get() = !value.hasRemaining()
+        get() = length == 0
+
+    /**
+     * Copies the bytes of this view into the given buffer, starting at its position, which is advanced by [length].
+     *
+     * GenHTTP exposes the memory of a view directly. On the JVM, [bytes] has to return a new buffer on every access,
+     * so this method provides access to the content without creating one.
+     *
+     * @param target The buffer to copy the bytes into
+     * @throws BufferOverflowException if the target has less than [length] bytes remaining
+     */
+    public fun copyTo(target: ByteBuffer) {
+        if (target.remaining() < length) {
+            throw BufferOverflowException()
+        }
+
+        val position = target.position()
+
+        target.put(position, memory(), start, length)
+        target.position(position + length)
+    }
 
     // endregion
 
@@ -95,7 +123,7 @@ public abstract class MemoryView {
      * @param other The memory to compare this view with
      * @return true, if both contain the same bytes (ignoring ASCII case)
      */
-    public fun contentEquals(other: ByteBuffer): Boolean = equalsIgnoreCase(value, other)
+    public fun contentEquals(other: ByteBuffer): Boolean = equalsIgnoreCase(memory(), start, length, other, other.position(), other.remaining())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -106,14 +134,14 @@ public abstract class MemoryView {
         // only compare hashes that are known already, computing them would read the content anyway
         if (hash != 0 && other.hash != 0 && hash != other.hash) return false
 
-        return equalsIgnoreCase(value, other.value)
+        return equalsIgnoreCase(memory(), start, length, other.memory(), other.start, other.length)
     }
 
     override fun hashCode(): Int {
         var current = hash
 
         if (current == 0 && !hashIsZero) {
-            current = computeHash(value)
+            current = computeHash(memory(), start, length)
 
             if (current == 0) {
                 hashIsZero = true
@@ -129,11 +157,11 @@ public abstract class MemoryView {
      * Returns the ASCII representation of this view (bytes outside of the ASCII range are rendered as `?`).
      */
     override fun toString(): String {
-        val length = value.remaining()
+        val memory = memory()
         val chars = CharArray(length)
 
         for (i in 0 until length) {
-            val b = value.get(value.position() + i).toInt()
+            val b = memory.get(start + i).toInt()
             chars[i] = if (b < 0) '?' else b.toChar()
         }
 
@@ -141,6 +169,19 @@ public abstract class MemoryView {
     }
 
     // endregion
+
+    /**
+     * The buffer to read the content from by absolute index.
+     *
+     * Absolute access is bounded by the limit of the buffer, which its creator may still move: the parser re-points
+     * its views to the fields of the next request, and a view kept beyond its request (which it must not be) would then
+     * fail instead of reading what the memory contains now, as it did before the views were recycled.
+     */
+    private fun memory(): ByteBuffer {
+        val value = value
+
+        return if (start + length <= value.limit()) value else value.duplicate().clear()
+    }
 
     private companion object {
 
@@ -160,10 +201,7 @@ public abstract class MemoryView {
             return bytes
         }
 
-        private fun computeHash(buffer: ByteBuffer): Int {
-            val start = buffer.position()
-            val length = buffer.remaining()
-
+        private fun computeHash(buffer: ByteBuffer, start: Int, length: Int): Int {
             var hash = OFFSET xor length.toLong()
             var offset = 0
 
@@ -194,22 +232,19 @@ public abstract class MemoryView {
             return hash.toInt()
         }
 
-        private fun equalsIgnoreCase(a: ByteBuffer, b: ByteBuffer): Boolean {
-            val length = a.remaining()
-
-            if (length != b.remaining()) {
+        private fun equalsIgnoreCase(a: ByteBuffer, aStart: Int, length: Int, b: ByteBuffer, bStart: Int, bLength: Int): Boolean {
+            if (length != bLength) {
                 return false
             }
 
-            // vectorized, but only worth its overhead for longer values
-            if (length >= 16 && a.mismatch(b) == -1) {
-                return true
+            var offset = 0
+
+            // eight bytes at once as long as the content is identical (usually all of it)
+            while (length - offset >= 8 && a.getLong(aStart + offset) == b.getLong(bStart + offset)) {
+                offset += 8
             }
 
-            val aStart = a.position()
-            val bStart = b.position()
-
-            for (i in 0 until length) {
+            for (i in offset until length) {
                 val x = a.get(aStart + i).toInt()
                 val y = b.get(bStart + i).toInt()
 

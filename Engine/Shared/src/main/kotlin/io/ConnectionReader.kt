@@ -25,6 +25,11 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
     // view on the whole buffer, sliced by data(); not read-only, so that the parser can access the backing array
     private var view: ByteBuffer = ByteBuffer.wrap(buffer)
 
+    // re-pointed instead of created for every call of peek() and fill()
+    private var peekView: ByteBuffer = ByteBuffer.wrap(buffer)
+
+    private var target: ByteBuffer = ByteBuffer.wrap(buffer)
+
     private var start = 0
 
     private var end = 0
@@ -48,6 +53,22 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
      * be modified. Data that is handed out to handlers needs to be sliced as read-only buffers.
      */
     public fun data(): ByteBuffer = view.slice(start, end - start)
+
+    /**
+     * A view on the buffered bytes that have not been consumed yet, like [data], but without creating a buffer:
+     * the same instance is re-pointed on every call (its position is the first unconsumed byte, its limit the end of
+     * the buffered data). The view is only valid until the next call of [peek], [fill] or [consume] and must not be
+     * modified or handed out.
+     */
+    public fun peek(): ByteBuffer {
+        val peek = peekView
+
+        // the limit first, so that the position is always within the limit
+        peek.limit(end)
+        peek.position(start)
+
+        return peek
+    }
 
     /**
      * Marks the given number of buffered bytes as consumed.
@@ -75,7 +96,10 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
 
         ensureSpace()
 
-        val target = ByteBuffer.wrap(buffer, end, buffer.size - end)
+        val target = target
+
+        target.limit(buffer.size)
+        target.position(end)
 
         var read: Int
 
@@ -165,7 +189,10 @@ public class ConnectionReader(private val channel: ReadableByteChannel, initialC
             System.arraycopy(buffer, start, buffer, 0, count)
         } else {
             buffer = buffer.copyOf(buffer.size * 2)
+
             view = ByteBuffer.wrap(buffer)
+            peekView = ByteBuffer.wrap(buffer)
+            target = ByteBuffer.wrap(buffer)
         }
 
         start = 0

@@ -47,7 +47,15 @@ public class HttpRequestTarget : RequestTarget {
      * Initializes the routing state for the given path.
      */
     public fun apply(path: ByteString) {
-        this.path = path.bytes
+        apply(path.bytes)
+    }
+
+    /**
+     * Initializes the routing state for the given path as read from the request (instead of copying the view of the
+     * byte string created from it). The buffer must not be moved while the state is in use.
+     */
+    internal fun apply(path: ByteBuffer) {
+        this.path = path
         offset = 0
         segmentStart = 0
         current = null

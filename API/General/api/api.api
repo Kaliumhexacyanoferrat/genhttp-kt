@@ -3,6 +3,7 @@ public abstract class org/genhttp/api/MemoryView {
 	protected fun <init> (Ljava/nio/ByteBuffer;)V
 	protected fun <init> ([B)V
 	public final fun contentEquals (Ljava/nio/ByteBuffer;)Z
+	public final fun copyTo (Ljava/nio/ByteBuffer;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBytes ()Ljava/nio/ByteBuffer;
 	public final fun getLength ()I
