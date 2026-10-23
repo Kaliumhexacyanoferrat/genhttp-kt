@@ -1,4 +1,4 @@
-package org.genhttp.testing.acceptance.engine
+package org.genhttp.testing.acceptance.additional.engine
 
 import org.genhttp.api.content.Handler
 import org.genhttp.api.infrastructure.Server
