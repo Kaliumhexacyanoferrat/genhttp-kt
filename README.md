@@ -56,22 +56,8 @@ Running this snippet will provide the following endpoints:
 
 If you only need the engine and the basic modules (IO, layouting and best practices), depend on `genhttp-core` instead
 and add the modules you need individually (`genhttp-modules-<name>`, see the
-[list of modules](https://genhttp-kt.genhttp.run/documentation/content/#modules)).
-
-### Choosing an Engine
-
-genhttp-kt ships with two engines that serve the same applications, only the `Host` import differs:
-
-| Engine   | Packages                                   | Import                             | Execution model                                                                                          |
-|----------|--------------------------------------------|------------------------------------|----------------------------------------------------------------------------------------------------------|
-| Internal | `genhttp-full`, `genhttp-core`             | `org.genhttp.engine.internal.Host` | A virtual thread per connection, handlers may block                                                      |
-| Netty    | `genhttp-full-netty`, `genhttp-core-netty` | `org.genhttp.engine.netty.Host`    | One event loop per core (epoll, io_uring or NIO), handlers run on the loop and must suspend, never block |
-
-The Netty engine is the counterpart of GenHTTP's ioxide engine and avoids the hand-over between the socket poller and
-the virtual threads on every request, which pays off for many small requests and high connection counts. Blocking
-inside a handler (`Thread.sleep`, `runBlocking`, blocking I/O) halts every connection served by the loop, so use
-suspending APIs or move blocking work to `withContext(Dispatchers.IO)`. It currently serves HTTP/1.1 (plain and TLS,
-including websockets). Engine specific options are passed to `Host.create(options = EngineOptions(...))`.
+[list of modules](https://genhttp-kt.genhttp.run/documentation/content/#modules)). To run on the Netty engine, depend on
+`genhttp-full-netty` or `genhttp-core-netty` and import `org.genhttp.engine.netty.Host` (see [Engines](#engines)).
 
 ## Documentation
 
@@ -93,6 +79,23 @@ genhttp-kt the same way the port is (see [SYNC.md](docs/SYNC.md#the-website)).
 
 The [playground](./Playground/) project provides a quick starting point to view sample code. See
 [the documentation](https://genhttp-kt.genhttp.run/documentation/content/) for all available capabilities.
+
+## Engines
+
+genhttp-kt runs on different engines that can simply be switched by changing a single dependency and the import of the
+`Host`. Engines are tested to be compatible with all modules, so you can switch the engine without any further
+adjustments.
+
+| Engine                                                                            | Protocols | Performance                                                                                                                                 | Use Cases                                                              |
+|-----------------------------------------------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| [Internal](https://genhttp-kt.genhttp.run/documentation/server/engines/internal/) | `1.1`     | [![HTTP Arena](https://img.shields.io/endpoint?url=https://www.http-arena.com/badge/genhttp-kt/h1.json)](https://www.http-arena.com/)       | Embedding; web applications behind a reverse proxy; blocking handlers  |
+| [Netty](https://genhttp-kt.genhttp.run/documentation/server/engines/netty/)       | `1.1`     | [![HTTP Arena](https://img.shields.io/endpoint?url=https://www.http-arena.com/badge/genhttp-kt-netty/h1.json)](https://www.http-arena.com/) | High performance web applications on Linux via epoll or `io_uring`     |
+
+The internal engine (`genhttp-full`, `genhttp-core`, `org.genhttp.engine.internal.Host`) serves every connection on
+virtual threads, so handlers may block. The Netty engine (`genhttp-full-netty`, `genhttp-core-netty`,
+`org.genhttp.engine.netty.Host`) is the counterpart of GenHTTP's ioxide engine: one event loop per CPU core serves its
+connections from start to finish, including websockets and TLS via OpenSSL. Handlers run on the loop and must suspend
+rather than block - move blocking calls such as JDBC to `withContext(Dispatchers.IO)`.
 
 ## Support
 
@@ -132,4 +135,6 @@ and verified, and where it intentionally differs from GenHTTP.
 
 - Ported from [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP) and [Glyph11](https://github.com/dotnet-web-stack/Glyph11)
 - Powered by [Kotlin](https://kotlinlang.org/), [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) and the [JDK](https://openjdk.org/)
+- Netty engine implemented with [Netty](https://netty.io/) and [netty-tcnative](https://github.com/netty/netty-tcnative) (BoringSSL)
 - Modules implemented with [Jackson](https://github.com/FasterXML/jackson) | [swagger-core](https://github.com/swagger-api/swagger-core) | [Pebble](https://pebbletemplates.io/) | [Apache Commons Compress](https://commons.apache.org/proper/commons-compress/) | [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt) | [Koin](https://insert-koin.io/) | [Brotli4j](https://github.com/hyperxpro/Brotli4j) | [zstd-jni](https://github.com/luben/zstd-jni)
+- Monitored by [HTTP Arena](https://www.http-arena.com)
