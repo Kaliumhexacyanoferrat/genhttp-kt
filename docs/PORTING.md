@@ -29,12 +29,14 @@ The folder structure mirrors GenHTTP so that upstream paths map mechanically:
 | `API/General`                             | `API/General` (`:api`)                         | `org.genhttp.api`                  |
 | `Engine/Shared`                           | `Engine/Shared` (`:engine-shared`)             | `org.genhttp.engine.shared`        |
 | `Engine/Internal`                         | `Engine/Internal` (`:engine-internal`)         | `org.genhttp.engine.internal`      |
+| `Engine/Ioxide`                           | `Engine/Netty` (`:engine-netty`)               | `org.genhttp.engine.netty`         |
 | `Modules/<Name>`                          | `Modules/<Name>` (`:modules-<name>`)           | `org.genhttp.modules.<name>`       |
 | `Testing/Testing`                         | `Testing/Testing` (`:testing`)                 | `org.genhttp.testing`              |
 | `Testing/Acceptance`                      | `Testing/Acceptance` (`:testing-acceptance`)   | `org.genhttp.testing.acceptance`   |
 | `Playground`                              | `Playground` (`:playground`)                   | `org.genhttp.playground`           |
 | `Benchmarks`                              | `Benchmarks` (`:benchmarks`)                   | `org.genhttp.benchmarks`           |
 | `Packages/GenHTTP.Core.nuspec` / `.Full`  | `Packages/Core`, `Packages/Full`               | (aggregate artifacts)              |
+| `Packages/GenHTTP.{Core,Full}.Ioxide`     | `Packages/CoreNetty`, `Packages/FullNetty`     | (aggregate artifacts)              |
 | Glyph11 `src/Glyph11` (separate repo)     | `Glyph11` (`:glyph11`)                         | `org.genhttp.glyph11`              |
 
 Within a project, sources live in `src/main/kotlin` and use Kotlin's recommended layout that **omits the common root
@@ -160,15 +162,24 @@ infix helpers instead of operators.
 ## Asynchrony and I/O
 
 - **Coroutines everywhere.** Every `ValueTask`/`Task` API is a `suspend` function. There is exactly one async model.
-- **NIO for bytes.** The engine reads and writes through NIO channels into `ByteBuffer`s.
-- **Virtual threads under the hood.** Each connection runs as a coroutine on a dispatcher backed by virtual threads
-  (`Executors.newVirtualThreadPerTaskExecutor()`). This makes the blocking-shaped JVM stream types that the API must
-  expose (`InputStream` request bodies, `OutputStream` sinks, serializers, compressors) safe to use from suspend
-  handlers: a blocking call only parks a virtual thread. Suspending handlers (`delay`, channels, flows) release it.
-  The executor is a `ScheduledExecutorService` with sharded timers, otherwise kotlinx.coroutines would run every
-  `delay` and `withTimeout` of the server through the single queue of its `DefaultExecutor` thread.
-- Handlers must not assume a specific dispatcher. Blocking calls inside handlers are allowed (they run on virtual
-  threads), long CPU work should use `Dispatchers.Default`.
+- **NIO for bytes.** The engines read and write through NIO channels into `ByteBuffer`s.
+- Handlers must not assume a specific dispatcher. Long CPU work should use `Dispatchers.Default`.
+
+The execution model depends on the engine, like upstream (internal engine vs. ioxide):
+
+- **Internal engine: virtual threads under the hood.** Each connection runs as a coroutine on a dispatcher backed by
+  virtual threads (`Executors.newVirtualThreadPerTaskExecutor()`). This makes the blocking-shaped JVM stream types
+  that the API must expose (`InputStream` request bodies, `OutputStream` sinks, serializers, compressors) safe to use
+  from suspend handlers: a blocking call only parks a virtual thread. Suspending handlers (`delay`, channels, flows)
+  release it. The executor is a `ScheduledExecutorService` with sharded timers, otherwise kotlinx.coroutines would run
+  every `delay` and `withTimeout` of the server through the single queue of its `DefaultExecutor` thread. Blocking
+  calls inside handlers are allowed.
+- **Netty engine (port of ioxide): event loops.** One Netty event loop per core (epoll, io_uring or NIO), sockets
+  bound once per loop with `SO_REUSEPORT`. Each connection runs as a coroutine on an `EventLoopDispatcher` of the loop
+  that accepted it: resumptions on the loop continue inline, resumptions elsewhere are handed back to the loop, timers
+  (`delay`, `withTimeout`) are scheduled on the loop. Handlers must not block (like ioxide), suspending is fine.
+  Request bodies are buffered completely before the handler runs, so the blocking `InputStream` of the body never
+  waits. Upgraded connections (websockets) are served on a virtual thread with blocking bridges to the loop.
 
 ## Builders
 

@@ -34,7 +34,7 @@ class EngineProvider : ArgumentsProvider {
     companion object {
 
         fun engines(): List<ServerEngine> {
-            val engine = System.getenv("TEST_ENGINE") ?: return listOf(ServerEngine.Internal)
+            val engine = System.getenv("TEST_ENGINE") ?: return listOf(ServerEngine.Internal, ServerEngine.Netty)
 
             val found = ServerEngine.entries.firstOrNull { it.name.equals(engine, ignoreCase = true) }
                 ?: throw IllegalStateException("Engine '$engine' is not supported")

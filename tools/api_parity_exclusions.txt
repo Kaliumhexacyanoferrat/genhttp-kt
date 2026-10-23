@@ -2,9 +2,9 @@
 # Format: <upstream project>:<Type>[.<Member>] (glob patterns allowed)  # reason
 # Every entry must be covered by a rule or the deviation log (docs/DEVIATIONS.md).
 
-# --- Dropped engines (only the internal engine is ported)
+# --- Engines (Kestrel is dropped, the Ioxide engine is ported as the Netty engine)
 API/General:ServerEngine.Kestrel                     # Kestrel engine not ported
-API/General:ServerEngine.Ioxide                      # Ioxide engine not ported
+API/General:ServerEngine.Ioxide                      # Ioxide engine ported as ServerEngine.Netty (deviation log)
 
 # --- Naming rules
 API/General:Forwarding.For                           # `for` is a keyword: Forwarding.forAddress (deviation log)

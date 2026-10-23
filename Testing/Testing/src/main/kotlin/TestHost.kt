@@ -8,6 +8,7 @@ import org.genhttp.api.content.HandlerBuilder
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.infrastructure.ServerHost
 import org.genhttp.engine.internal.Host
+import org.genhttp.engine.netty.Host as NettyHost
 import org.genhttp.modules.practices.defaults
 
 import java.net.Authenticator
@@ -220,6 +221,7 @@ public open class TestHost(
 
         private fun createHost(engine: ServerEngine): ServerHost = when (engine) {
             ServerEngine.Internal -> Host.create()
+            ServerEngine.Netty -> NettyHost.create()
             else -> throw UnsupportedOperationException("Engine '$engine' is not supported")
         }
 

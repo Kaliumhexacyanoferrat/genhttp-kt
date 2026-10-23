@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     // aggregates the coverage of all projects (most of it produced by the acceptance tests)
-    subprojects.filter { it.path !in setOf(":core", ":full", ":playground", ":benchmarks") }.forEach {
+    subprojects.filter { it.path !in setOf(":core", ":full", ":core-netty", ":full-netty", ":playground", ":benchmarks") }.forEach {
         kover(project(it.path))
     }
 }

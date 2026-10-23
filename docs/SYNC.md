@@ -32,9 +32,11 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
 2. List the new upstream commits: `git log --reverse <genhttp.commit>..origin/main` (same for Glyph11).
 3. For each upstream commit (oldest first) or a coherent group of commits:
    1. Inspect the diff (`git show <sha>`) and map every changed file to its counterpart (see the
-      [layout table](PORTING.md#project-layout)). Changes to Kestrel, ioxide, the ASP.NET Core adapter, `.csproj`/NuGet
+      [layout table](PORTING.md#project-layout)). Changes to Kestrel, the ASP.NET Core adapter, `.csproj`/NuGet
       plumbing and other items listed as deviations are not ported, but their *behavioral* intent is checked (e.g. a
-      bug fix in shared engine code also applies to the Kotlin engine).
+      bug fix in shared engine code also applies to the Kotlin engines). Changes to `Engine/Ioxide` map to
+      `Engine/Netty` by intent: the Netty engine is not a line-by-line port (ioxide's runtime is replaced by Netty), so
+      behavior (protocol handling, options, defaults, log lines) is ported, io_uring/OpenSSL plumbing is not.
    2. Port production code and tests together. Ported tests must mirror the upstream tests 1:1. A new upstream
       module becomes a Gradle project (`module(...)` in `settings.gradle.kts`, dependency of `Packages/Full` and of
       `Testing/Acceptance`).

@@ -38,8 +38,12 @@ where genhttp-kt intentionally differs from GenHTTP.
 
 ## Engine
 
-genhttp-kt ships with its own HTTP/1.1 engine, a port of GenHTTP's internal engine. Kestrel and ioxide are specific to
-.NET and therefore not ported. Modules are engine-independent, exactly like in GenHTTP.
+genhttp-kt ships with two HTTP/1.1 engines: the internal engine (`Engine/Internal`, a port of GenHTTP's internal
+engine) and the Netty engine (`Engine/Netty`, the counterpart of GenHTTP's ioxide engine). Kestrel is specific to .NET
+and therefore not ported, ioxide is replaced by Netty. Modules are engine-independent, exactly like in GenHTTP, and the
+acceptance tests run on both engines.
+
+The internal engine:
 
 - Every endpoint accepts connections on a virtual thread, every connection runs as a coroutine on a dispatcher backed
   by virtual threads. Reads and writes use blocking NIO channels: a blocking call only parks a virtual thread, the JDK
@@ -50,14 +54,28 @@ genhttp-kt ships with its own HTTP/1.1 engine, a port of GenHTTP's internal engi
   parser, over a contiguous connection buffer. Request objects are reused per connection like upstream.
 - Responses are serialized into a buffered NIO writer, using chunked encoding if the content length is unknown.
 
+The Netty engine (see [the design](specs/netty-engine.md)):
+
+- One Netty event loop per core (epoll if available, io_uring or NIO on request). With the native transports, every
+  loop binds its own socket (`SO_REUSEPORT`), so accepting and serving connections is spread over the loops.
+- Every connection runs as a coroutine on the loop that accepted it. The coroutine suspends until the loop delivers
+  data, data received by the loop resumes it inline, coroutines that resume on other threads are handed back to their
+  loop, timers stay on the loop. Handlers must not block (like with ioxide), suspending is fine.
+- Request bodies are buffered completely before the handler runs, upgraded connections (websockets) are served on
+  virtual threads with blocking bridges to the loop. Pipelined responses are sent with a single flush.
+- TLS is terminated by Netty's `SniHandler`, the certificate is selected per SNI host name through the
+  `CertificateProvider` of the endpoint.
+- Parsing (glyph11-kt), the request and response types and the serialization are shared with the internal engine
+  (`Engine/Shared`).
+
 ## Keeping in Sync
 
 [`upstream.properties`](../upstream.properties) records the last GenHTTP and Glyph11 commits that are fully reflected
 in this repository. A daily workflow checks both repositories and maintains an issue that lists the commits that have
 not been ported yet. An agent then ports them following the [sync procedure](SYNC.md): production code and tests
 together, one commit per upstream change, referenced with an `Upstream-Commit:` trailer. Changes that only affect
-.NET-specific parts (Kestrel, ioxide, the ASP.NET Core adapter, NuGet packaging) are not ported, but their intent is
-checked against the Kotlin code.
+.NET-specific parts (Kestrel, the ASP.NET Core adapter, NuGet packaging) are not ported, but their intent is checked
+against the Kotlin code. Changes to ioxide are ported to the Netty engine by intent.
 
 ## Verification
 

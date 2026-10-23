@@ -18,6 +18,7 @@ pebble = "4.1.2"
 koin = "4.2.2"
 bouncycastle = "1.86"
 kotlinx-benchmark = "0.5.0"
+netty = "4.2.19.Final"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -49,6 +50,13 @@ swagger-core = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref
 pebble = { module = "io.pebbletemplates:pebble", version.ref = "pebble" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }
+netty-transport = { module = "io.netty:netty-transport" }
+netty-handler = { module = "io.netty:netty-handler" }
+netty-epoll = { module = "io.netty:netty-transport-classes-epoll" }
+netty-epoll-native = { module = "io.netty:netty-transport-native-epoll" }
+netty-iouring = { module = "io.netty:netty-transport-classes-io_uring" }
+netty-iouring-native = { module = "io.netty:netty-transport-native-io_uring" }
 
 # build-logic
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

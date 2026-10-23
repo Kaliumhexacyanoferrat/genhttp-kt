@@ -6,6 +6,7 @@ description = "Testing infrastructure for applications and modules built with Ge
 
 dependencies {
     api(project(":engine-internal"))
+    api(project(":engine-netty"))
     api(project(":modules-practices"))
     api(project(":modules-conversion"))
     api(project(":modules-protobuf"))
