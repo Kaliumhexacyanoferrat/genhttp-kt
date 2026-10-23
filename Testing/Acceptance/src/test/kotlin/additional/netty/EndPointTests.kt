@@ -95,14 +95,22 @@ class EndPointTests {
     @MethodSource("transports")
     fun testRestart(transport: Transport) = test {
         NettyRunner.run(Content.from(Resource.fromString("Hello World!")), options(transport)).use { runner ->
-            // closed by the server, which leaves the connection in TIME_WAIT on the port of the server
             RawClient.connect(runner.port).use { before ->
-                RawClient.send(before, RawClient.request(headers = listOf("Connection" to "close")))
+                if (Platform.windows) {
+                    // the JDK binds exclusively on Windows (SO_EXCLUSIVEADDRUSE), which does not allow to bind a port
+                    // with connections in TIME_WAIT again, so the client closes the connection (and keeps TIME_WAIT)
+                    RawClient.send(before, RawClient.request())
 
-                val input = before.getInputStream()
+                    assertEquals("Hello World!", RawClient.readResponse(before.getInputStream()).text)
+                } else {
+                    // closed by the server, which leaves the connection in TIME_WAIT on the port of the server
+                    RawClient.send(before, RawClient.request(headers = listOf("Connection" to "close")))
 
-                assertEquals("Hello World!", RawClient.readResponse(input).text)
-                assertEquals(-1, input.read())
+                    val input = before.getInputStream()
+
+                    assertEquals("Hello World!", RawClient.readResponse(input).text)
+                    assertEquals(-1, input.read())
+                }
             }
 
             runner.host.restart()
@@ -169,7 +177,7 @@ class EndPointTests {
         private val IPv6Loopback: InetAddress = InetAddress.getByName("::1")
 
         @JvmStatic
-        fun transports(): List<Transport> = availableTransports()
+        fun transports(): List<Transport> = Natives.transports
 
     }
 

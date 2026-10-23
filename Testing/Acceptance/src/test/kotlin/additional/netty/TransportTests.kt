@@ -23,26 +23,26 @@ import kotlin.test.assertTrue
  * Not ported from GenHTTP: the transports of the Netty engine (epoll, io_uring, NIO and the automatic choice) and the
  * number of event loops. With the native transports, every loop accepts on a socket of its own; with NIO, a single
  * socket accepts the connections and hands them to the loops one after another. Handlers always run on the loop
- * that serves the connection.
+ * that serves the connection. Native transports that are not available (epoll and io_uring are Linux only) make the
+ * start fail when they are requested explicitly, the automatic choice falls back to NIO.
  */
 class TransportTests {
 
     @Test
     fun testEpoll() = test {
-        assertServes(Transport.Epoll, "Epoll")
+        if (Natives.epoll) {
+            assertServes(Transport.Epoll, "Epoll")
+        } else {
+            assertUnavailable(Transport.Epoll, "The epoll transport is not available on this system")
+        }
     }
 
     @Test
     fun testIoUring() = test {
-        if (isNativeAvailable(IoUring)) {
+        if (Natives.ioUring) {
             assertServes(Transport.IoUring, "IoUring")
         } else {
-            // a transport that has been requested explicitly is not silently replaced by another one
-            NettyRunner(LoopHandler(), options(Transport.IoUring, 2)).use { runner ->
-                val e = assertFailsWith<UnsupportedOperationException> { runner.start() }
-
-                assertEquals("The io_uring transport is not available on this system", e.message)
-            }
+            assertUnavailable(Transport.IoUring, "The io_uring transport is not available on this system")
         }
     }
 
@@ -56,12 +56,12 @@ class TransportTests {
 
     @Test
     fun testAutoPrefersEpoll() = test {
-        assertServes(Transport.Auto, if (isNativeAvailable(Epoll)) "Epoll" else "Nio")
+        assertServes(Transport.Auto, Natives.automatic)
     }
 
     @Test
     fun testSingleEventLoop() = test {
-        val threads = assertServes(Transport.Auto, if (isNativeAvailable(Epoll)) "Epoll" else "Nio", count = 1)
+        val threads = assertServes(Transport.Auto, Natives.automatic, count = 1)
 
         assertEquals(1, threads.size)
     }
@@ -130,6 +130,18 @@ class TransportTests {
         }
     }
 
+    /**
+     * Checks that a transport that has been requested explicitly is not silently replaced by another one if it is
+     * not available on this system (e.g. the native transports on macOS and Windows).
+     */
+    private suspend fun assertUnavailable(transport: Transport, expected: String) {
+        NettyRunner(LoopHandler(), options(transport, 2)).use { runner ->
+            val e = assertFailsWith<UnsupportedOperationException> { runner.start() }
+
+            assertEquals(expected, e.message)
+        }
+    }
+
     private fun options(transport: Transport, count: Int) = EngineOptions(eventLoop = EventLoopOptions(count = count, transport = transport))
 
     /**
@@ -147,14 +159,6 @@ class TransportTests {
 
             return request.respond().content(request.header.path.toString()).build()
         }
-
-    }
-
-    private companion object {
-
-        const val Epoll = "io.netty.channel.epoll.Epoll"
-
-        const val IoUring = "io.netty.channel.uring.IoUring"
 
     }
 

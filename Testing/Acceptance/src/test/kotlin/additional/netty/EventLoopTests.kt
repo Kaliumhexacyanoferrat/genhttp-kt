@@ -19,6 +19,7 @@ import org.genhttp.testing.acceptance.utilities.AsyncFunctionalHandler
 
 import org.junit.jupiter.api.Test
 
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -165,7 +166,7 @@ class EventLoopTests {
                 }
 
                 // one after another, the requests would take 6 seconds
-                assertTrue(start.elapsedNow() < 3.seconds, "The requests have not been handled concurrently (${start.elapsedNow()})")
+                assertTrue(start.elapsedNow() < 4.seconds, "The requests have not been handled concurrently (${start.elapsedNow()})")
             } finally {
                 clients.forEach(Socket::close)
             }
@@ -178,7 +179,13 @@ class EventLoopTests {
 
     private fun options(count: Int) = EngineOptions(eventLoop = EventLoopOptions(count = count))
 
-    private fun accepts(port: Int): Boolean = runCatching { Socket("127.0.0.1", port).close() }.isSuccess
+    /**
+     * Whether a connection to the given port can be established (refused connections take a while on Windows, which
+     * retries them, so the attempt is bounded).
+     */
+    private fun accepts(port: Int): Boolean = runCatching {
+        Socket().use { it.connect(InetSocketAddress("127.0.0.1", port), 1000) }
+    }.isSuccess
 
     // endregion
 

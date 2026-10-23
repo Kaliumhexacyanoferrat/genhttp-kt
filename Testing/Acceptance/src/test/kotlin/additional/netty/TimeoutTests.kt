@@ -7,6 +7,8 @@ import kotlinx.coroutines.withTimeout
 import org.genhttp.api.content.io.Resource
 import org.genhttp.api.infrastructure.CertificateProvider
 import org.genhttp.api.protocol.ContentType
+import org.genhttp.api.protocol.ResponseContent
+import org.genhttp.api.protocol.ResponseSink
 import org.genhttp.engine.netty.EngineOptions
 import org.genhttp.engine.netty.TcpTransportOptions
 import org.genhttp.modules.io.Content
@@ -21,9 +23,11 @@ import org.genhttp.testing.getContent
 import org.junit.jupiter.api.Test
 
 import java.io.IOException
+import java.net.Socket
 import java.net.URI
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.ByteBuffer
 
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -37,36 +41,37 @@ import kotlin.time.TimeSource
  * that neither receive nor send anything, the send timeout closes connections whose client does not read the data
  * sent to it (plain and secure ones, as well as upgraded connections served on a virtual thread), and the handshake
  * timeout closes TLS connections that do not complete the handshake in time.
+ *
+ * The timeouts are short, but the bounds checked are generous, so that slow machines pass as well.
  */
 class TimeoutTests {
 
     @Test
     fun testIdleConnectionIsClosed() = test {
-        NettyRunner.run(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(idleTimeout = 300.milliseconds))).use { runner ->
+        NettyRunner.run(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(idleTimeout = 1.seconds))).use { runner ->
             RawClient.connect(runner.port).use { client ->
                 RawClient.send(client, RawClient.request())
 
-                val input = client.getInputStream()
-
-                assertEquals("Hello World!", RawClient.readResponse(input).text)
+                assertEquals("Hello World!", RawClient.readResponse(client.getInputStream()).text)
 
                 val idle = TimeSource.Monotonic.markNow()
 
-                assertEquals(-1, input.read())
+                RawClient.assertClosedByServer(client, "The idle connection has not been closed")
 
-                assertTrue(idle.elapsedNow() >= 200.milliseconds, "The connection has been closed after ${idle.elapsedNow()}")
+                // by the timeout, not right away
+                assertTrue(idle.elapsedNow() >= 500.milliseconds, "The connection has been closed after ${idle.elapsedNow()}")
             }
         }
     }
 
     @Test
     fun testActiveConnectionIsKeptOpen() = test {
-        NettyRunner.run(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(idleTimeout = 500.milliseconds))).use { runner ->
+        NettyRunner.run(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(idleTimeout = 1.seconds))).use { runner ->
             RawClient.connect(runner.port).use { client ->
                 val start = TimeSource.Monotonic.markNow()
 
                 // longer than the idle timeout in total, but never idle for that long
-                while (start.elapsedNow() < 1.seconds) {
+                while (start.elapsedNow() < 2.seconds) {
                     RawClient.send(client, RawClient.request())
 
                     assertEquals("Hello World!", RawClient.readResponse(client.getInputStream()).text)
@@ -79,29 +84,22 @@ class TimeoutTests {
 
     @Test
     fun testClientNotReadingIsClosedAfterSendTimeout() = test {
-        val large = ByteArray(16 * 1024 * 1024)
+        val content = LargeContent()
 
-        val handler = AsyncFunctionalHandler { request -> request.respond().content(large, ContentType.ApplicationOctetStream).build() }
+        val handler = AsyncFunctionalHandler { request -> request.respond().content(content).build() }
 
         NettyRunner.run(handler, tcp(TcpTransportOptions(sendTimeout = 300.milliseconds))).use { runner ->
             RawClient.connect(runner.port, receiveBuffer = 8192).use { client ->
-                RawClient.send(client, RawClient.request())
-
-                // the response cannot be sent while the client does not read
-                Thread.sleep(1000)
-
-                val (received, _) = RawClient.drain(client.getInputStream())
-
-                assertTrue(received < large.size, "The complete response has been received, the connection has not been closed")
+                assertClosedWhileNotReading(client, content)
             }
         }
     }
 
     @Test
     fun testSecureClientNotReadingIsClosedAfterSendTimeout() = test {
-        val large = ByteArray(16 * 1024 * 1024)
+        val content = LargeContent()
 
-        val handler = AsyncFunctionalHandler { request -> request.respond().content(large, ContentType.ApplicationOctetStream).build() }
+        val handler = AsyncFunctionalHandler { request -> request.respond().content(content).build() }
 
         NettyRunner(handler, tcp(TcpTransportOptions(sendTimeout = 300.milliseconds))).use { runner ->
             val port = TestHost.nextPort()
@@ -111,14 +109,7 @@ class TimeoutTests {
             runner.start()
 
             RawClient.connectSecure(port, receiveBuffer = 8192).use { client ->
-                RawClient.send(client, RawClient.request())
-
-                // the response cannot be sent while the client does not read
-                Thread.sleep(1000)
-
-                val (received, _) = RawClient.drain(client.getInputStream())
-
-                assertTrue(received < large.size, "The complete response has been received, the connection has not been closed")
+                assertClosedWhileNotReading(client, content)
             }
         }
     }
@@ -135,7 +126,7 @@ class TimeoutTests {
             }
         }
 
-        NettyRunner.run(handler, tcp(TcpTransportOptions(sendTimeout = 500.milliseconds))).use { runner ->
+        NettyRunner.run(handler, tcp(TcpTransportOptions(sendTimeout = 1.seconds))).use { runner ->
             RawClient.connect(runner.port).use { client ->
                 val input = client.getInputStream()
 
@@ -143,7 +134,7 @@ class TimeoutTests {
                 assertEquals(large.size, RawClient.readResponse(input).body.size)
 
                 // the deadline of the sent response must not close the connection
-                Thread.sleep(800)
+                Thread.sleep(1500)
 
                 RawClient.send(client, RawClient.request("/small"))
                 assertEquals("Small", RawClient.readResponse(input).text)
@@ -155,12 +146,15 @@ class TimeoutTests {
     fun testUpgradedClientNotReadingIsClosedAfterSendTimeout() = test {
         val failure = CompletableDeferred<Throwable?>()
 
-        val handler = UpgradeHandler { _, sink ->
-            val chunk = ByteArray(16 * 1024)
+        val chunk = ByteArray(16 * 1024)
 
+        // far more than the socket buffers can hold (the writes wait while the client does not read, so the data is
+        // not held in memory)
+        val chunks = 64 * 1024
+
+        val handler = UpgradeHandler { _, sink ->
             try {
-                // far more than the socket buffers can hold
-                repeat(4096) {
+                repeat(chunks) {
                     sink.stream.write(chunk)
                     sink.stream.flush()
                 }
@@ -175,20 +169,21 @@ class TimeoutTests {
             RawClient.connect(runner.port, receiveBuffer = 8192).use { client ->
                 UpgradeHandler.upgrade(client)
 
-                val error = withTimeout(10.seconds) { failure.await() }
+                val error = withTimeout(60.seconds) { failure.await() }
 
                 assertIs<IOException>(error, "The writes of the virtual thread did not fail")
 
                 val (received, _) = RawClient.drain(client.getInputStream())
 
-                assertTrue(received < 4096L * 16 * 1024)
+                assertTrue(received < chunks.toLong() * chunk.size)
             }
         }
     }
 
     @Test
     fun testHandshakeTimeout() = test {
-        NettyRunner(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(handshakeTimeout = 300.milliseconds))).use { runner ->
+        // long enough for the first handshake of a slow machine
+        NettyRunner(Content.from(Resource.fromString("Hello World!")), tcp(TcpTransportOptions(handshakeTimeout = 2.seconds))).use { runner ->
             val port = TestHost.nextPort()
 
             runner.host.bind(null, port, CertificateProvider.from(Security.getCertificate()))
@@ -199,11 +194,10 @@ class TimeoutTests {
             RawClient.connect(port).use { client ->
                 val connected = TimeSource.Monotonic.markNow()
 
-                val (received, _) = RawClient.drain(client.getInputStream())
+                RawClient.assertClosedByServer(client, "The connection without handshake has not been closed")
 
-                assertEquals(0L, received)
-                assertTrue(connected.elapsedNow() >= 200.milliseconds, "The connection has been closed after ${connected.elapsedNow()}")
-                assertTrue(connected.elapsedNow() < 10.seconds)
+                // by the timeout, not right away
+                assertTrue(connected.elapsedNow() >= 1.seconds, "The connection has been closed after ${connected.elapsedNow()}")
             }
 
             // clients completing the handshake in time are served
@@ -218,6 +212,48 @@ class TimeoutTests {
     // region Helpers
 
     private fun tcp(options: TcpTransportOptions) = EngineOptions(tcp = options)
+
+    /**
+     * Requests the content without reading the response and checks that the connection is closed: the client starts
+     * reading after the send timeout expired, but only receives what the socket buffers hold.
+     */
+    private suspend fun assertClosedWhileNotReading(client: Socket, content: LargeContent) {
+        RawClient.send(client, RawClient.request())
+
+        // the loop is busy while it writes the response (a slow machine may need some time to encrypt it), the send
+        // timeout fires afterwards
+        withTimeout(60.seconds) { content.written.await() }
+
+        Thread.sleep(1000)
+
+        val (received, _) = RawClient.drain(client.getInputStream())
+
+        assertTrue(received < content.length, "The complete response has been received, the connection has not been closed")
+    }
+
+    /**
+     * Far more data than the socket buffers of any platform hold, signals when it has been passed to the engine.
+     */
+    private class LargeContent : ResponseContent {
+
+        private val data = ByteArray(64 * 1024 * 1024)
+
+        val written = CompletableDeferred<Unit>()
+
+        override val length: Long = data.size.toLong()
+
+        override val type: ContentType = ContentType.ApplicationOctetStream
+
+        override val encoding: ByteBuffer? = null
+
+        override suspend fun calculateChecksum(): Long? = null
+
+        override suspend fun write(sink: ResponseSink) {
+            sink.stream.write(data)
+            written.complete(Unit)
+        }
+
+    }
 
     // endregion
 

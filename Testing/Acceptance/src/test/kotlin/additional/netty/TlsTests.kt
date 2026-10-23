@@ -46,8 +46,9 @@ import kotlin.test.assertTrue
  * choice prefers OpenSSL. Both providers serve HTTPS (sending large responses completely, also before closing the
  * connection) and validate client certificates. The TLS 1.2 suites can be restricted with both providers (names in
  * OpenSSL or IANA notation), the TLS 1.3 suites with the JDK provider only (BoringSSL does not allow to restrict
- * them, which is logged). Suites the provider does not support stop the server from starting. The test certificate
- * has an RSA key.
+ * them, which is logged). Suites the provider does not support stop the server from starting. Where OpenSSL is not
+ * available, requesting it stops the server from starting and the automatic choice falls back to the JDK. The test
+ * certificate has an RSA key.
  */
 class TlsTests {
 
@@ -60,19 +61,15 @@ class TlsTests {
 
     @Test
     fun testOpenSslProvider() = test {
-        if (isNativeAvailable(OpenSsl)) {
+        withProvider(TlsProvider.OpenSsl) {
             assertServes(TlsProvider.OpenSsl, "OPENSSL")
-        } else {
-            // a provider that has been requested explicitly is not silently replaced by another one
-            val e = assertFailsWith<UnsupportedOperationException> { secure(TcpTransportOptions(tlsProvider = TlsProvider.OpenSsl)) }
-
-            assertEquals("OpenSSL is not available on this system", e.message)
         }
     }
 
     @Test
     fun testAutoPrefersOpenSsl() = test {
-        assertServes(TlsProvider.Auto, if (isNativeAvailable(OpenSsl)) "OPENSSL" else "JDK")
+        // falls back to the JDK where OpenSSL is not available
+        assertServes(TlsProvider.Auto, if (Natives.openSsl) "OPENSSL" else "JDK")
     }
 
     // endregion
@@ -82,30 +79,34 @@ class TlsTests {
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testCipherListRestrictsTls12(provider: TlsProvider) = test {
-        secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES128-GCM-SHA256")).use { server ->
-            assertEquals("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", negotiate(server.port, "TLSv1.2"))
+        withProvider(provider) {
+            secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES128-GCM-SHA256")).use { server ->
+                assertEquals("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", negotiate(server.port, "TLSv1.2"))
 
-            assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384") }
-        }
+                assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384") }
+            }
 
-        secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305")).use { server ->
-            assertEquals("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"))
-            assertEquals("TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256", negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"))
+            secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305")).use { server ->
+                assertEquals("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"))
+                assertEquals("TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256", negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"))
 
-            assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") }
+                assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") }
 
-            // TLS 1.3 keeps the defaults of the provider
-            negotiate(server.port, "TLSv1.3")
+                // TLS 1.3 keeps the defaults of the provider
+                negotiate(server.port, "TLSv1.3")
+            }
         }
     }
 
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testCipherListAcceptsIanaNames(provider: TlsProvider) = test {
-        secure(TcpTransportOptions(tlsProvider = provider, cipherList = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384")).use { server ->
-            assertEquals("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.2"))
+        withProvider(provider) {
+            secure(TcpTransportOptions(tlsProvider = provider, cipherList = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384")).use { server ->
+                assertEquals("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.2"))
 
-            assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") }
+                assertFailsWith<IOException> { negotiate(server.port, "TLSv1.2", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") }
+            }
         }
     }
 
@@ -123,31 +124,35 @@ class TlsTests {
 
     @Test
     fun testCipherSuitesAreNotRestrictedByBoringSsl() = test {
-        secure(TcpTransportOptions(tlsProvider = TlsProvider.OpenSsl, cipherSuites = "TLS_CHACHA20_POLY1305_SHA256")).use { server ->
-            assertEquals("TLS_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.3", "TLS_AES_256_GCM_SHA384"))
+        withProvider(TlsProvider.OpenSsl) {
+            secure(TcpTransportOptions(tlsProvider = TlsProvider.OpenSsl, cipherSuites = "TLS_CHACHA20_POLY1305_SHA256")).use { server ->
+                assertEquals("TLS_AES_256_GCM_SHA384", negotiate(server.port, "TLSv1.3", "TLS_AES_256_GCM_SHA384"))
 
-            val warning = "BoringSSL does not allow to configure the TLS 1.3 cipher suites, they are not restricted to 'TLS_CHACHA20_POLY1305_SHA256'"
+                val warning = "BoringSSL does not allow to configure the TLS 1.3 cipher suites, they are not restricted to 'TLS_CHACHA20_POLY1305_SHA256'"
 
-            assertTrue(server.runner.logging.entries.any { it.level == Level.WARN && it.message == warning }, "Warning not logged: ${server.runner.logging.messages}")
+                assertTrue(server.runner.logging.entries.any { it.level == Level.WARN && it.message == warning }, "Warning not logged: ${server.runner.logging.messages}")
+            }
         }
     }
 
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testUnsupportedCiphersStopTheStart(provider: TlsProvider) = test {
-        val name = if (provider == TlsProvider.Jdk) "JDK" else "OPENSSL"
+        withProvider(provider) {
+            val name = if (provider == TlsProvider.Jdk) "JDK" else "OPENSSL"
 
-        val tls12 = assertFailsWith<IllegalArgumentException> {
-            secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES128-GCM-SHA256:TLS_ECDHE_RSA_WITH_NOT_A_CIPHER"))
+            val tls12 = assertFailsWith<IllegalArgumentException> {
+                secure(TcpTransportOptions(tlsProvider = provider, cipherList = "ECDHE-RSA-AES128-GCM-SHA256:TLS_ECDHE_RSA_WITH_NOT_A_CIPHER"))
+            }
+
+            assertEquals("Cipher suites not supported by the TLS provider ($name): TLS_ECDHE_RSA_WITH_NOT_A_CIPHER", tls12.message)
+
+            val tls13 = assertFailsWith<IllegalArgumentException> {
+                secure(TcpTransportOptions(tlsProvider = provider, cipherSuites = "TLS_NOT_A_SUITE"))
+            }
+
+            assertEquals("Cipher suites not supported by the TLS provider ($name): TLS_NOT_A_SUITE", tls13.message)
         }
-
-        assertEquals("Cipher suites not supported by the TLS provider ($name): TLS_ECDHE_RSA_WITH_NOT_A_CIPHER", tls12.message)
-
-        val tls13 = assertFailsWith<IllegalArgumentException> {
-            secure(TcpTransportOptions(tlsProvider = provider, cipherSuites = "TLS_NOT_A_SUITE"))
-        }
-
-        assertEquals("Cipher suites not supported by the TLS provider ($name): TLS_NOT_A_SUITE", tls13.message)
     }
 
     // endregion
@@ -157,20 +162,22 @@ class TlsTests {
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testLargeResponsesAreSentCompletely(provider: TlsProvider) = test {
-        secure(TcpTransportOptions(tlsProvider = provider)).use { server ->
-            RawClient.connectSecure(server.port, receiveBuffer = 8192).use { socket ->
-                val input = BufferedInputStream(socket.getInputStream())
+        withProvider(provider) {
+            secure(TcpTransportOptions(tlsProvider = provider)).use { server ->
+                RawClient.connectSecure(server.port, receiveBuffer = 8192).use { socket ->
+                    val input = BufferedInputStream(socket.getInputStream())
 
-                RawClient.send(socket, RawClient.request("/large"))
+                    RawClient.send(socket, RawClient.request("/large"))
 
-                assertTrue(Large.contentEquals(RawClient.readResponse(input).body))
+                    assertTrue(Large.contentEquals(RawClient.readResponse(input).body))
 
-                // the connection is closed after the response has been sent
-                RawClient.send(socket, RawClient.request("/large", headers = listOf("Connection" to "close")))
+                    // the connection is closed after the response has been sent
+                    RawClient.send(socket, RawClient.request("/large", headers = listOf("Connection" to "close")))
 
-                assertTrue(Large.contentEquals(RawClient.readResponse(input).body))
+                    assertTrue(Large.contentEquals(RawClient.readResponse(input).body))
 
-                assertEquals(-1, input.read())
+                    assertEquals(-1, input.read())
+                }
             }
         }
     }
@@ -182,37 +189,56 @@ class TlsTests {
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testClientCertificatesAreValidated(provider: TlsProvider) = test {
-        for (revocation in X509RevocationMode.entries) {
-            val validator = RecordingValidator(true, revocation)
+        withProvider(provider) {
+            for (revocation in X509RevocationMode.entries) {
+                val validator = RecordingValidator(true, revocation)
 
-            secure(TcpTransportOptions(tlsProvider = provider), validator).use { server ->
-                val response = getWithCertificate(server.port)
+                secure(TcpTransportOptions(tlsProvider = provider), validator).use { server ->
+                    val response = getWithCertificate(server.port)
 
-                assertEquals(200, response.statusCode())
-                assertEquals(Subject, response.getContent())
+                    assertEquals(200, response.statusCode())
+                    assertEquals(Subject, response.getContent())
+                }
+
+                assertEquals(listOf(Validation), validator.calls, "Unexpected validation with $revocation")
             }
-
-            assertEquals(listOf(Validation), validator.calls, "Unexpected validation with $revocation")
         }
     }
 
     @ParameterizedTest
     @EnumSource(TlsProvider::class, names = ["Jdk", "OpenSsl"])
     fun testRejectedClientCertificateFailsTheHandshake(provider: TlsProvider) = test {
-        val validator = RecordingValidator(false, X509RevocationMode.NoCheck)
+        withProvider(provider) {
+            val validator = RecordingValidator(false, X509RevocationMode.NoCheck)
 
-        secure(TcpTransportOptions(tlsProvider = provider), validator).use { server ->
-            assertFailsWith<IOException> { getWithCertificate(server.port) }
+            secure(TcpTransportOptions(tlsProvider = provider), validator).use { server ->
+                assertFailsWith<IOException> { getWithCertificate(server.port) }
+            }
+
+            // the client retries the request after the server rejected its certificate
+            assertTrue(validator.calls.isNotEmpty())
+            assertTrue(validator.calls.all { it == Validation }, "Unexpected validation: ${validator.calls}")
         }
-
-        // the client retries the request after the server rejected its certificate
-        assertTrue(validator.calls.isNotEmpty())
-        assertTrue(validator.calls.all { it == Validation }, "Unexpected validation: ${validator.calls}")
     }
 
     // endregion
 
     // region Helpers
+
+    /**
+     * Runs the given checks with the given provider. OpenSSL is not shipped for every platform (not for Windows on
+     * ARM64), where it is not available a server that requests it explicitly must not start (instead of silently
+     * using the JDK).
+     */
+    private suspend fun withProvider(provider: TlsProvider, checks: suspend () -> Unit) {
+        if (provider == TlsProvider.OpenSsl && !Natives.openSsl) {
+            val e = assertFailsWith<UnsupportedOperationException> { secure(TcpTransportOptions(tlsProvider = TlsProvider.OpenSsl)) }
+
+            assertEquals("OpenSSL is not available on this system", e.message)
+        } else {
+            checks()
+        }
+    }
 
     /**
      * A server with a secure endpoint (on [port]).
@@ -335,8 +361,6 @@ class TlsTests {
     }
 
     private companion object {
-
-        const val OpenSsl = "io.netty.handler.ssl.OpenSsl"
 
         val Large = ByteArray(8 * 1024 * 1024) { it.toByte() }
 

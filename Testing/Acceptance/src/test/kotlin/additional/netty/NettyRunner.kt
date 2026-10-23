@@ -140,22 +140,56 @@ class CapturingLoggerFactory : ILoggerFactory {
 }
 
 /**
- * The transports that can be requested explicitly on this system (whether io_uring is available or not is checked by
- * `TransportTests`).
+ * The optional native libraries of Netty the engine uses if they are available: epoll and io_uring (Linux only) and
+ * OpenSSL (BoringSSL, shipped for Linux, macOS and Windows on x64, but not for Windows on ARM64). Their classes are
+ * implementation details of the engine, so they are not on the compile classpath of the tests (but on the runtime
+ * classpath, where their availability is checked).
+ *
+ * Tests do not skip what is not available, but check that the engine refuses to start (or falls back) as documented.
  */
-fun availableTransports(): List<Transport> = buildList {
-    add(Transport.Epoll)
-    add(Transport.Nio)
+object Natives {
 
-    if (isNativeAvailable("io.netty.channel.uring.IoUring")) {
-        add(Transport.IoUring)
-    }
+    val epoll: Boolean
+        get() = isAvailable("io.netty.channel.epoll.Epoll")
+
+    val ioUring: Boolean
+        get() = isAvailable("io.netty.channel.uring.IoUring")
+
+    val openSsl: Boolean
+        get() = isAvailable("io.netty.handler.ssl.OpenSsl")
+
+    /**
+     * The transports that can be requested explicitly on this system.
+     */
+    val transports: List<Transport>
+        get() = buildList {
+            if (epoll) {
+                add(Transport.Epoll)
+            }
+
+            add(Transport.Nio)
+
+            if (ioUring) {
+                add(Transport.IoUring)
+            }
+        }
+
+    /**
+     * The transport the engine chooses automatically (epoll if available, NIO otherwise), as named in its log.
+     */
+    val automatic: String
+        get() = if (epoll) "Epoll" else "Nio"
+
+    private fun isAvailable(library: String): Boolean =
+        Class.forName(library).getMethod("isAvailable").invoke(null) as Boolean
+
 }
 
 /**
- * Checks the availability of an optional native library of Netty, such as `io.netty.channel.uring.IoUring` or
- * `io.netty.handler.ssl.OpenSsl`. They are implementation details of the engine and therefore not on the compile
- * classpath of the tests, but on the runtime classpath.
+ * The platform the tests run on, for socket behavior that differs between operating systems.
  */
-fun isNativeAvailable(library: String): Boolean =
-    Class.forName(library).getMethod("isAvailable").invoke(null) as Boolean
+object Platform {
+
+    val windows: Boolean = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+
+}

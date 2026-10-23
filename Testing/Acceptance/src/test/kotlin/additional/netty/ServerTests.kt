@@ -29,13 +29,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.slf4j.event.Level
 
 import java.net.Socket
-import java.net.SocketTimeoutException
 
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.test.fail
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
@@ -128,7 +126,7 @@ class ServerTests {
                     assertTrue(stopping.elapsedNow() < 5.seconds, "Stopping the server took ${stopping.elapsedNow()}")
 
                     for ((name, client) in listOf("idle" to idle, "waiting" to waiting, "upgraded" to upgraded)) {
-                        assertClosed(client, "Attempt $attempt: the $name connection has not been closed by the stop")
+                        RawClient.assertClosedByServer(client, "Attempt $attempt: the $name connection has not been closed by the stop", timeout = 5000)
                     }
 
                     // the content reading the upgraded connection sees the end of its input
@@ -141,16 +139,6 @@ class ServerTests {
     }
 
     // region Helpers
-
-    private fun assertClosed(client: Socket, message: String) {
-        client.soTimeout = 2000
-
-        try {
-            assertEquals(-1, client.getInputStream().read(), message)
-        } catch (_: SocketTimeoutException) {
-            fail(message)
-        }
-    }
 
     /**
      * Answers requests to `/idle`, suspends requests to `/suspend` until they are cancelled and reads upgraded
@@ -201,7 +189,7 @@ class ServerTests {
     companion object {
 
         @JvmStatic
-        fun transports(): List<Transport> = availableTransports()
+        fun transports(): List<Transport> = Natives.transports
 
     }
 

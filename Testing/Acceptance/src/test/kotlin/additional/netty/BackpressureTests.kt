@@ -24,8 +24,8 @@ import kotlin.test.assertEquals
  * their writes, which wait while the client does not read. Once the client reads, all answers arrive complete and
  * in order.
  *
- * The client detects the push back by its writes getting stuck (the socket buffers of the server absorb some
- * megabytes before).
+ * The client detects the push back by its writes getting stuck (the socket buffers absorb some megabytes before,
+ * depending on the platform).
  */
 class BackpressureTests {
 
@@ -140,10 +140,11 @@ class BackpressureTests {
         const val PayloadSize = 8000
 
         /**
-         * The client gives up after this many chunks (about 128 MB), which is far more than the socket buffers
-         * hold.
+         * The client gives up after this many chunks (about 256 MB), which is far more than the socket buffers hold
+         * on any platform (Linux absorbs some megabytes, Windows considerably more). Only what the buffers absorb
+         * is actually sent, the answers to this data are read afterwards.
          */
-        const val MaxChunks = 16 * 1024
+        const val MaxChunks = 32 * 1024
 
         val Padding = "p".repeat(PayloadSize)
 

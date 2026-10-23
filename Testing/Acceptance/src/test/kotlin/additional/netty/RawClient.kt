@@ -9,6 +9,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.Base64
@@ -19,6 +20,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.X509TrustManager
 
+import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -220,6 +222,25 @@ object RawClient {
         }
     }
 
+    /**
+     * Checks that the server closes the given connection within the given time (without sending anything), whether
+     * it ends the connection regularly or resets it.
+     */
+    fun assertClosedByServer(socket: Socket, message: String, timeout: Int = Constants.ClientTimeout) {
+        socket.soTimeout = timeout
+
+        val read = try {
+            socket.getInputStream().read()
+        } catch (_: SocketTimeoutException) {
+            fail("$message (still open after $timeout ms)")
+        } catch (_: IOException) {
+            // reset
+            -1
+        }
+
+        assertEquals(-1, read, "$message (received data)")
+    }
+
     private fun readChunked(input: InputStream): ByteArray {
         val result = ByteArrayOutputStream()
 
@@ -367,7 +388,7 @@ class PushbackWriter(output: OutputStream, private val maxChunks: Int, chunk: (I
      *
      * @return The number of chunks written when the writer got stuck
      */
-    fun awaitPushback(stall: Duration = 1.seconds, timeout: Duration = 60.seconds): Int {
+    fun awaitPushback(stall: Duration = 1.seconds, timeout: Duration = 120.seconds): Int {
         val start = TimeSource.Monotonic.markNow()
 
         var last = -1
@@ -417,7 +438,7 @@ class PushbackWriter(output: OutputStream, private val maxChunks: Int, chunk: (I
             }
         }
 
-        if (!finished.await(Constants.ClientTimeout.toLong(), TimeUnit.MILLISECONDS)) {
+        if (!finished.await(60, TimeUnit.SECONDS)) {
             fail("The writer did not finish")
         }
 
