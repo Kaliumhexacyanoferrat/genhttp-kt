@@ -5,7 +5,7 @@ developers to quickly create web services on the JVM and concentrate on the func
 files or complex concepts. genhttp-kt is the Kotlin port of [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP)
 (see [About the Port](#about-the-port)).
 
-Website and documentation: **[genhttp.org/kotlin](https://genhtt.org/kotlin)**
+Website and documentation: **[genhttp.org/kotlin](https://genhttp.org/kotlin)**
 
 [![Build](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml/badge.svg)](https://github.com/Kaliumhexacyanoferrat/genhttp-kt/actions/workflows/build.yml) [![View - Documentation](https://img.shields.io/badge/view-Documentation-7F52FF)](https://genhttp-kt.genhttp.run/documentation/) [![Discord](https://discordapp.com/api/guilds/1177529388229734410/widget.png?style=shield)](https://discord.gg/PRkwKrnrB4)
 
