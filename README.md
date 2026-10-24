@@ -97,6 +97,12 @@ virtual threads, so handlers may block. The Netty engine (`genhttp-full-netty`, 
 connections from start to finish, including websockets and TLS via OpenSSL. Handlers run on the loop and must suspend
 rather than block - move blocking calls such as JDBC to `withContext(Dispatchers.IO)`.
 
+According to [HTTP Arena](https://http-arena.com/#sort=rps:-1&type=emerging,experimental,flagship&tuned=0&q=java%2Ckotlin),
+genhttp-kt is among the fastest Kotlin web servers for HTTP/1.1: with the Netty engine it ranks second of all the Java
+and Kotlin frameworks without tuning, and the internal engine is 1.4 times faster than Ktor and 2.6 times faster than
+Spring Boot (results of October 24, 2026). The
+[features page](https://genhttp-kt.genhttp.run/features/#server-performance) shows the full comparison.
+
 ## Support
 
 If you encounter issues implementing your application, feel free to
