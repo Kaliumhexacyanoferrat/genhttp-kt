@@ -7,6 +7,7 @@ description = "Micro benchmarks of the request pipeline (port of GenHTTP.Benchma
 dependencies {
     implementation(project(":engine-internal"))
     implementation(project(":engine-netty"))
+    implementation(project(":engine-ioxide"))
     implementation(project(":modules-compression"))
     implementation(project(":modules-files"))
     implementation(project(":modules-functional"))
