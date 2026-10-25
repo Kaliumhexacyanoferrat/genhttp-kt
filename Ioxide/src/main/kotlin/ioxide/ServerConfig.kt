@@ -9,6 +9,8 @@ package ioxide
  * @property recvSlots buffers in that group, a power of two up to 32768.
  * @property opSlots initial capacity of the table of in-flight timer operations; it grows on demand.
  * @property tcp the TCP transport; null opens no listener at all.
+ * @property dualStack listeners are dual-stack IPv6 (AF_INET6 on :: with IPV6_V6ONLY=0), so one socket accepts
+ *   both IPv6 and IPv4-mapped clients; false (the default) binds IPv4-only listeners (AF_INET on 0.0.0.0).
  */
 class ServerConfig(
     val reactorCount: Int = 12,
@@ -17,6 +19,7 @@ class ServerConfig(
     val recvSlots: Int = 4096,
     val opSlots: Int = 4096,
     val tcp: TcpOptions? = null,
+    val dualStack: Boolean = false,
 )
 
 /**

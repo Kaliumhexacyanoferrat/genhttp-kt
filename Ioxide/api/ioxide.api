@@ -137,8 +137,9 @@ public final class ioxide/RingTimer$Companion {
 
 public final class ioxide/ServerConfig {
 	public fun <init> ()V
-	public fun <init> (IIIIILioxide/TcpOptions;)V
-	public synthetic fun <init> (IIIIILioxide/TcpOptions;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IIIIILioxide/TcpOptions;Z)V
+	public synthetic fun <init> (IIIIILioxide/TcpOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDualStack ()Z
 	public final fun getOpSlots ()I
 	public final fun getReactorCount ()I
 	public final fun getRecvBufferSize ()I

@@ -26,7 +26,7 @@ internal class TcpTransport(val reactor: Reactor, private val config: ServerConf
         listenFds = IntArray(ports.size) { -1 }
         listenPorts = ports.copyOf()
         for (i in ports.indices) {
-            listenFds[i] = Sockets.listen(ports[i], options.listenBacklog)
+            listenFds[i] = Sockets.listen(ports[i], options.listenBacklog, dualStack = config.dualStack)
             if (ports[i] == 0) listenPorts[i] = Sockets.localPort(listenFds[i])
         }
     }

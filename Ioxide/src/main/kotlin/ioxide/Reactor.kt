@@ -130,7 +130,8 @@ class Reactor(val id: Int, private val config: ServerConfig) {
 
     private fun announceListening() {
         val ports = tcp?.listenPorts
-        System.err.println("[r$id] listening on " + (if (ports != null && ports.isNotEmpty()) "0.0.0.0:${ports.joinToString(",")}" else "(no tcp)"))
+        val any = if (config.dualStack) "[::]" else "0.0.0.0"
+        System.err.println("[r$id] listening on " + (if (ports != null && ports.isNotEmpty()) "$any:${ports.joinToString(",")}" else "(no tcp)"))
     }
 
     // ---- Loop -------------------------------------------------------------------------------------------
