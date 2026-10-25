@@ -4,19 +4,19 @@ ChunkedBodyStreamSequenceTests.Sequence_MatchesSpan_AcrossSegmentations Glyph11-
 ChunkedBodyStreamSequenceTests.Sequence_ChunkDataSpanningSegmentBoundary Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
 ChunkedBodyStreamSequenceTests.Sequence_NeedMoreData_RollsBack_ThenCompletes Glyph11-kt only parses contiguous buffers (no ReadOnlySequence)
 DefaultResource.TestLiteralGeneration Kotlin port has no Roslyn code generation (CompilationUtil.GetLiteral does not exist)
-IoxideFilesTests.TestRegular Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestSubFile Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestNotFound Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestDirectory Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestMethodNotAllowed Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestHead Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestPrecompressedBrotli Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestPrecompressedGzip Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestPrecompressedPrefersBrotliOverGzip Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestNoAcceptEncodingServesIdentity Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestLargeFileIsServedFromDisk Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestChangedFileServesUpdatedContent Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestPinnedSnapshotIgnoresFilesAddedLater Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestZeroIntervalPicksUpFilesAddedLater Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestNegativeRefreshIntervalIsRejected Ioxide engine only (tests return early on other engines); Ioxide is not ported
-IoxideFilesTests.TestChaining Ioxide engine only (tests return early on other engines); Ioxide is not ported
+IoxideFilesTests.TestRegular Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestSubFile Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestNotFound Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestDirectory Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestMethodNotAllowed Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestHead Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestPrecompressedBrotli Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestPrecompressedGzip Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestPrecompressedPrefersBrotliOverGzip Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestNoAcceptEncodingServesIdentity Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestLargeFileIsServedFromDisk Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestChangedFileServesUpdatedContent Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestPinnedSnapshotIgnoresFilesAddedLater Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestZeroIntervalPicksUpFilesAddedLater Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestNegativeRefreshIntervalIsRejected Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port
+IoxideFilesTests.TestChaining Ioxide engine only; the native file path (ioxide.file) is not part of ioxide's Kotlin port

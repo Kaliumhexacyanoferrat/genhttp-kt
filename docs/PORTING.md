@@ -29,15 +29,18 @@ The folder structure mirrors GenHTTP so that upstream paths map mechanically:
 | `API/General`                             | `API/General` (`:api`)                         | `org.genhttp.api`                  |
 | `Engine/Shared`                           | `Engine/Shared` (`:engine-shared`)             | `org.genhttp.engine.shared`        |
 | `Engine/Internal`                         | `Engine/Internal` (`:engine-internal`)         | `org.genhttp.engine.internal`      |
-| `Engine/Ioxide`                           | `Engine/Netty` (`:engine-netty`)               | `org.genhttp.engine.netty`         |
+| `Engine/Ioxide`                           | `Engine/Ioxide` (`:engine-ioxide`)             | `org.genhttp.engine.ioxide`        |
+| `Engine/Ioxide` (by intent, portable)     | `Engine/Netty` (`:engine-netty`)               | `org.genhttp.engine.netty`         |
 | `Modules/<Name>`                          | `Modules/<Name>` (`:modules-<name>`)           | `org.genhttp.modules.<name>`       |
 | `Testing/Testing`                         | `Testing/Testing` (`:testing`)                 | `org.genhttp.testing`              |
 | `Testing/Acceptance`                      | `Testing/Acceptance` (`:testing-acceptance`)   | `org.genhttp.testing.acceptance`   |
 | `Playground`                              | `Playground` (`:playground`)                   | `org.genhttp.playground`           |
 | `Benchmarks`                              | `Benchmarks` (`:benchmarks`)                   | `org.genhttp.benchmarks`           |
 | `Packages/GenHTTP.Core.nuspec` / `.Full`  | `Packages/Core`, `Packages/Full`               | (aggregate artifacts)              |
-| `Packages/GenHTTP.{Core,Full}.Ioxide`     | `Packages/CoreNetty`, `Packages/FullNetty`     | (aggregate artifacts)              |
+| `Packages/GenHTTP.{Core,Full}.Ioxide`     | `Packages/CoreIoxide`, `Packages/FullIoxide`   | (aggregate artifacts)              |
+| (by intent, portable)                     | `Packages/CoreNetty`, `Packages/FullNetty`     | (aggregate artifacts)              |
 | Glyph11 `src/Glyph11` (separate repo)     | `Glyph11` (`:glyph11`)                         | `org.genhttp.glyph11`              |
+| ioxide `kotlin/ioxide` (separate repo)    | `Ioxide` (`:ioxide`, kept as upstream has it)  | `ioxide`                           |
 
 Within a project, sources live in `src/main/kotlin` and use Kotlin's recommended layout that **omits the common root
 package**: `Modules/Layouting/Provider/LayoutBuilder.cs` becomes
@@ -47,7 +50,7 @@ Multi-word module names use kebab-case for Gradle (`:modules-single-page-applica
 packages (`org.genhttp.modules.singlepageapplications`).
 
 Maven coordinates: group `org.genhttp`, artifacts `genhttp-api`, `genhttp-engine-internal`, `genhttp-modules-layouting`,
-`genhttp-testing`, `genhttp-core`, `genhttp-full`, `glyph11-kt`, ...
+`genhttp-testing`, `genhttp-core`, `genhttp-full`, `glyph11-kt`, `ioxide-kt`, ...
 
 ## Naming
 
@@ -183,6 +186,14 @@ The execution model depends on the engine, like upstream (internal engine vs. io
   The response of an upgrade is written on a virtual thread; its stream implements `SuspendingInput`, so content that
   supports it (websockets) moves to the event loop and reads without blocking, other content reads blocking on the
   virtual thread.
+- **ioxide engine (port of ioxide, Linux only): io_uring reactors.** ioxide's own Kotlin port: one reactor per core
+  with its own ring and `SO_REUSEPORT` listeners. Each connection runs as a coroutine on a `ReactorDispatcher` of the
+  reactor that accepted it: the reactor resumes it inline from the completion that delivered its data, resumptions
+  elsewhere are handed back, timers (`delay`, `withTimeout`) are submitted to the ring. Handlers must not block,
+  suspending is fine. Request bodies are buffered completely before the handler runs (like the Netty engine).
+  Responses are staged in the write slab of the connection and sent once the reactor has handled its current
+  completions. Upgrades work like on the Netty engine (`SuspendingInput`). TLS is terminated by BoringSSL through
+  ioxide (optionally kernel TLS) or by the JDK, see `docs/specs/ioxide-engine.md`.
 
 ## Builders
 

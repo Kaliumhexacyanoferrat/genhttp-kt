@@ -38,10 +38,11 @@ where genhttp-kt intentionally differs from GenHTTP.
 
 ## Engine
 
-genhttp-kt ships with two HTTP/1.1 engines: the internal engine (`Engine/Internal`, a port of GenHTTP's internal
-engine) and the Netty engine (`Engine/Netty`, the counterpart of GenHTTP's ioxide engine). Kestrel is specific to .NET
-and therefore not ported, ioxide is replaced by Netty. Modules are engine-independent, exactly like in GenHTTP, and the
-acceptance tests run on both engines.
+genhttp-kt ships with three HTTP/1.1 engines: the internal engine (`Engine/Internal`, a port of GenHTTP's internal
+engine), the ioxide engine (`Engine/Ioxide`, a port of GenHTTP's ioxide engine on ioxide's own Kotlin runtime, Linux
+only) and the Netty engine (`Engine/Netty`, the portable counterpart of GenHTTP's ioxide engine). Kestrel is specific to
+.NET and therefore not ported. Modules are engine-independent, exactly like in GenHTTP, and the acceptance tests run on
+every engine (the ioxide engine on Linux, like upstream).
 
 The internal engine:
 
@@ -70,6 +71,21 @@ The Netty engine (see [the design](specs/netty-engine.md)):
 - Parsing (glyph11-kt), the request and response types and the serialization are shared with the internal engine
   (`Engine/Shared`).
 
+The ioxide engine (see [the design](specs/ioxide-engine.md)):
+
+- ioxide's Kotlin port (`Ioxide/`, the runtime GenHTTP's ioxide engine runs on, kept in the repository until it is
+  published): one `io_uring` reactor per core with its own ring and `SO_REUSEPORT` listeners, the syscalls made through
+  the Foreign Function & Memory API.
+- Every connection runs as a coroutine on the reactor that accepted it, resumed inline by the completion that delivered
+  its data; coroutines that resume on other threads are handed back, timers are submitted to the ring. Handlers must not
+  block, suspending is fine.
+- Request bodies are buffered completely before the handler runs. Responses are staged in the write slab of the
+  connection, pipelined responses are sent with a single send. Websockets run on the reactor (`SuspendingInput`). The
+  state of connections is pooled per reactor.
+- TLS is terminated by BoringSSL through ioxide (optionally with kernel TLS) for endpoints with one certificate and no
+  client certificates, by the JDK's `SSLEngine` for the others (certificates per SNI host name, client certificates).
+- Parsing, the request and response types and the serialization are shared with the other engines (`Engine/Shared`).
+
 ## Keeping in Sync
 
 [`upstream.properties`](../upstream.properties) records the last GenHTTP and Glyph11 commits that are fully reflected
@@ -77,7 +93,8 @@ in this repository. A daily workflow checks both repositories and maintains an i
 not been ported yet. An agent then ports them following the [sync procedure](SYNC.md): production code and tests
 together, one commit per upstream change, referenced with an `Upstream-Commit:` trailer. Changes that only affect
 .NET-specific parts (Kestrel, the ASP.NET Core adapter, NuGet packaging) are not ported, but their intent is checked
-against the Kotlin code. Changes to ioxide are ported to the Netty engine by intent.
+against the Kotlin code. Changes to GenHTTP's ioxide engine are ported to the ioxide engine and to the Netty engine
+by intent; the runtime of the ioxide engine follows ioxide's Kotlin port (`ioxide.commit`).
 
 ## Verification
 

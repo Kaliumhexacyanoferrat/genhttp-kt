@@ -37,7 +37,11 @@ Same layering as GenHTTP, enforced by Gradle dependencies:
 - `Engine/Shared`, `Engine/Internal` — the HTTP server. Must not depend on modules except those upstream uses
   (IO, ErrorHandling and their dependencies).
 - `Modules/*` — content modules. Never depend on `Engine/*`.
+- `Engine/Netty`, `Engine/Ioxide` — the event loop engines (ports of upstream's ioxide engine), they must not depend
+  on each other or on `Engine/Internal`.
 - `Glyph11` — the HTTP/1.1 parser used by the engine (port of dotnet-web-stack/Glyph11).
+- `Ioxide` — the io_uring runtime of the ioxide engine: ioxide's Kotlin port as upstream has it (MDA2AV/ioxide), not a
+  port of this project; changes go upstream first.
 - `Testing/Testing` — public test helpers (`TestHost`), `Testing/Acceptance` — the acceptance test suite.
 
 ## Rules

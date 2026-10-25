@@ -35,8 +35,10 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
       [layout table](PORTING.md#project-layout)). Changes to Kestrel, the ASP.NET Core adapter, `.csproj`/NuGet
       plumbing and other items listed as deviations are not ported, but their *behavioral* intent is checked (e.g. a
       bug fix in shared engine code also applies to the Kotlin engines). Changes to `Engine/Ioxide` map to
-      `Engine/Netty` by intent: the Netty engine is not a line-by-line port (ioxide's runtime is replaced by Netty), so
-      behavior (protocol handling, options, defaults, log lines) is ported, io_uring/OpenSSL plumbing is not.
+      `Engine/Ioxide` (what ioxide's Kotlin port supports: HTTP/1.1, TLS; HTTP/2, HTTP/3 and the native file path are
+      not part of it yet) and to `Engine/Netty` by intent: the Netty engine is not a line-by-line port (ioxide's runtime
+      is replaced by Netty), so behavior (protocol handling, options, defaults, log lines) is ported, io_uring/OpenSSL
+      plumbing is not.
    2. Port production code and tests together. Ported tests must mirror the upstream tests 1:1. A new upstream
       module becomes a Gradle project (`module(...)` in `settings.gradle.kts`, dependency of `Packages/Full` and of
       `Testing/Acceptance`).
@@ -59,6 +61,12 @@ genhttp-kt versions are `<upstream version>.<port revision>`, e.g. `11.1.0.0`, `
       ```
       Use one `Upstream-Commit:` trailer per ported commit, `dotnet-web-stack/Glyph11@<sha>` for Glyph11.
 4. Update `upstream.properties` (`genhttp.commit`, `glyph11.commit`) in the last commit of the sync.
+
+The runtime of the ioxide engine (`Ioxide/`) is ioxide's Kotlin port (`kotlin/ioxide` of
+[MDA2AV/ioxide](https://github.com/MDA2AV/ioxide)) as upstream has it, at `ioxide.commit`. It is updated by copying
+`kotlin/ioxide/src/main/kotlin` of a newer commit (keeping dual-stack listeners until upstream has them), refreshing its
+ABI dump (`./gradlew :ioxide:updateKotlinAbi`) and running the tests of the ioxide engine, in a commit of its own.
+Once ioxide publishes its Kotlin port, the project is replaced by a dependency.
 5. If `<Version>` in GenHTTP's `Directory.Build.props` changed, set `genhttp.version` to the new value and reset
    `port.revision=0`. Otherwise, if the sync is released, increment `port.revision`.
 6. Update the [deviation log](DEVIATIONS.md) if a new deviation was introduced.
