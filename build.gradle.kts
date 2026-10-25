@@ -3,8 +3,9 @@ plugins {
 }
 
 dependencies {
-    // aggregates the coverage of all projects (most of it produced by the acceptance tests)
-    subprojects.filter { it.path !in setOf(":core", ":full", ":core-netty", ":full-netty", ":playground", ":benchmarks") }.forEach {
+    // aggregates the coverage of all projects (most of it produced by the acceptance tests), except the vendored
+    // runtime of the ioxide engine, which is tested upstream
+    subprojects.filter { it.path !in setOf(":core", ":full", ":core-netty", ":full-netty", ":playground", ":benchmarks", ":ioxide") }.forEach {
         kover(project(it.path))
     }
 }

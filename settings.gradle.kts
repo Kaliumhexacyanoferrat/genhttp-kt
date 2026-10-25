@@ -24,6 +24,7 @@ fun module(name: String, directory: String) {
 }
 
 module("glyph11", "Glyph11")
+module("ioxide", "Ioxide")
 module("api", "API/General")
 module("modules-io", "Modules/IO")
 module("modules-pages", "Modules/Pages")
