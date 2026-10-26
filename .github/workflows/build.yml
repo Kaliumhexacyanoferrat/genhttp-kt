@@ -57,11 +57,17 @@ jobs:
           sparse-checkout: src/ioxide/runtimes/linux-x64/native
           sparse-checkout-cone-mode: false
 
-      - name: Load kernel TLS
-        run: sudo modprobe tls || true
+      - name: Enable io_uring
+        run: |
+          sudo sysctl -w kernel.io_uring_disabled=0 2>/dev/null || true
+          sudo modprobe tls 2>/dev/null || true
 
+      # the io_uring rings of the ioxide engine count against RLIMIT_MEMLOCK, which the runner's default (8 MiB)
+      # cannot cover for the test servers running at the same time (like upstream's build)
       - name: Build & test
-        run: ./gradlew check :koverXmlReport :koverLog :koverVerify --console=plain
+        run: |
+          sudo prlimit --pid $$ --memlock=-1:-1 2>/dev/null || ulimit -l unlimited 2>/dev/null || true
+          ./gradlew check :koverXmlReport :koverLog :koverVerify --console=plain
         env:
           IOXIDE_BORINGSSL: ${{ github.workspace }}/build/ioxide/src/ioxide/runtimes/linux-x64/native/libioxide_boringssl.so
 
@@ -180,5 +186,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      # the ioxide engine is tested on Linux, see the build job
+      - name: Enable io_uring
+        if: runner.os == 'Linux'
+        run: sudo sysctl -w kernel.io_uring_disabled=0 2>/dev/null || true
+
       - name: Build & test
-        run: ./gradlew test --console=plain
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo prlimit --pid $$ --memlock=-1:-1 2>/dev/null || ulimit -l unlimited 2>/dev/null || true
+          fi
+          ./gradlew test --console=plain
