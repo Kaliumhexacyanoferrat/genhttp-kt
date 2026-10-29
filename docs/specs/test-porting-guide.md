@@ -62,7 +62,8 @@ Upstream: `../GenHTTP/Testing/Acceptance` (MSTest). Target: `Testing/Acceptance/
 | `HttpClient` HTTP/1.0 requests                                       | raw socket (the JDK client only supports HTTP/1.1 and 2)                   |
 | C# lambdas `r => ...` as handlers                                    | Kotlin lambdas; `Handler.from { r -> ... }`                                |
 | `Inline.Create().Get((int a) => ...)`                                | `Inline.create().get { a: Int -> ... }` (suspend lambdas)                  |
-| `ServerEngine.Kestrel` / `Ioxide` specific branches                  | drop (only the internal engine exists); keep the generic part              |
+| `ServerEngine.Kestrel` specific branches                             | drop (Kestrel does not exist on the JVM); keep the generic part             |
+| `ServerEngine.Ioxide` specific branches                              | port for `ServerEngine.Ioxide` where the behavior of the engines agrees, otherwise log a deviation |
 
 API naming follows docs/PORTING.md (no `I` prefix, camelCase, `Async` dropped, companion factories such as
 `Resource.fromString`, `Handler.from`, `Content.from`, fluent builders). Read the ported production code of the module

@@ -303,6 +303,7 @@ public abstract interface class org/genhttp/api/infrastructure/Server {
 public final class org/genhttp/api/infrastructure/ServerEngine : java/lang/Enum {
 	public static final field Custom Lorg/genhttp/api/infrastructure/ServerEngine;
 	public static final field Internal Lorg/genhttp/api/infrastructure/ServerEngine;
+	public static final field Ioxide Lorg/genhttp/api/infrastructure/ServerEngine;
 	public static final field Netty Lorg/genhttp/api/infrastructure/ServerEngine;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/infrastructure/ServerEngine;

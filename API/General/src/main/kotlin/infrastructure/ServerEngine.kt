@@ -7,8 +7,7 @@ package org.genhttp.api.infrastructure
  * provide their functionality independently of the underlying engine and must not throw exceptions for engines
  * they do not know. Therefore, it is recommended not to rely on this field in business logic.
  *
- * GenHTTP additionally knows `Kestrel` and `Ioxide`, which are .NET specific and not available on the JVM. The
- * counterpart of `Ioxide` is [Netty].
+ * GenHTTP additionally knows `Kestrel`, which is .NET specific and not available on the JVM.
  */
 public enum class ServerEngine {
 
@@ -20,6 +19,12 @@ public enum class ServerEngine {
      * accepts and serves its connections.
      */
     Netty,
+
+    /**
+     * High performance Linux engine based on io_uring (ioxide), running one reactor per CPU core that accepts and
+     * serves its connections.
+     */
+    Ioxide,
 
     /** A custom implementation that is not shipped with the default SDK. */
     Custom

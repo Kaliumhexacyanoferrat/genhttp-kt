@@ -90,12 +90,16 @@ adjustments.
 |-----------------------------------------------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
 | [Internal](https://genhttp-kt.genhttp.run/documentation/server/engines/internal/) | `1.1`     | [![HTTP Arena](https://img.shields.io/endpoint?url=https://www.http-arena.com/badge/genhttp-kt/h1.json)](https://www.http-arena.com/)       | Embedding; web applications behind a reverse proxy; blocking handlers  |
 | [Netty](https://genhttp-kt.genhttp.run/documentation/server/engines/netty/)       | `1.1`     | [![HTTP Arena](https://img.shields.io/endpoint?url=https://www.http-arena.com/badge/genhttp-kt-netty/h1.json)](https://www.http-arena.com/) | High performance web applications on Linux via epoll or `io_uring`     |
+| ioxide                                                                            | `1.1`     |                                                                                                                                             | High performance web applications on Linux via `io_uring` (Linux only) |
 
 The internal engine (`genhttp-full`, `genhttp-core`, `org.genhttp.engine.internal.Host`) serves every connection on
 virtual threads, so handlers may block. The Netty engine (`genhttp-full-netty`, `genhttp-core-netty`,
 `org.genhttp.engine.netty.Host`) is the counterpart of GenHTTP's ioxide engine: one event loop per CPU core serves its
 connections from start to finish, including websockets and TLS via OpenSSL. Handlers run on the loop and must suspend
-rather than block - move blocking calls such as JDBC to `withContext(Dispatchers.IO)`.
+rather than block - move blocking calls such as JDBC to `withContext(Dispatchers.IO)`. The ioxide engine
+(`genhttp-full-ioxide`, `genhttp-core-ioxide`, `org.genhttp.engine.ioxide.Host`) is the port of GenHTTP's ioxide engine on
+[ioxide](https://github.com/MDA2AV/ioxide)'s own Kotlin runtime: one `io_uring` reactor per CPU core, TLS via BoringSSL
+(with optional kernel TLS) or the JDK, Linux only. Its handlers must not block either.
 
 According to [HTTP Arena](https://http-arena.com/#sort=rps:-1&type=emerging,experimental,flagship&tuned=0&q=java%2Ckotlin),
 genhttp-kt is among the fastest Kotlin web servers for HTTP/1.1: with the Netty engine it ranks second of all the Java
@@ -142,5 +146,6 @@ and verified, and where it intentionally differs from GenHTTP.
 - Ported from [GenHTTP](https://github.com/Kaliumhexacyanoferrat/GenHTTP) and [Glyph11](https://github.com/dotnet-web-stack/Glyph11)
 - Powered by [Kotlin](https://kotlinlang.org/), [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) and the [JDK](https://openjdk.org/)
 - Netty engine implemented with [Netty](https://netty.io/) and [netty-tcnative](https://github.com/netty/netty-tcnative) (BoringSSL)
+- ioxide engine implemented with [ioxide](https://github.com/MDA2AV/ioxide) (its Kotlin port, `io_uring` and BoringSSL)
 - Modules implemented with [Jackson](https://github.com/FasterXML/jackson) | [swagger-core](https://github.com/swagger-api/swagger-core) | [Pebble](https://pebbletemplates.io/) | [Apache Commons Compress](https://commons.apache.org/proper/commons-compress/) | [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt) | [Koin](https://insert-koin.io/) | [Brotli4j](https://github.com/hyperxpro/Brotli4j) | [zstd-jni](https://github.com/luben/zstd-jni)
 - Monitored by [HTTP Arena](https://www.http-arena.com)

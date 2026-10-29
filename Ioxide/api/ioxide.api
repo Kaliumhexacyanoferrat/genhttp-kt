@@ -1,0 +1,271 @@
+public final class ioxide/FlushResult {
+	public static final field Companion Lioxide/FlushResult$Companion;
+	public final fun isCanceled ()Z
+	public final fun isCompleted ()Z
+}
+
+public final class ioxide/FlushResult$Companion {
+}
+
+public final class ioxide/IoxideServer : java/lang/AutoCloseable {
+	public fun <init> (Lioxide/ServerConfig;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lioxide/ServerConfig;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun getReactors ()Ljava/util/List;
+	public final fun join ()V
+	public final fun start ()Lioxide/IoxideServer;
+}
+
+public final class ioxide/Memory {
+	public static final field INSTANCE Lioxide/Memory;
+	public final fun copy (JJJ)V
+	public final fun copy (J[BII)V
+	public final fun copy ([BIJI)V
+	public final fun getByte (J)B
+	public final fun getInt (J)I
+	public final fun getLong (J)J
+	public final fun getShort (J)S
+	public final fun putByte (JB)V
+	public final fun putInt (JI)V
+	public final fun putLong (JJ)V
+	public final fun putShort (JS)V
+}
+
+public abstract interface class ioxide/PipeReader {
+	public abstract fun advanceTo (JJ)V
+	public static synthetic fun advanceTo$default (Lioxide/PipeReader;JJILjava/lang/Object;)V
+	public abstract fun cancelPendingRead ()V
+	public abstract fun complete ()V
+	public abstract fun read (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun tryRead ()Lioxide/ReadResult;
+}
+
+public abstract interface class ioxide/PipeWriter {
+	public abstract fun advance (I)V
+	public abstract fun cancelPendingFlush ()V
+	public abstract fun complete ()V
+	public abstract fun flush (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getBuffer (I)J
+	public static synthetic fun getBuffer$default (Lioxide/PipeWriter;IILjava/lang/Object;)J
+	public abstract fun getSegment (I)Ljava/lang/foreign/MemorySegment;
+	public static synthetic fun getSegment$default (Lioxide/PipeWriter;IILjava/lang/Object;)Ljava/lang/foreign/MemorySegment;
+	public abstract fun getUnflushedBytes ()J
+	public abstract fun write ([BII)V
+	public static synthetic fun write$default (Lioxide/PipeWriter;[BIIILjava/lang/Object;)V
+}
+
+public final class ioxide/Reactor {
+	public static final field Companion Lioxide/Reactor$Companion;
+	public static final field TICK_MS J
+	public fun <init> (ILioxide/ServerConfig;)V
+	public final fun addTicker (Ljava/lang/Runnable;)V
+	public final fun getHandlerContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getId ()I
+	public final fun getListenPorts ()[I
+	public final fun getNowMs ()J
+	public final fun getOnFault ()Lkotlin/jvm/functions/Function2;
+	public final fun getOnReactorThread ()Z
+	public final fun getOnStart ()Lkotlin/jvm/functions/Function1;
+	public final fun getTcpHandler ()Lkotlin/jvm/functions/Function2;
+	public final fun post (Ljava/lang/Runnable;)V
+	public final fun run ()V
+	public final fun setHandlerContext (Lkotlin/coroutines/CoroutineContext;)V
+	public final fun setOnFault (Lkotlin/jvm/functions/Function2;)V
+	public final fun setOnStart (Lkotlin/jvm/functions/Function1;)V
+	public final fun setTcpHandler (Lkotlin/jvm/functions/Function2;)V
+	public final fun stop ()V
+}
+
+public final class ioxide/Reactor$Companion {
+}
+
+public final class ioxide/ReadBuffer {
+	public final fun copyTo ([BIJI)V
+	public static synthetic fun copyTo$default (Lioxide/ReadBuffer;[BIJIILjava/lang/Object;)V
+	public final fun get (J)B
+	public final fun getLength ()J
+	public final fun getSegmentCount ()I
+	public final fun indexOf (BJ)J
+	public final fun indexOf ([BJ)J
+	public static synthetic fun indexOf$default (Lioxide/ReadBuffer;BJILjava/lang/Object;)J
+	public static synthetic fun indexOf$default (Lioxide/ReadBuffer;[BJILjava/lang/Object;)J
+	public final fun isEmpty ()Z
+	public final fun isSingleSegment ()Z
+	public final fun matches (J[B)Z
+	public final fun segment (I)Ljava/lang/foreign/MemorySegment;
+	public static synthetic fun segment$default (Lioxide/ReadBuffer;IILjava/lang/Object;)Ljava/lang/foreign/MemorySegment;
+	public final fun segmentAddress (I)J
+	public final fun segmentLength (I)I
+	public final fun toByteArray (JI)[B
+	public static synthetic fun toByteArray$default (Lioxide/ReadBuffer;JIILjava/lang/Object;)[B
+}
+
+public final class ioxide/ReadResult {
+	public final fun getBuffer ()Lioxide/ReadBuffer;
+	public final fun isCanceled ()Z
+	public final fun isCompleted ()Z
+}
+
+public final class ioxide/RecvItem {
+	public fun <init> ()V
+	public final fun copyTo ([BIII)V
+	public static synthetic fun copyTo$default (Lioxide/RecvItem;[BIIIILjava/lang/Object;)V
+	public final fun get (I)B
+	public final fun getAddress ()J
+	public final fun getBufferId ()I
+	public final fun getHasBuffer ()Z
+	public final fun getLength ()I
+	public final fun segment ()Ljava/lang/foreign/MemorySegment;
+}
+
+public final class ioxide/RecvSnapshot {
+	public final fun getTail ()J
+	public final fun isClosed ()Z
+}
+
+public final class ioxide/RingTimer {
+	public static final field Companion Lioxide/RingTimer$Companion;
+	public static final field ETIME I
+	public fun <init> (Lioxide/Reactor;)V
+	public final fun delay (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun delayNanoseconds (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class ioxide/RingTimer$Companion {
+	public final fun expired (I)Z
+}
+
+public final class ioxide/ServerConfig {
+	public fun <init> ()V
+	public fun <init> (IIIIILioxide/TcpOptions;Z)V
+	public synthetic fun <init> (IIIIILioxide/TcpOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDualStack ()Z
+	public final fun getOpSlots ()I
+	public final fun getReactorCount ()I
+	public final fun getRecvBufferSize ()I
+	public final fun getRecvSlots ()I
+	public final fun getRingEntries ()I
+	public final fun getTcp ()Lioxide/TcpOptions;
+}
+
+public final class ioxide/TcpConnection {
+	public final fun advance (I)V
+	public final fun decRef ()V
+	public final fun disableReadTimeout ()V
+	public final fun flush (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getBuffer (I)J
+	public static synthetic fun getBuffer$default (Lioxide/TcpConnection;IILjava/lang/Object;)J
+	public final fun getClientFd ()I
+	public final fun getListenerPort ()I
+	public final fun getReactor ()Lioxide/Reactor;
+	public final fun getRecvOverflowed ()Z
+	public final fun getSegment (I)Ljava/lang/foreign/MemorySegment;
+	public static synthetic fun getSegment$default (Lioxide/TcpConnection;IILjava/lang/Object;)Ljava/lang/foreign/MemorySegment;
+	public final fun getWritableBytes ()I
+	public final fun getWrittenBytes ()I
+	public final fun isClosed ()Z
+	public final fun itemCount (Lioxide/RecvSnapshot;)I
+	public final fun read (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun returnBuffer (Lioxide/RecvItem;)V
+	public final fun shutdownWrite ()V
+	public final fun tryGetItem (Lioxide/RecvSnapshot;Lioxide/RecvItem;)Z
+	public final fun write (Ljava/lang/foreign/MemorySegment;)V
+	public final fun write ([BII)V
+	public static synthetic fun write$default (Lioxide/TcpConnection;[BIIILjava/lang/Object;)V
+}
+
+public final class ioxide/TcpDuplexPipe {
+	public fun <init> (Lioxide/TcpConnection;)V
+	public final fun getConnection ()Lioxide/TcpConnection;
+	public final fun getInput ()Lioxide/TcpPipeReader;
+	public final fun getOutput ()Lioxide/TcpPipeWriter;
+}
+
+public final class ioxide/TcpOptions {
+	public fun <init> ()V
+	public fun <init> (I[IIIIZIJJ)V
+	public synthetic fun <init> (I[IIIIZIJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getExtraPorts ()[I
+	public final fun getListenBacklog ()I
+	public final fun getPoolMax ()I
+	public final fun getPort ()I
+	public final fun getReadTimeoutMs ()J
+	public final fun getRecvQueueEntries ()I
+	public final fun getSendTimeoutMs ()J
+	public final fun getSendWaitAll ()Z
+	public final fun getWriteSlabSize ()I
+}
+
+public final class ioxide/TcpPipeReader : ioxide/PipeReader, ioxide/RecvBufferHolder {
+	public fun <init> (Lioxide/TcpConnection;)V
+	public fun advanceTo (JJ)V
+	public fun cancelPendingRead ()V
+	public fun complete ()V
+	public fun read (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun releaseHeldBuffers ()V
+	public fun tryRead ()Lioxide/ReadResult;
+}
+
+public final class ioxide/TcpPipeWriter : ioxide/PipeWriter {
+	public fun <init> (Lioxide/TcpConnection;)V
+	public fun advance (I)V
+	public fun cancelPendingFlush ()V
+	public fun complete ()V
+	public fun flush (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBuffer (I)J
+	public fun getSegment (I)Ljava/lang/foreign/MemorySegment;
+	public fun getUnflushedBytes ()J
+	public fun write ([BII)V
+}
+
+public final class ioxide/tls/TlsOptions {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILioxide/tls/TlsProtocolVersion;Ljava/lang/String;Ljava/lang/String;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILioxide/tls/TlsProtocolVersion;Ljava/lang/String;Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAlpn ()Ljava/util/List;
+	public final fun getCertificatePath ()Ljava/lang/String;
+	public final fun getCertificatePem ()Ljava/lang/String;
+	public final fun getCipherList ()Ljava/lang/String;
+	public final fun getCipherSuites ()Ljava/lang/String;
+	public final fun getHandshakeTimeoutMs ()I
+	public final fun getKernelRx ()Z
+	public final fun getKernelTx ()Z
+	public final fun getKeyPath ()Ljava/lang/String;
+	public final fun getKeyPem ()Ljava/lang/String;
+	public final fun getMinProtocolVersion ()Lioxide/tls/TlsProtocolVersion;
+}
+
+public final class ioxide/tls/TlsProtocolVersion : java/lang/Enum {
+	public static final field DEFAULT Lioxide/tls/TlsProtocolVersion;
+	public static final field TLS12 Lioxide/tls/TlsProtocolVersion;
+	public static final field TLS13 Lioxide/tls/TlsProtocolVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lioxide/tls/TlsProtocolVersion;
+	public static fun values ()[Lioxide/tls/TlsProtocolVersion;
+}
+
+public final class ioxide/tls/TlsService {
+	public static final field Companion Lioxide/tls/TlsService$Companion;
+	public final fun accept (Lioxide/TcpConnection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class ioxide/tls/TlsService$Companion {
+	public final fun start (Lioxide/Reactor;Lioxide/tls/TlsOptions;)Lioxide/tls/TlsService;
+}
+
+public final class ioxide/tls/TlsSession : java/lang/AutoCloseable {
+	public fun close ()V
+	public final fun decrypt (JI)I
+	public final fun drainPlaintext ()I
+	public final fun getClosed ()Z
+	public final fun getKernelRx ()Z
+	public final fun getKernelTx ()Z
+	public final fun getNegotiatedAlpn ()Ljava/lang/String;
+	public final fun getNegotiatedCipherSuiteId ()I
+	public final fun getNegotiatedProtocolVersion ()I
+	public final fun getPlaintext ()J
+	public final fun write (Lioxide/TcpConnection;JI)V
+	public final fun write (Lioxide/TcpConnection;[BII)V
+	public static synthetic fun write$default (Lioxide/tls/TlsSession;Lioxide/TcpConnection;[BIIILjava/lang/Object;)V
+}
+

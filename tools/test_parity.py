@@ -31,7 +31,8 @@ SUITES = {
                    os.path.join(ROOT, "Testing", "Acceptance", "src", "test", "kotlin")),
 }
 
-# upstream folders that are intentionally not ported (see docs/DEVIATIONS.md)
+# upstream folders that are intentionally not ported (see docs/DEVIATIONS.md): Kestrel, and the tests of the ioxide engine
+# that need what ioxide's Kotlin port does not have yet (HTTP/2, HTTP/3, certificate features of BoringSSL)
 EXCLUDED_UPSTREAM = [
     os.path.join("Engine", "Kestrel"),
     os.path.join("Engine", "Ioxide"),

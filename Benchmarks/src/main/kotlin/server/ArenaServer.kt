@@ -7,6 +7,10 @@ import org.genhttp.api.infrastructure.CertificateProvider
 import org.genhttp.api.infrastructure.HttpProtocols
 import org.genhttp.benchmarks.benchmarks.webservices.Baseline
 import org.genhttp.engine.internal.Host
+import org.genhttp.engine.ioxide.EngineOptions as IoxideEngineOptions
+import org.genhttp.engine.ioxide.Host as IoxideHost
+import org.genhttp.engine.ioxide.TcpTransportOptions as IoxideTcpTransportOptions
+import org.genhttp.engine.ioxide.TlsProvider as IoxideTlsProvider
 import org.genhttp.engine.netty.EngineOptions
 import org.genhttp.engine.netty.Host as NettyHost
 import org.genhttp.engine.netty.TcpTransportOptions
@@ -31,15 +35,17 @@ import kotlin.system.exitProcess
  * Serves the baseline, pipeline and delay endpoints the same way as the genhttp-kt entry of HttpArena does
  * (layout, webservices, compression, no logging), so that changes can be load tested end to end.
  *
- * Arguments: the port (8080 by default), the engine (`internal` by default, `netty` for the Netty engine) and
- * optionally a PKCS#12 key store (password `genhttp`) to additionally serve HTTPS on port 8443 with. The TLS provider of
- * the Netty engine can be chosen with the environment variable `NETTY_TLS_PROVIDER` (`Auto`, `OpenSsl`, `Jdk`), its
- * cipher suites with `NETTY_CIPHER_SUITES` (TLS 1.3) and `NETTY_CIPHER_LIST` (TLS 1.2).
+ * Arguments: the port (8080 by default), the engine (`internal` by default, `netty` for the Netty engine, `ioxide` for
+ * the ioxide engine) and optionally a PKCS#12 key store (password `genhttp`) to additionally serve HTTPS on port 8443
+ * with. The TLS provider of the Netty engine can be chosen with the environment variable `NETTY_TLS_PROVIDER` (`Auto`,
+ * `OpenSsl`, `Jdk`), its cipher suites with `NETTY_CIPHER_SUITES` (TLS 1.3) and `NETTY_CIPHER_LIST` (TLS 1.2). The TLS
+ * provider of the ioxide engine with `IOXIDE_TLS_PROVIDER` (`Auto`, `BoringSsl`, `Jdk`), kernel TLS with
+ * `IOXIDE_KERNEL_TLS=1`.
  */
 suspend fun main(args: Array<String>) {
     val port = args.firstOrNull()?.toInt() ?: 8080
 
-    val netty = args.getOrNull(1).equals("netty", ignoreCase = true)
+    val engine = args.getOrNull(1)?.lowercase() ?: "internal"
 
     val keyStore = args.getOrNull(2)
 
@@ -63,7 +69,16 @@ suspend fun main(args: Array<String>) {
         cipherList = System.getenv("NETTY_CIPHER_LIST")
     )
 
-    val host = (if (netty) NettyHost.create(options = EngineOptions(tcp = tcp)) else Host.create())
+    val ioxideTcp = IoxideTcpTransportOptions(
+        tlsProvider = System.getenv("IOXIDE_TLS_PROVIDER")?.let { IoxideTlsProvider.valueOf(it) } ?: IoxideTlsProvider.Auto,
+        txKernelTls = System.getenv("IOXIDE_KERNEL_TLS") == "1"
+    )
+
+    val host = when (engine) {
+        "netty" -> NettyHost.create(options = EngineOptions(tcp = tcp))
+        "ioxide" -> IoxideHost.create(options = IoxideEngineOptions(tcp = ioxideTcp))
+        else -> Host.create()
+    }
         .handler(app)
         .compression()
         .logging(NOPLoggerFactory(), false)
