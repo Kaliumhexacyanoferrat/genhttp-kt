@@ -90,4 +90,4 @@ it describes, so the new version shows every sample an API change breaks.
 - Do not refactor unrelated code during a sync; keep diffs reviewable and traceable to upstream commits.
 - Dependency updates of the port are separate commits without `Upstream-Commit` trailers.
 - Changes to upstream benchmarks (`Benchmarks/`) and the playground are ported as well.
-- When delegating to sub-agents, follow the delegation rules in [CLAUDE.md](../CLAUDE.md) and the briefs in [specs/](specs/).
+- When delegating to sub-agents, follow the delegation rules in [AGENTS.md](../AGENTS.md) and the briefs in [specs/](specs/).

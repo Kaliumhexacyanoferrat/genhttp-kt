@@ -19,6 +19,9 @@ source of truth for the public API and the behavior of the server. This has some
 To add your contributions, create a fork of this repository and add your changes there. As soon as your work has
 finished, create a pull request to allow a maintainer to review and merge your changes into the `main` branch.
 
+For larger changes or new features, please open an issue first so that the approach can be discussed before you invest
+time into the implementation.
+
 You will need JDK 25. The Gradle wrapper downloads everything else:
 
 ```sh
@@ -30,11 +33,29 @@ You will need JDK 25. The Gradle wrapper downloads everything else:
 For a pull request to be merged, the following rules need to be fulfilled:
 
 - The automated build was able to compile and successfully test the changes on all platforms
+- New behavior and bug fixes are covered by acceptance tests that run against all server engines
 - The test coverage does not drop below 90 %
 - Public API declarations are documented (KDoc) and the ABI dumps (`api/*.api`) are updated (`./gradlew updateKotlinAbi`)
 - `Handler` and `Concern` instances can be created using a builder
 - The changes follow the rules in [docs/PORTING.md](docs/PORTING.md); deviations from GenHTTP are documented in the [deviation log](docs/DEVIATIONS.md)
-- Architecture principles as described in the following section have not been violated
+- The public API stays compatible with GenHTTP, or the difference is documented in the deviation log
+- Changes to the request handling path do not introduce performance regressions
+- Architecture principles as described below have not been violated
+- The pull request describes changes visible to users (new API, changed behavior or defaults), so that the
+  [documentation](https://genhttp-kt.genhttp.run/documentation/) can be updated accordingly
+
+## Quality Goals
+
+genhttp-kt is a library that other projects build on, so the following goals apply to every change. If they conflict,
+they are prioritized in this order:
+
+1. **Correctness and security**: The server follows the HTTP specifications and handles requests from untrusted
+   clients safely. Defaults are secure; less secure behavior has to be enabled explicitly.
+2. **Compatibility**: The public API mirrors GenHTTP. Applications run on all engines and platforms with the same
+   behavior.
+3. **Performance**: The request handling path is designed to be allocation-free. Changes to this path should be
+   backed by benchmarks.
+4. **Ease of use**: Functionality is exposed via fluent builders and factory methods with sensible defaults.
 
 ## Project Structure
 
@@ -43,9 +64,27 @@ genhttp-kt mirrors the structure of GenHTTP. The following table describes the p
 | Project                   | Description                                                                                                                                                                                       |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `genhttp-api`             | Public interface of the webserver. Contains types that are useful for all kind of content providers. Problem specific types and references to 3rd party libraries are not allowed here.         |
-| `genhttp-engine-*`        | The actual implementation of the webserver. References to 3rd party libraries or complex modules are not allowed.                                                                               |
+| `genhttp-engine-*`        | Server engines (`internal`, `netty`) and the functionality they share (`shared`). Engines may only reference a small set of basic modules and must not depend on optional functionality (e.g. websockets). |
 | `genhttp-modules-*`       | Additional modules that can be used to add functionality to the webserver. References to 3rd party libraries are allowed. Must not reference `genhttp-engine-*` to stay independent from the server implementation. May reference other modules as needed. |
 | `glyph11-kt`              | The HTTP/1.1 parser used by the engine, ported from [Glyph11](https://github.com/dotnet-web-stack/Glyph11).                                                                                       |
+| `genhttp-testing`         | Allows applications to test their handlers.                                                                                                                                                      |
+
+The acceptance tests in `Testing/Acceptance` mirror the tests of GenHTTP. [AGENTS.md](AGENTS.md) describes the
+architecture, conventions and tooling in more detail and is useful for human contributors as well.
+
+## Pull Requests
+
+- Keep a pull request focused on a single change
+- Changes ported from GenHTTP reference the upstream commits (see [docs/SYNC.md](docs/SYNC.md))
+- Please do not report security vulnerabilities via public issues or pull requests, but follow the
+  [security policy](SECURITY.md)
+
+## Coding Agents
+
+You are welcome to use coding agents to work on genhttp-kt. [AGENTS.md](AGENTS.md) provides them with the necessary
+context and is picked up automatically by most tools. Please note that you remain responsible for your contribution:
+review the generated code, make sure you understand it, and verify that it fulfills the Definition of Done just like
+any hand-written change.
 
 ## Legal Aspects
 

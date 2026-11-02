@@ -113,6 +113,6 @@ dependency updates) and resets with every new upstream version. See [SYNC.md](SY
 | [PORTING.md](PORTING.md)                 | Porting rulebook: project layout, naming, type mapping, reflection, tests       |
 | [SYNC.md](SYNC.md)                       | Procedure to port upstream changes, versioning                                  |
 | [DEVIATIONS.md](DEVIATIONS.md)           | Every intentional difference from GenHTTP and its reason                        |
-| [specs/](specs/)                         | Design specifications (Glyph11, Reflection, DependencyInjection), agent briefs  |
+| [specs/](specs/)                         | Design specifications (Glyph11, Reflection, DI, Netty engine, MCP), agent briefs |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)    | How to contribute, definition of done                                           |
-| [CLAUDE.md](../CLAUDE.md)                | Instructions for agents working on the port                                     |
+| [AGENTS.md](../AGENTS.md)                | Instructions for agents working on the port (`CLAUDE.md` imports it)            |
