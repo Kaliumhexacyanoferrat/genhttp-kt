@@ -53,6 +53,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | IO | `WritingStream` is a write-only `OutputStream(WritableByteChannel, Flushable)` | JVM streams are not bidirectional |
 | IO | Stream checksums require `markSupported()`, `StreamContent.length` is only the known length | JVM streams are not seekable |
 | IO | `Handler.From` / `Concern.From` sync and async overloads merged into one suspend lambda | A suspend lambda accepts both |
+| Webservices / Controllers | `type<T>()` (and `ServiceResource.from<T>()`, `Controller.from<T>()`) creates the instance through kotlin-reflect with the constructor made accessible (`@PublishedApi internal fun newInstance` in the ABI) | Upstream compiles `new T()` at the call site, so classes that are only visible to the caller (e.g. private nested classes) can be used; kotlin-reflect is subject to JVM access checks |
 | IO | `DirectoryContainer` rejects paths that escape the directory (e.g. via `%2F`) | Hardening |
 | IO | `ResponseBuilder.apply(modifications)` shadows the stdlib `apply` for response builders | Upstream name kept |
 | Websockets | `WebsocketConnection` is not disposable; the `Canceled` frame error is never produced (cancellation throws `CancellationException`); segmented payloads are linearized into a copy | `close()` clashes with the close frame API and the engine owns the input; no `ReadOnlySequence` on the JVM |

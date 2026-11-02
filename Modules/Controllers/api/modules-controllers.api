@@ -31,6 +31,7 @@ public final class org/genhttp/modules/controllers/provider/ControllerBuilder : 
 	public fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
 	public final fun instance (Ljava/lang/Object;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
 	public final fun instanceProvider (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
+	public final fun newInstance (Lkotlin/reflect/KClass;)Ljava/lang/Object;
 	public synthetic fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Ljava/lang/Object;
 	public fun serializers (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;
 	public final fun type (Lkotlin/reflect/KClass;)Lorg/genhttp/modules/controllers/provider/ControllerBuilder;

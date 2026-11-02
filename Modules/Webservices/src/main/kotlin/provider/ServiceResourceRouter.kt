@@ -10,13 +10,12 @@ import org.genhttp.modules.reflection.MethodHandler
 import org.genhttp.modules.reflection.MethodRegistry
 import org.genhttp.modules.reflection.ServiceMethodProvider
 import org.genhttp.modules.reflection.operations.OperationBuilder
+import org.genhttp.modules.reflection.operations.TypeAnalyzer
 import org.genhttp.modules.webservices.ResourceMethod
 import org.genhttp.modules.webservices.ResourceMethodConfiguration
 
 import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.memberFunctions
 
 /**
  * Routes requests to the operations of a webservice.
@@ -36,11 +35,7 @@ public class ServiceResourceRouter(
     override suspend fun prepare(server: Server) {
         val found = mutableListOf<MethodHandler>()
 
-        for (method in type.memberFunctions) {
-            if (method.visibility != KVisibility.PUBLIC) {
-                continue
-            }
-
+        for (method in TypeAnalyzer.findMethods(type)) {
             val annotation = method.findAnnotation<ResourceMethod>() ?: continue
 
             val configuration = ResourceMethodConfiguration(annotation)

@@ -16,12 +16,11 @@ import org.genhttp.modules.reflection.MethodRegistry
 import org.genhttp.modules.reflection.ServiceMethodProvider
 import org.genhttp.modules.reflection.operations.Operation
 import org.genhttp.modules.reflection.operations.OperationBuilder
+import org.genhttp.modules.reflection.operations.TypeAnalyzer
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
 /**
@@ -43,11 +42,7 @@ public class ControllerHandler(
     override suspend fun prepare(server: Server) {
         val found = mutableListOf<MethodHandler>()
 
-        for (method in type.declaredMemberFunctions) {
-            if (method.visibility != KVisibility.PUBLIC) {
-                continue
-            }
-
+        for (method in TypeAnalyzer.findMethods(type)) {
             val annotation = method.findAnnotation<ControllerAction>()
 
             val configuration: MethodConfiguration = if (annotation != null) ControllerActionConfiguration(annotation) else MethodAttribute()

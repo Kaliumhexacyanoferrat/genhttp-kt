@@ -18,7 +18,8 @@ import org.genhttp.modules.reflection.ReflectionFrameworkBuilder
 import org.genhttp.modules.reflection.injectors.InjectionRegistry
 
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Builds a webservice from a class with functions annotated with
@@ -43,9 +44,20 @@ public class ServiceResourceBuilder : ReflectionFrameworkBuilder<ServiceResource
     // region Functionality
 
     /**
-     * Uses a new instance of the given type (requires a parameterless constructor).
+     * Uses a new instance of the given type (requires a parameterless constructor, which
+     * does not need to be accessible, like `new T()` of the caller upstream).
      */
-    public inline fun <reified T : Any> type(): ServiceResourceBuilder = instance(T::class.createInstance())
+    public inline fun <reified T : Any> type(): ServiceResourceBuilder = instance(newInstance(T::class))
+
+    @PublishedApi
+    internal fun newInstance(type: KClass<*>): Any {
+        val constructor = type.constructors.singleOrNull { it.parameters.all(KParameter::isOptional) }
+            ?: throw IllegalArgumentException("Class '${type.simpleName}' needs a single constructor without required parameters")
+
+        constructor.isAccessible = true
+
+        return constructor.callBy(emptyMap())
+    }
 
     /**
      * Sets the type of the service (the instance needs to be provided via [instanceProvider]).

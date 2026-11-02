@@ -18,7 +18,8 @@ import org.genhttp.modules.reflection.ReflectionFrameworkBuilder
 import org.genhttp.modules.reflection.injectors.InjectionRegistry
 
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Builds a controller from a class, routing requests to its public functions by name.
@@ -43,9 +44,20 @@ public class ControllerBuilder : ReflectionFrameworkBuilder<ControllerBuilder> {
     // region Functionality
 
     /**
-     * Uses a new instance of the given type (requires a parameterless constructor).
+     * Uses a new instance of the given type (requires a parameterless constructor, which
+     * does not need to be accessible, like `new T()` of the caller upstream).
      */
-    public inline fun <reified T : Any> type(): ControllerBuilder = instance(T::class.createInstance())
+    public inline fun <reified T : Any> type(): ControllerBuilder = instance(newInstance(T::class))
+
+    @PublishedApi
+    internal fun newInstance(type: KClass<*>): Any {
+        val constructor = type.constructors.singleOrNull { it.parameters.all(KParameter::isOptional) }
+            ?: throw IllegalArgumentException("Class '${type.simpleName}' needs a single constructor without required parameters")
+
+        constructor.isAccessible = true
+
+        return constructor.callBy(emptyMap())
+    }
 
     /**
      * Sets the type of the controller (the instance needs to be provided via [instanceProvider]).
