@@ -39,6 +39,6 @@ public class Operation(
      * The settings used to execute the function.
      */
     public val executionSettings: ExecutionSettings =
-        if (method.visibility == KVisibility.PUBLIC) executionSettings else ExecutionSettings(ExecutionMode.Reflection)
+        if (delegate != null || method.visibility == KVisibility.PUBLIC) executionSettings else ExecutionSettings(ExecutionMode.Reflection)
 
 }

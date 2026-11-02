@@ -70,6 +70,12 @@ class InterceptionTests {
     @MyAttribute("throw")
     fun thrown(): Int = 42
 
+    @MyAttribute("pass")
+    fun passedWithArguments(a: Int, b: Int, c: Int): Int = a + b + c
+
+    @MyAttribute("intercept")
+    fun interceptedWithArguments(a: Int, b: Int): Int = a + b
+
     // endregion
 
     // region Tests
@@ -97,6 +103,30 @@ class InterceptionTests {
             response.assertStatus(ResponseStatus.Ok)
 
             assertEquals("42", response.getContent())
+        }
+    }
+
+    @MultiEngineFrameworkTest
+    fun testPassThroughWithMultipleArguments(engine: ServerEngine, mode: ExecutionMode) = test {
+        val app = Inline.create().get(this@InterceptionTests::passedWithArguments).executionMode(mode)
+
+        TestHost.run(app).use { host ->
+            val response = host.getResponse("/?a=1&b=2&c=3")
+
+            response.assertStatus(ResponseStatus.Ok)
+
+            assertEquals("6", response.getContent())
+        }
+    }
+
+    @MultiEngineFrameworkTest
+    fun testInterceptionWithTwoArguments(engine: ServerEngine, mode: ExecutionMode) = test {
+        val app = Inline.create().get(this@InterceptionTests::interceptedWithArguments).executionMode(mode)
+
+        TestHost.run(app).use { host ->
+            val response = host.getResponse("/?a=1&b=2")
+
+            response.assertStatus(ResponseStatus.Forbidden)
         }
     }
 
