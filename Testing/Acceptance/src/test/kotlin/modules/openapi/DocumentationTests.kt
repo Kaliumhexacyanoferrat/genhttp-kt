@@ -125,6 +125,7 @@ class DocumentationTests {
         assertEquals("The content of the file", op.requestBody?.description)
         assertEquals(true, op.requestBody?.required)
         assertEquals("binary", op.requestBody?.content?.getValue("application/octet-stream")?.schema?.format)
+        assertEquals("string", op.requestBody?.content?.getValue("application/octet-stream")?.schema?.type)
     }
 
     @MultiEngineTest
@@ -137,6 +138,7 @@ class DocumentationTests {
         assertEquals("The archive", op.requestBody?.description)
         assertEquals(1, op.requestBody?.content?.size)
         assertEquals("binary", op.requestBody?.content?.getValue("application/zip")?.schema?.format)
+        assertEquals("string", op.requestBody?.content?.getValue("application/zip")?.schema?.type)
     }
 
     @MultiEngineTest
@@ -289,7 +291,9 @@ class DocumentationTests {
 
         assertEquals(2, response?.content?.size)
         assertEquals("binary", response?.content?.getValue("image/png")?.schema?.format)
+        assertEquals("string", response?.content?.getValue("image/png")?.schema?.type)
         assertEquals("binary", response?.content?.getValue("image/jpeg")?.schema?.format)
+        assertEquals("string", response?.content?.getValue("image/jpeg")?.schema?.type)
     }
 
     @MultiEngineTest

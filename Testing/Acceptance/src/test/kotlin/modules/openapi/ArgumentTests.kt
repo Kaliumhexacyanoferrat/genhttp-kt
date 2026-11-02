@@ -94,6 +94,7 @@ class ArgumentTests {
 
         assertTrue(operation.requestBody?.content?.containsKey("*/*") ?: false)
         assertEquals("binary", operation.requestBody?.content?.getValue("*/*")?.schema?.format)
+        assertEquals("string", operation.requestBody?.content?.getValue("*/*")?.schema?.type)
     }
 
     @MultiEngineTest

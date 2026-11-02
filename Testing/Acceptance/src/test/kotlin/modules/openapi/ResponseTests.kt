@@ -46,6 +46,7 @@ class ResponseTests {
         assertEquals(true, op.responses?.getValue("200")?.content?.containsKey("application/octet-stream"))
 
         assertEquals("binary", op.responses?.getValue("200")?.content?.getValue("application/octet-stream")?.schema?.format)
+        assertEquals("string", op.responses?.getValue("200")?.content?.getValue("application/octet-stream")?.schema?.type)
     }
 
     @MultiEngineTest

@@ -616,7 +616,7 @@ public class MethodHandlerExplorer : ApiExplorer {
         return getBinarySchema()
     }
 
-    private fun getBinarySchema(): Schema<*> = Schema<Any>().format("binary")
+    private fun getBinarySchema(): Schema<*> = Schema<Any>().type("string").format("binary")
 
     private fun getSchema(type: KClass<*>, schemata: SchemaManager): Schema<*> =
         if (type == Nothing::class) StringSchema() else schemata.getOrCreateSchema(type)
