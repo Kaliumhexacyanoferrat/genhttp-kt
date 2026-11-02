@@ -6,12 +6,10 @@ import org.genhttp.api.infrastructure.PropertyBag
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.ClientProtocol
 import org.genhttp.api.protocol.HeaderAccess
-import org.genhttp.api.protocol.KnownHeaders
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.RequestBody
 import org.genhttp.api.protocol.RequestHeader
 import org.genhttp.api.protocol.ResponseBuilder
-import org.genhttp.api.protocol.containsKey
 import org.genhttp.engine.shared.io.ConnectionReader
 import org.genhttp.glyph11.protocol.BinaryRequest
 
@@ -30,12 +28,6 @@ public class HttpRequest : Request {
 
     private var _endPoint: EndPoint? = null
 
-    private var _reader: ConnectionReader? = null
-
-    private var wrappedBody: RequestBody? = null
-
-    private var bodyWrapper: ((RequestBody) -> RequestBody)? = null
-
     private val _header: HttpRequestHeader
 
     private val _client = RemoteClientConnection()
@@ -46,10 +38,6 @@ public class HttpRequest : Request {
 
     private val body: HttpRequestBody
 
-    private var bodyLoaded = false
-
-    private var _hasBody = false
-
     private var resetRequired = true
 
     // region Get-/Setters
@@ -58,12 +46,6 @@ public class HttpRequest : Request {
      * The request parsed by glyph11 this instance reads from.
      */
     public val source: BinaryRequest = BinaryRequest()
-
-    /**
-     * The reader of the connection the request has been received on.
-     */
-    public val reader: ConnectionReader
-        get() = _reader ?: throw IllegalStateException("Reader property has not been initialized")
 
     override val server: Server
         get() = _server ?: throw IllegalStateException("Server property has not been initialized")
@@ -79,7 +61,7 @@ public class HttpRequest : Request {
 
     override val header: RequestHeader
         get() {
-            if (!bodyLoaded) {
+            if (!body.isOpened) {
                 return retainedHeader ?: _header
             }
 
@@ -87,19 +69,19 @@ public class HttpRequest : Request {
         }
 
     override val hasBody: Boolean
-        get() = _hasBody
+        get() = body.isPresent
 
     // endregion
 
     init {
         _header = HttpRequestHeader(this)
-        body = HttpRequestBody(this)
+        body = HttpRequestBody(_header)
     }
 
     // region Functionality
 
     override fun getBody(headerAccess: HeaderAccess): RequestBody? {
-        if (bodyLoaded) {
+        if (body.isOpened) {
             throw IllegalStateException("Request body can only be fetched once.")
         }
 
@@ -107,23 +89,7 @@ public class HttpRequest : Request {
             retainedHeader = RetainedRequestHeader(_header)
         }
 
-        if (_hasBody) {
-            body.apply(reader)
-        }
-
-        bodyLoaded = true
-
-        if (!_hasBody) {
-            return null
-        }
-
-        val wrapper = bodyWrapper
-
-        if (wrapper != null) {
-            return wrapper(body).also { wrappedBody = it }
-        }
-
-        return body
+        return body.open()
     }
 
     /**
@@ -132,19 +98,14 @@ public class HttpRequest : Request {
     public fun apply(server: Server, endPoint: EndPoint, reader: ConnectionReader, remoteAddress: InetAddress?, clientCertificate: X509Certificate?) {
         _server = server
         _endPoint = endPoint
-        _reader = reader
 
         _header.apply()
         _client.apply(remoteAddress, if (endPoint.secure) ClientProtocol.Https else ClientProtocol.Http, clientCertificate)
         _properties.clear()
 
-        bodyLoaded = false
         retainedHeader = null
-        wrappedBody = null
-        bodyWrapper = null
 
-        val headers = _header.headers
-        _hasBody = headers.containsKey(KnownHeaders.ContentLength) || headers.containsKey(KnownHeaders.TransferEncoding)
+        body.apply(reader)
     }
 
     /**
@@ -156,11 +117,9 @@ public class HttpRequest : Request {
         _client.apply(null, null, null)
         _properties.clear()
 
-        bodyLoaded = false
-        _hasBody = false
         retainedHeader = null
-        wrappedBody = null
-        bodyWrapper = null
+
+        body.apply()
     }
 
     /**
@@ -172,29 +131,15 @@ public class HttpRequest : Request {
         body.reset()
         _client.reset()
 
-        (wrappedBody as? AutoCloseable)?.close()
-
-        wrappedBody = null
-        bodyWrapper = null
         resetRequired = true
     }
 
     /**
-     * Reads the remaining body of the request (if any), so the next request can be read from the connection.
+     * Invoked by the engine after the response has been written to consume whatever is left of the request body.
+     *
+     * @return true, if the connection can be used to serve another request
      */
-    public fun drain() {
-        if (bodyLoaded) {
-            if (_hasBody) {
-                body.drain()
-            }
-
-            return
-        }
-
-        if (getBody(HeaderAccess.Release) != null) {
-            body.drain()
-        }
-    }
+    public suspend fun finish(): Boolean = body.finish()
 
     override fun respond(): ResponseBuilder {
         if (!resetRequired) {
@@ -207,19 +152,16 @@ public class HttpRequest : Request {
     }
 
     override fun wrapBody(wrapper: (RequestBody) -> RequestBody) {
-        bodyWrapper = wrapper
+        body.wrap(wrapper)
     }
 
     override fun upgrade(): InputStream {
         // the upgraded connection outlives the buffer the header was parsed from
-        if (retainedHeader == null) {
+        if (!body.isOpened && retainedHeader == null) {
             retainedHeader = RetainedRequestHeader(_header)
         }
 
-        bodyLoaded = true
-        _hasBody = false
-
-        return reader.asInputStream()
+        return body.upgrade().asInputStream()
     }
 
     // endregion

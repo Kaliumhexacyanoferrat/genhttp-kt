@@ -7,12 +7,14 @@ import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.testing.TestHost
+import org.genhttp.testing.acceptance.Constants
 import org.genhttp.testing.acceptance.MultiEngineTest
 import org.genhttp.testing.acceptance.assertStatus
 import org.genhttp.testing.acceptance.test
 import org.genhttp.testing.acceptance.wrap
 
 import java.io.ByteArrayInputStream
+import java.net.Socket
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.util.Random
@@ -141,6 +143,32 @@ class DrainBodyTests {
             }
 
             assertEquals(3, handler.requestCount)
+        }
+    }
+
+    @MultiEngineTest
+    fun testPipelinedIgnoredBodies(engine: ServerEngine) = test {
+        val handler = CountingHandler()
+
+        TestHost.run(handler.wrap(), engine = engine).use { runner ->
+            Socket("127.0.0.1", runner.port).use { client ->
+                client.soTimeout = Constants.ClientTimeout
+
+                val stream = client.getOutputStream()
+
+                // all requests arrive at once, so each skipped body is followed by the next request in the same buffer
+                val requests = "POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 5\r\n\r\nHello" +
+                    "POST / HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\n\r\n5\r\nHello\r\n0\r\n\r\n" +
+                    "POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 5\r\nConnection: close\r\n\r\nHello"
+
+                stream.write(requests.toByteArray(Charsets.US_ASCII))
+                stream.flush()
+
+                val responses = String(client.getInputStream().readAllBytes(), Charsets.UTF_8)
+
+                assertEquals(3, responses.split("HTTP/1.1 200").size - 1, responses)
+                assertEquals(3, handler.requestCount)
+            }
         }
     }
 

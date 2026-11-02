@@ -170,7 +170,7 @@ class Pipeline(handler: Handler) {
         context.clientHandler.handleRequest(context.request)
         context.writer.flush()
 
-        context.request.drain()
+        context.request.finish()
         context.request.reset()
 
         reader.consume(reader.available)

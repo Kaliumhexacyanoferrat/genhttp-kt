@@ -124,12 +124,13 @@ internal class ClientHandler(private val context: ConnectionContext) {
                 if (status == Connection.Upgrade) {
                     // content handler is responsible for flushing, avoid duplicate flushes
                     return
-                } else if (status == Connection.Close) {
+                }
+
+                if (status == Connection.Close || !request.finish()) {
                     context.writer.flush()
                     return
                 }
 
-                request.drain()
                 request.reset()
 
                 if (reader.available > 0) {

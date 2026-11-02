@@ -152,12 +152,13 @@ internal class Http1Driver(private val context: ConnectionContext) {
                 if (status == Connection.Upgrade) {
                     // the content has been written and flushed on the virtual thread
                     return
-                } else if (status == Connection.Close) {
+                }
+
+                if (status == Connection.Close || !request.finish()) {
                     context.writer.flush()
                     return
                 }
 
-                request.drain()
                 request.reset()
 
                 if (!context.channel.isWritable) {

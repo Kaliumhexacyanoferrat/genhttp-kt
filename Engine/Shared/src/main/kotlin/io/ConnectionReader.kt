@@ -2,9 +2,7 @@ package org.genhttp.engine.shared.io
 
 import org.genhttp.api.infrastructure.BufferSize
 
-import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.channels.ReadableByteChannel
 
@@ -142,39 +140,6 @@ public open class ConnectionReader(private val channel: ReadableByteChannel, ini
         consume(count)
 
         return count
-    }
-
-    /**
-     * Writes `length` buffered bytes, starting `offset` bytes after the first unconsumed byte, to the given stream
-     * (without consuming them).
-     */
-    public fun copyTo(target: OutputStream, offset: Int, length: Int) {
-        require(offset >= 0 && length >= 0 && offset + length <= available) { "Cannot copy $length bytes at $offset, only $available available" }
-
-        target.write(buffer, start + offset, length)
-    }
-
-    /**
-     * Reads exactly `length` bytes into a new array, combining buffered data with direct channel reads.
-     *
-     * @throws IOException if the stream ends before the requested number of bytes could be read
-     */
-    public fun readExactly(length: Int): ByteArray {
-        val result = ByteArray(length)
-
-        var position = 0
-
-        while (position < length) {
-            val read = read(result, position, length - position)
-
-            if (read < 0) {
-                throw IOException("Unexpected end of stream ($position of $length bytes read)")
-            }
-
-            position += read
-        }
-
-        return result
     }
 
     /**

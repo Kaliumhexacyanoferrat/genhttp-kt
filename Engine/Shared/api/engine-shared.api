@@ -123,7 +123,6 @@ public class org/genhttp/engine/shared/io/ConnectionReader {
 	public synthetic fun <init> (Ljava/nio/channels/ReadableByteChannel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun asInputStream ()Ljava/io/InputStream;
 	public final fun consume (I)V
-	public final fun copyTo (Ljava/io/OutputStream;II)V
 	public final fun data ()Ljava/nio/ByteBuffer;
 	public final fun fill ()I
 	public final fun getAvailable ()I
@@ -131,7 +130,6 @@ public class org/genhttp/engine/shared/io/ConnectionReader {
 	public final fun isCompleted ()Z
 	public final fun peek ()Ljava/nio/ByteBuffer;
 	public final fun read ([BII)I
-	public final fun readExactly (I)[B
 	public final fun reset ()V
 }
 
@@ -202,14 +200,13 @@ public final class org/genhttp/engine/shared/types/HttpRequest : org/genhttp/api
 	public fun <init> ()V
 	public final fun apply (Lorg/genhttp/api/infrastructure/Server;)V
 	public final fun apply (Lorg/genhttp/api/infrastructure/Server;Lorg/genhttp/api/infrastructure/EndPoint;Lorg/genhttp/engine/shared/io/ConnectionReader;Ljava/net/InetAddress;Ljava/security/cert/X509Certificate;)V
-	public final fun drain ()V
+	public final fun finish (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getBody (Lorg/genhttp/api/protocol/HeaderAccess;)Lorg/genhttp/api/protocol/RequestBody;
 	public fun getClient ()Lorg/genhttp/api/infrastructure/ClientConnection;
 	public fun getEndPoint ()Lorg/genhttp/api/infrastructure/EndPoint;
 	public fun getHasBody ()Z
 	public fun getHeader ()Lorg/genhttp/api/protocol/RequestHeader;
 	public fun getProperties ()Lorg/genhttp/api/infrastructure/PropertyBag;
-	public final fun getReader ()Lorg/genhttp/engine/shared/io/ConnectionReader;
 	public fun getServer ()Lorg/genhttp/api/infrastructure/Server;
 	public final fun getSource ()Lorg/genhttp/glyph11/protocol/BinaryRequest;
 	public final fun reset ()V
@@ -219,13 +216,9 @@ public final class org/genhttp/engine/shared/types/HttpRequest : org/genhttp/api
 }
 
 public final class org/genhttp/engine/shared/types/HttpRequestBody : org/genhttp/api/protocol/RequestBody {
-	public fun <init> (Lorg/genhttp/api/protocol/Request;)V
-	public final fun apply (Lorg/genhttp/engine/shared/io/ConnectionReader;)V
 	public fun asMemory (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun asStream ()Ljava/io/InputStream;
-	public final fun drain ()V
 	public final fun getLength ()Ljava/lang/Long;
-	public final fun reset ()V
 }
 
 public final class org/genhttp/engine/shared/types/HttpRequestHeader : org/genhttp/api/protocol/RequestHeader {
@@ -299,13 +292,13 @@ public final class org/genhttp/engine/shared/types/RemoteClientConnection : org/
 
 public final class org/genhttp/engine/shared/types/ResponseHandler {
 	public fun <init> (Lorg/genhttp/engine/shared/types/ClientContext;)V
-	public final fun handle (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/Response;Lorg/genhttp/api/protocol/HttpProtocol;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun handle (Lorg/genhttp/engine/shared/types/HttpRequest;Lorg/genhttp/api/protocol/Response;Lorg/genhttp/api/protocol/HttpProtocol;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/genhttp/engine/shared/types/ResponseSerializer {
 	public static final field INSTANCE Lorg/genhttp/engine/shared/types/ResponseSerializer;
 	public final fun shouldSendBody (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/Response;Z)Z
-	public final fun writeHeader (Lorg/genhttp/engine/shared/io/ConnectionWriter;Lorg/genhttp/api/protocol/Response;Z[B[BZ)V
+	public final fun writeHead (Lorg/genhttp/engine/shared/io/ConnectionWriter;Lorg/genhttp/api/protocol/Response;Z[B[BZ)V
 }
 
 public final class org/genhttp/engine/shared/types/RetainedKeyValueList : org/genhttp/api/protocol/RequestHeaders, org/genhttp/api/protocol/RequestQuery {
@@ -321,44 +314,5 @@ public final class org/genhttp/engine/shared/types/RetainedRequestHeader : org/g
 	public fun getProtocol ()Lorg/genhttp/api/protocol/HttpProtocol;
 	public fun getQuery ()Lorg/genhttp/api/protocol/RequestQuery;
 	public fun getTarget ()Lorg/genhttp/api/protocol/RequestTarget;
-}
-
-public final class org/genhttp/engine/shared/types/body/ChunkedBodyStream : java/io/InputStream, org/genhttp/engine/shared/types/body/DrainableStream {
-	public fun <init> (Lorg/genhttp/engine/shared/io/ConnectionReader;)V
-	public fun close ()V
-	public fun drain ()V
-	public fun read ()I
-	public fun read ([BII)I
-	public fun transferTo (Ljava/io/OutputStream;)J
-}
-
-public abstract interface class org/genhttp/engine/shared/types/body/DrainableStream {
-	public abstract fun drain ()V
-}
-
-public final class org/genhttp/engine/shared/types/body/LengthLimitedStream : java/io/InputStream, org/genhttp/engine/shared/types/body/DrainableStream {
-	public fun <init> (Lorg/genhttp/engine/shared/io/ConnectionReader;J)V
-	public fun available ()I
-	public fun close ()V
-	public fun drain ()V
-	public final fun getPosition ()J
-	public fun read ()I
-	public fun read ([BII)I
-}
-
-public final class org/genhttp/engine/shared/types/body/MemoryConsumptionStrategy {
-	public fun <init> ()V
-	public final fun apply (Lorg/genhttp/engine/shared/io/ConnectionReader;Ljava/lang/Long;)V
-	public final fun drain ()V
-	public final fun obtain ()Ljava/nio/ByteBuffer;
-	public final fun reset ()V
-}
-
-public final class org/genhttp/engine/shared/types/body/StreamConsumptionStrategy {
-	public fun <init> ()V
-	public final fun apply (Lorg/genhttp/engine/shared/io/ConnectionReader;Ljava/lang/Long;)V
-	public final fun drain ()V
-	public final fun obtain ()Ljava/io/InputStream;
-	public final fun reset ()V
 }
 

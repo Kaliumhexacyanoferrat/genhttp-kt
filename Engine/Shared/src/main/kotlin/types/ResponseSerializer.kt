@@ -30,9 +30,20 @@ public object ResponseSerializer {
     }
 
     /**
+     * Writes the status line and the headers of the given response.
+     */
+    public fun writeHead(writer: ConnectionWriter, response: Response, keepAlive: Boolean, serverHeader: ByteArray, dateHeader: ByteArray, isHttp10: Boolean) {
+        writer.write(StatusLine.get(response.status))
+
+        writeHeader(writer, response, keepAlive, serverHeader, dateHeader, isHttp10)
+
+        writer.write(LineEnd)
+    }
+
+    /**
      * Writes the headers of the given response (without status line and without the terminating empty line).
      */
-    public fun writeHeader(writer: ConnectionWriter, response: Response, keepAlive: Boolean, serverHeader: ByteArray, dateHeader: ByteArray, isHttp10: Boolean) {
+    private fun writeHeader(writer: ConnectionWriter, response: Response, keepAlive: Boolean, serverHeader: ByteArray, dateHeader: ByteArray, isHttp10: Boolean) {
         val isUpgrade = response.mode == Connection.Upgrade
 
         if (!response.headers.containsKey(KnownHeaders.Server)) {

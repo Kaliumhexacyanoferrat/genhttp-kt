@@ -2,7 +2,6 @@ package org.genhttp.engine.shared.types
 
 import org.genhttp.api.protocol.Connection
 import org.genhttp.api.protocol.HttpProtocol
-import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
 import org.genhttp.api.protocol.ResponseContent
 import org.genhttp.engine.shared.types.sinks.ChunkedSink
@@ -22,15 +21,9 @@ public class ResponseHandler(private val context: ClientContext) {
      *
      * @return true, if the response has been written successfully
      */
-    public suspend fun handle(request: Request?, response: Response, version: HttpProtocol, keepAlive: Boolean, headRequest: Boolean): Boolean {
+    public suspend fun handle(request: HttpRequest?, response: Response, version: HttpProtocol, keepAlive: Boolean, headRequest: Boolean): Boolean {
         try {
-            val writer = context.writer
-
-            writer.write(StatusLine.get(response.status))
-
-            ResponseSerializer.writeHeader(writer, response, keepAlive, ServerHeader.getValue(context), DateHeader.getValue(), version == HttpProtocol.Http10)
-
-            writer.writeAscii("\r\n")
+            writeHead(response, version, keepAlive)
 
             if (ResponseSerializer.shouldSendBody(request, response, headRequest)) {
                 writeBody(response)
@@ -44,6 +37,10 @@ public class ResponseHandler(private val context: ClientContext) {
 
             return false
         }
+    }
+
+    private fun writeHead(response: Response, version: HttpProtocol, keepAlive: Boolean) {
+        ResponseSerializer.writeHead(context.writer, response, keepAlive, ServerHeader.getValue(context), DateHeader.getValue(), version == HttpProtocol.Http10)
     }
 
     private suspend fun writeBody(response: Response) {
