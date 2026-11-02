@@ -16,7 +16,7 @@ genhttp-kt requires JDK 25 or newer. Add a dependency on `genhttp-full` to your 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("org.genhttp:genhttp-full:11.1.0.3")
+    implementation("org.genhttp:genhttp-full:11.2.0.0")
 }
 ```
 
@@ -66,7 +66,7 @@ concept of genhttp-kt, with Kotlin samples that are compiled against the release
 
 - [Getting started](https://genhttp-kt.genhttp.run/documentation/) with Gradle or Maven
 - [Content](https://genhttp-kt.genhttp.run/documentation/content/) - webservices, functional handlers, controllers,
-  websockets, static websites, SPAs, Open API, authentication and all other modules
+  tools for AI agents (MCP), websockets, static websites, SPAs, Open API, authentication and all other modules
 - [Testing](https://genhttp-kt.genhttp.run/documentation/testing/), [running](https://genhttp-kt.genhttp.run/documentation/server/)
   and [hosting](https://genhttp-kt.genhttp.run/documentation/hosting/) an application
 - [Coming from GenHTTP](https://genhttp-kt.genhttp.run/documentation/port/coming-from-genhttp/) - how C# code
@@ -130,7 +130,7 @@ NIO and virtual threads). The [documentation of genhttp-kt](https://genhttp-kt.g
 documentation of GenHTTP ported to Kotlin, so samples written for GenHTTP translate mechanically
 ([Coming from GenHTTP](https://genhttp-kt.genhttp.run/documentation/port/coming-from-genhttp/)).
 
-Versions follow GenHTTP: `11.1.0.0` is based on GenHTTP `11.1.0`, the last component counts port-only releases. Features
+Versions follow GenHTTP: `11.2.0.0` is based on GenHTTP `11.2.0`, the last component counts port-only releases. Features
 and behavioral changes are contributed to GenHTTP first and reach genhttp-kt with the next sync (see
 [CONTRIBUTING.md](CONTRIBUTING.md)).
 
