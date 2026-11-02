@@ -113,13 +113,13 @@ public class MethodHandlerExplorer : ApiExplorer {
                     when (arg.source) {
                         OperationArgumentSource.Body -> {
                             if (requestMethod != RequestMethod.Get) {
-                                operation.requestBody = getRequestBody(BodyDescription(schemata.getOrCreateSchema(String::class), listOf("text/plain")), description)
+                                operation.requestBody = getRequestBody(BodyDescription(schemata.getOrCreateSchema(String::class, handler.registry.serialization), listOf("text/plain")), description)
                             }
                         }
 
                         OperationArgumentSource.Content -> {
                             if (requestMethod != RequestMethod.Get) {
-                                operation.requestBody = getRequestBody(BodyDescription(schemata.getOrCreateSchema(arg.type), getFormats(handler.registry)), description)
+                                operation.requestBody = getRequestBody(BodyDescription(schemata.getOrCreateSchema(arg.type, handler.registry.serialization), getFormats(handler.registry)), description)
                             }
                         }
 
@@ -539,8 +539,8 @@ public class MethodHandlerExplorer : ApiExplorer {
         val type = unwrap(operation.result.type)
 
         return when (operation.result.sink) {
-            OperationResultSink.Formatter -> BodyDescription(schemata.getOrCreateSchema(type), listOf("text/plain"))
-            OperationResultSink.Serializer -> BodyDescription(schemata.getOrCreateSchema(type), getFormats(registry))
+            OperationResultSink.Formatter -> BodyDescription(schemata.getOrCreateSchema(type, registry.serialization), listOf("text/plain"))
+            OperationResultSink.Serializer -> BodyDescription(schemata.getOrCreateSchema(type, registry.serialization), getFormats(registry))
             OperationResultSink.Binary -> BodyDescription(getBinarySchema(), listOf("application/octet-stream"))
             OperationResultSink.Dynamic -> BodyDescription(null, listOf("*/*"))
             else -> null
@@ -582,7 +582,7 @@ public class MethodHandlerExplorer : ApiExplorer {
         val declaredContentType = contentType.ifEmpty { null }
 
         if (type != Nothing::class) {
-            val schema = schemata.getOrCreateSchema(type)
+            val schema = schemata.getOrCreateSchema(type, registry.serialization)
 
             if (declaredContentType != null) {
                 return BodyDescription(schema, listOf(declaredContentType))

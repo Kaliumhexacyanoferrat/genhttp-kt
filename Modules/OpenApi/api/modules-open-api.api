@@ -74,7 +74,11 @@ public final class org/genhttp/modules/openapi/discovery/OpenApiExtensions {
 
 public final class org/genhttp/modules/openapi/discovery/SchemaManager {
 	public final fun getOrCreateSchema (Lkotlin/reflect/KClass;)Lio/swagger/v3/oas/models/media/Schema;
+	public final fun getOrCreateSchema (Lkotlin/reflect/KClass;Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;)Lio/swagger/v3/oas/models/media/Schema;
+	public final fun getOrCreateSchema (Lkotlin/reflect/KClass;Ltools/jackson/databind/json/JsonMapper;)Lio/swagger/v3/oas/models/media/Schema;
 	public final fun getOrCreateSchema (Lkotlin/reflect/KType;)Lio/swagger/v3/oas/models/media/Schema;
+	public final fun getOrCreateSchema (Lkotlin/reflect/KType;Lorg/genhttp/modules/conversion/serializers/SerializationRegistry;)Lio/swagger/v3/oas/models/media/Schema;
+	public final fun getOrCreateSchema (Lkotlin/reflect/KType;Ltools/jackson/databind/json/JsonMapper;)Lio/swagger/v3/oas/models/media/Schema;
 }
 
 public final class org/genhttp/modules/openapi/discovery/ServiceExplorer : org/genhttp/modules/openapi/ApiExplorer {
