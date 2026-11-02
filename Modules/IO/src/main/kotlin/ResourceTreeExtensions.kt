@@ -43,6 +43,8 @@ public suspend fun ResourceContainer.find(target: RequestTarget): Pair<ResourceC
             target.advance()
             return childNode.find(target)
         }
+
+        return Pair(null, null)
     }
 
     return Pair(this, null)

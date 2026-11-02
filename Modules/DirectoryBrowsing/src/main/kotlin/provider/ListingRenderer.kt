@@ -1,5 +1,7 @@
 package org.genhttp.modules.directorybrowsing.provider
 
+import org.genhttp.modules.pages.escaped
+
 import java.text.Collator
 import java.time.Instant
 import java.time.ZoneOffset
@@ -41,11 +43,11 @@ public object ListingRenderer {
         }
 
         for (dir in model.container.getNodes().sortedWith { a, b -> collator.compare(a.name, b.name) }) {
-            append(content, "./${urlPathEncode(dir.name)}/", dir.name, null, dir.modified)
+            append(content, "./${escapeDataString(dir.name)}/", dir.name, null, dir.modified)
         }
 
         for (file in model.container.getResources().filter { it.name != null }.sortedWith { a, b -> collator.compare(a.name, b.name) }) {
-            append(content, "./${urlPathEncode(file.name!!)}", file.name!!, file.length, file.modified)
+            append(content, "./${escapeDataString(file.name!!)}", file.name!!, file.length, file.modified)
         }
 
         content.appendLine("</table>")
@@ -55,7 +57,7 @@ public object ListingRenderer {
 
     private fun append(builder: StringBuilder, path: String, name: String, size: Long?, modified: Instant?) {
         builder.appendLine("<tr>")
-        builder.appendLine("  <td><a href=\"$path\">$name</a></td>")
+        builder.appendLine("  <td><a href=\"$path\">${name.escaped()}</a></td>")
         builder.appendLine("  <td>${FileSizeFormatter.format(size)}</td>")
 
         if (modified != null) {
@@ -68,37 +70,29 @@ public object ListingRenderer {
     }
 
     /**
-     * Encodes the path like `HttpUtility.UrlPathEncode` does: non-ASCII and control characters (UTF-8, lower
-     * case hex digits) and spaces are percent-encoded, everything else (including the query string) is kept.
+     * Encodes the name like `Uri.EscapeDataString` does: everything except the unreserved characters of RFC 3986
+     * (letters, digits, `-`, `.`, `_` and `~`) is percent-encoded (UTF-8, upper case hex digits).
      */
-    private fun urlPathEncode(value: String): String {
-        if (value.isEmpty()) {
-            return value
-        }
-
-        val query = value.indexOf('?')
-
-        if (query >= 0) {
-            return urlPathEncode(value.substring(0, query)) + value.substring(query)
-        }
-
+    private fun escapeDataString(value: String): String {
         val result = StringBuilder(value.length + 8)
 
         for (byte in value.toByteArray(Charsets.UTF_8)) {
             val b = byte.toInt() and 0xFF
 
-            if (b >= 0x7F || b < 0x20) {
-                result.append('%').append(HEX[b shr 4]).append(HEX[b and 0xF])
-            } else if (b == ' '.code) {
-                result.append("%20")
-            } else {
+            if (isUnreserved(b)) {
                 result.append(b.toChar())
+            } else {
+                result.append('%').append(HEX[b shr 4]).append(HEX[b and 0xF])
             }
         }
 
         return result.toString()
     }
 
-    private const val HEX = "0123456789abcdef"
+    private fun isUnreserved(b: Int): Boolean =
+        (b >= 'a'.code && b <= 'z'.code) || (b >= 'A'.code && b <= 'Z'.code) || (b >= '0'.code && b <= '9'.code) ||
+            b == '-'.code || b == '.'.code || b == '_'.code || b == '~'.code
+
+    private const val HEX = "0123456789ABCDEF"
 
 }

@@ -20,14 +20,14 @@ public class ServerRenderer {
     /**
      * Renders a server-styled HTML page for the given title and content.
      *
-     * This method will not escape the given title or content.
+     * The title will be HTML-escaped by this method, the content will not.
      *
-     * @param title The title of the page to be rendered
+     * @param title The title of the page to be rendered (plain text)
      * @param content The HTML content of the page
      * @return The generated HTML page
      */
     public suspend fun render(title: String, content: String): String =
-        templateRender.render(mapOf("title" to title, "content" to content))
+        templateRender.render(mapOf("title" to title.escaped(), "content" to content))
 
     /**
      * Renders a server-styled HTML error page for the given exception.

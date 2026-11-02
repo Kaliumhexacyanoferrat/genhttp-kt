@@ -48,6 +48,18 @@ class StaticWebsiteTests {
         }
     }
 
+    @MultiEngineTest
+    fun testUnknownIntermediateSegmentIsNotFound(engine: ServerEngine) = test {
+        val tree = VirtualTree.create()
+            .add("index.html", Resource.fromString("Index"))
+
+        TestHost.run(StaticWebsite.from(tree), engine = engine).use { runner ->
+            val response = runner.getResponse("/unknown/sub/")
+
+            response.assertStatus(ResponseStatus.NotFound)
+        }
+    }
+
     @Test
     fun testConcernChaining() {
         val site = StaticWebsite.from(VirtualTree.create())
