@@ -76,7 +76,8 @@ internal open class DirectoryContainer(protected val directory: Path) : Resource
         try {
             val root = directory.toAbsolutePath().normalize()
 
-            val resolved = root.resolve(segment.decode()).normalize()
+            // appended instead of resolved, so the name cannot be interpreted as a root (e.g. "C:" on Windows)
+            val resolved = Path.of(root.toString() + root.fileSystem.separator + segment.decode()).normalize()
 
             return if (resolved.parent == root) resolved else null
         } catch (_: InvalidPathException) {
