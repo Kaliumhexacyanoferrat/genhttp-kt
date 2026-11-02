@@ -6,9 +6,11 @@ import org.genhttp.modules.conversion.serializers.ByteStreamSerialization
 import org.genhttp.modules.conversion.serializers.CamelCaseNaming
 import org.genhttp.modules.conversion.serializers.SerializationFormat
 
+import tools.jackson.core.StreamReadConstraints
 import tools.jackson.core.StreamReadFeature
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.MapperFeature
+import tools.jackson.dataformat.yaml.YAMLFactory
 import tools.jackson.dataformat.yaml.YAMLMapper
 import tools.jackson.dataformat.yaml.YAMLWriteFeature
 import tools.jackson.module.kotlin.KotlinModule
@@ -44,7 +46,17 @@ public class YamlFormat : SerializationFormat {
 
 internal object YamlSupport {
 
-    val Mapper: YAMLMapper = YAMLMapper.builder()
+    /**
+     * The maximum nesting depth of documents that are read, so deeply nested documents are rejected before they
+     * are deserialized (YamlDotNet upstream re-throws errors on every nesting level, deep documents exhaust the stack).
+     */
+    private const val MaximumDepth = 32
+
+    private val Factory: YAMLFactory = YAMLFactory.builder()
+        .streamReadConstraints(StreamReadConstraints.builder().maxNestingDepth(MaximumDepth).build())
+        .build()
+
+    val Mapper: YAMLMapper = YAMLMapper.builder(Factory)
         .addModule(KotlinModule.Builder().build())
         .propertyNamingStrategy(CamelCaseNaming)
         .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
