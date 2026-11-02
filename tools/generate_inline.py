@@ -5,6 +5,8 @@ Generates the arity-specific code needed for inline (suspend lambda) handlers:
 - Modules/Reflection/src/main/kotlin/LambdaInvoker.kt: invokes suspend lambdas with 0..N arguments
 - Modules/Functional/src/main/kotlin/InlineBuilderExtensions.kt: typed overloads get/post/... for lambdas with
   1..N parameters (arity 0 is a member of InlineBuilder so that `{ "x" }` resolves without ambiguity)
+- Modules/Mcp/src/main/kotlin/ToolsHandlerBuilderExtensions.kt: typed overloads of add for tools implemented by
+  lambdas with 1..N parameters (arity 0 is a member of ToolsHandlerBuilder)
 
 Run from the repository root: python tools/generate_inline.py
 """
@@ -76,6 +78,30 @@ public fun <{types}, R> InlineBuilder.{method}(path: String, function: suspend (
     return "".join(out)
 
 
+def tool_extensions():
+    out = [HEADER + '''@file:JvmName("ToolsHandlerBuilderExtensions")
+
+package org.genhttp.modules.mcp
+
+import org.genhttp.modules.mcp.provider.ToolsHandlerBuilder
+''']
+    for n in range(1, MAX_ARITY + 1):
+        types = ", ".join([f"P{i}" for i in range(1, n + 1)])
+        out.append(f'''
+/**
+ * Adds a tool with {n} argument{'s' if n > 1 else ''} implemented by the given lambda (parameters are read from the arguments sent by
+ * the client or injected by the framework by their type).
+ *
+ * @param name The name of the tool
+ * @param description Describes the purpose of the tool to the model
+ * @param function The lambda implementing the tool (a suspend lambda with explicitly typed parameters)
+ */
+public fun <{types}, R> ToolsHandlerBuilder.add(name: String, description: String, function: suspend ({types}) -> R): ToolsHandlerBuilder =
+    addFunction(name, description, function)
+''')
+    return "".join(out)
+
+
 def write(path, content):
     full = os.path.join(ROOT, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -87,3 +113,4 @@ def write(path, content):
 if __name__ == "__main__":
     write("Modules/Reflection/src/main/kotlin/LambdaInvoker.kt", invoker())
     write("Modules/Functional/src/main/kotlin/InlineBuilderExtensions.kt", extensions())
+    write("Modules/Mcp/src/main/kotlin/ToolsHandlerBuilderExtensions.kt", tool_extensions())

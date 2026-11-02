@@ -25,6 +25,7 @@ dependencies {
     api(project(":modules-io"))
     api(project(":modules-layouting"))
     api(project(":modules-load-balancing"))
+    api(project(":modules-mcp"))
     api(project(":modules-open-api"))
     api(project(":modules-pages"))
     api(project(":modules-practices"))

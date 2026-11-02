@@ -39,6 +39,7 @@ dependencies {
     testImplementation(project(":modules-dependency-injection"))
     testImplementation(project(":modules-reverse-proxy"))
     testImplementation(project(":modules-load-balancing"))
+    testImplementation(project(":modules-mcp"))
     testImplementation(libs.coroutines.test)
 }
 

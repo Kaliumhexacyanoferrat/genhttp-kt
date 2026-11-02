@@ -1,0 +1,128 @@
+public final class org/genhttp/modules/mcp/AudioContent : org/genhttp/modules/mcp/ToolContent {
+	public fun <init> (Ljava/nio/ByteBuffer;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/nio/ByteBuffer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/nio/ByteBuffer;Ljava/lang/String;)Lorg/genhttp/modules/mcp/AudioContent;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/mcp/AudioContent;Ljava/nio/ByteBuffer;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/AudioContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Ljava/nio/ByteBuffer;
+	public final fun getMimeType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/mcp/ImageContent : org/genhttp/modules/mcp/ToolContent {
+	public fun <init> (Ljava/nio/ByteBuffer;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/nio/ByteBuffer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/nio/ByteBuffer;Ljava/lang/String;)Lorg/genhttp/modules/mcp/ImageContent;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/mcp/ImageContent;Ljava/nio/ByteBuffer;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/ImageContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Ljava/nio/ByteBuffer;
+	public final fun getMimeType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/mcp/ResourceLinkContent : org/genhttp/modules/mcp/ToolContent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/mcp/ResourceLinkContent;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/mcp/ResourceLinkContent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/ResourceLinkContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getMimeType ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getUri ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/modules/mcp/TextContent : org/genhttp/modules/mcp/ToolContent {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/genhttp/modules/mcp/TextContent;
+	public static synthetic fun copy$default (Lorg/genhttp/modules/mcp/TextContent;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/TextContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/modules/mcp/Tool : java/lang/annotation/Annotation {
+	public abstract fun destructive ()[Z
+	public abstract fun idempotent ()[Z
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun openWorld ()[Z
+	public abstract fun readOnly ()[Z
+	public abstract fun title ()Ljava/lang/String;
+}
+
+public abstract class org/genhttp/modules/mcp/ToolContent {
+}
+
+public final class org/genhttp/modules/mcp/ToolResult {
+	public static final field Companion Lorg/genhttp/modules/mcp/ToolResult$Companion;
+	public fun <init> (Ljava/util/List;Ljava/lang/Object;Z)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/Object;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getContent ()Ljava/util/List;
+	public final fun getStructured ()Ljava/lang/Object;
+	public final fun isError ()Z
+}
+
+public final class org/genhttp/modules/mcp/ToolResult$Companion {
+	public final fun error (Ljava/lang/String;)Lorg/genhttp/modules/mcp/ToolResult;
+	public final fun from ([Lorg/genhttp/modules/mcp/ToolContent;)Lorg/genhttp/modules/mcp/ToolResult;
+	public final fun json (Ljava/lang/Object;)Lorg/genhttp/modules/mcp/ToolResult;
+	public final fun text (Ljava/lang/String;)Lorg/genhttp/modules/mcp/ToolResult;
+}
+
+public final class org/genhttp/modules/mcp/Tools {
+	public static final field INSTANCE Lorg/genhttp/modules/mcp/Tools;
+	public final fun create ()Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+}
+
+public final class org/genhttp/modules/mcp/ToolsHandlerBuilderExtensions {
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function10;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function11;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function12;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function13;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function14;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function15;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function16;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function17;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function4;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function5;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function6;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function7;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function8;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static final fun add (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function9;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+}
+
+public final class org/genhttp/modules/mcp/provider/ToolsHandlerBuilder : org/genhttp/api/content/HandlerBuilder$WithConcerns {
+	public fun <init> ()V
+	public final fun add (Ljava/lang/Object;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun add (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun add (Ljava/lang/String;Ljava/lang/String;Lkotlin/reflect/KFunction;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun add (Lkotlin/reflect/KClass;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public synthetic fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
+	public fun add (Lorg/genhttp/api/content/ConcernBuilder;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun allowOrigin (Ljava/lang/String;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public fun build ()Lorg/genhttp/api/content/Handler;
+	public final fun cacheDuration-LRDsOJo (J)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun injectors (Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun instanceProvider (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun instructions (Ljava/lang/String;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun serialization (Ltools/jackson/databind/json/JsonMapper;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public final fun server (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static synthetic fun server$default (Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+}
+

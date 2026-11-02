@@ -39,4 +39,21 @@ public object InstanceProvider {
      */
     public suspend inline fun <reified T : Any> provide(request: Request): T = provide(request, T::class)
 
+    /**
+     * Provides an instance of the given type (e.g. to invoke the tools of a class on, see
+     * [org.genhttp.modules.mcp.provider.ToolsHandlerBuilder.instanceProvider]).
+     *
+     * @param type The type of the instance to be provided
+     * @param request The request to obtain the service scope from
+     * @return The instance registered with the container or a newly constructed one
+     * @throws IllegalStateException Thrown if dependency injection is not enabled on the host or the instance cannot be constructed
+     */
+    public suspend fun provide(type: KClass<*>, request: Request): Any {
+        val scope = request.getServiceScope()
+
+        @Suppress("UNCHECKED_CAST")
+        return scope.getOrNull<Any>(type)
+            ?: Activator.create(type as KClass<Any>, scope)
+    }
+
 }

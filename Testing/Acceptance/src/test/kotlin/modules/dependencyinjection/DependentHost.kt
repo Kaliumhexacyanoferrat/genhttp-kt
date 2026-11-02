@@ -5,18 +5,21 @@ import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.modules.dependencyinjection.addDependencyInjection
 import org.genhttp.testing.TestHost
 
+import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
 object DependentHost {
 
-    suspend fun run(app: HandlerBuilder, engine: ServerEngine = ServerEngine.Internal): TestHost {
+    suspend fun run(app: HandlerBuilder, engine: ServerEngine = ServerEngine.Internal, configure: (Module.() -> Unit)? = null): TestHost {
         val host = TestHost(app.build(), engine = engine)
 
         val koin = koinApplication {
             modules(module {
                 single { AwesomeService() }
                 single { AnotherAwesomeService() }
+
+                configure?.invoke(this)
             })
         }.koin
 

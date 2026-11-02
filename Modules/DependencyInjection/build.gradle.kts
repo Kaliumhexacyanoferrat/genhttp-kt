@@ -9,6 +9,7 @@ dependencies {
     api(project(":modules-conversion"))
     api(project(":modules-functional"))
     api(project(":modules-layouting"))
+    api(project(":modules-mcp"))
     api(project(":modules-reflection"))
     api(project(":modules-webservices"))
     api(project(":modules-websockets"))

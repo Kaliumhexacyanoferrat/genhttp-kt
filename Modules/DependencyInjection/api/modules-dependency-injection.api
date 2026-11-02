@@ -22,6 +22,12 @@ public final class org/genhttp/modules/dependencyinjection/DependentInline {
 	public static synthetic fun create$default (Lorg/genhttp/modules/dependencyinjection/DependentInline;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;ILjava/lang/Object;)Lorg/genhttp/modules/functional/provider/InlineBuilder;
 }
 
+public final class org/genhttp/modules/dependencyinjection/DependentTools {
+	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/DependentTools;
+	public final fun create (Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+	public static synthetic fun create$default (Lorg/genhttp/modules/dependencyinjection/DependentTools;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;ILjava/lang/Object;)Lorg/genhttp/modules/mcp/provider/ToolsHandlerBuilder;
+}
+
 public final class org/genhttp/modules/dependencyinjection/DependentWebservice {
 	public static final fun addDependentService (Lorg/genhttp/modules/layouting/provider/LayoutBuilder;Lkotlin/reflect/KClass;Ljava/lang/String;Lorg/genhttp/modules/reflection/injectors/InjectionRegistryBuilder;Lorg/genhttp/api/infrastructure/Builder;Lorg/genhttp/api/infrastructure/Builder;)Lorg/genhttp/modules/layouting/provider/LayoutBuilder;
 }
@@ -47,6 +53,7 @@ public final class org/genhttp/modules/dependencyinjection/infrastructure/Handle
 
 public final class org/genhttp/modules/dependencyinjection/infrastructure/InstanceProvider {
 	public static final field INSTANCE Lorg/genhttp/modules/dependencyinjection/infrastructure/InstanceProvider;
+	public final fun provide (Lkotlin/reflect/KClass;Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun provide (Lorg/genhttp/api/protocol/Request;Lkotlin/reflect/KClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
