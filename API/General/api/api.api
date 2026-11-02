@@ -655,6 +655,7 @@ public final class org/genhttp/api/protocol/KnownHeaders {
 	public final fun getCookie ()Lorg/genhttp/api/protocol/ByteString;
 	public final fun getDate ()Lorg/genhttp/api/protocol/ByteString;
 	public final fun getETag ()Lorg/genhttp/api/protocol/ByteString;
+	public final fun getExpect ()Lorg/genhttp/api/protocol/ByteString;
 	public final fun getExpires ()Lorg/genhttp/api/protocol/ByteString;
 	public final fun getForwarded ()Lorg/genhttp/api/protocol/ByteString;
 	public final fun getForwardedFor ()Lorg/genhttp/api/protocol/ByteString;

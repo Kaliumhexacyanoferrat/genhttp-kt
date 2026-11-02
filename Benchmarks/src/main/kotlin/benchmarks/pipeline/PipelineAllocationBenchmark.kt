@@ -165,7 +165,7 @@ class Pipeline(handler: Handler) {
 
         reader.consume(bytesRead + 1)
 
-        context.request.apply(server, Point, reader, context.remoteAddress, null)
+        context.request.apply(server, Point, reader, context.remoteAddress, null, context.writer)
 
         context.clientHandler.handleRequest(context.request)
         context.writer.flush()

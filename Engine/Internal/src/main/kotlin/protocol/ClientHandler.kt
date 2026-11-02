@@ -113,7 +113,7 @@ internal class ClientHandler(private val context: ConnectionContext) {
                 // the request header stays valid in the buffer until the body is read
                 reader.consume(bytesRead + 1)
 
-                request.apply(context.server, context.endPoint, reader, context.remoteAddress, context.clientCertificate)
+                request.apply(context.server, context.endPoint, reader, context.remoteAddress, context.clientCertificate, context.writer)
 
                 val status = handleRequest(request)
 

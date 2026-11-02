@@ -11,6 +11,8 @@ import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.HeaderAccess
 import org.genhttp.api.protocol.RequestBody
 import org.genhttp.api.protocol.ResponseStatus
+import org.genhttp.engine.shared.io.ConnectionWriter
+import org.genhttp.engine.shared.io.WriteTarget
 import org.genhttp.engine.shared.types.HttpRequest
 import org.genhttp.engine.shared.types.HttpRequestBody
 import org.genhttp.glyph11.parser.ParserLimits
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test
 
 import org.slf4j.ILoggerFactory
 
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.InetAddress
 import java.nio.ByteBuffer
@@ -295,6 +298,174 @@ class RequestBodyLifecycleTests {
 
     // endregion
 
+    // region Expect: 100-continue
+
+    @Test
+    fun testContinueSentWithFirstRead() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse(ExpectingRequest, output = output.writer)
+
+        val body = request.getBody()!!
+
+        assertEquals("", written(output))
+
+        val memory = body.asMemory()
+
+        assertEquals("Hello", ascii(memory))
+        assertEquals(Continue, written(output))
+    }
+
+    @Test
+    fun testContinueSentOnce() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse("POST / HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\nExpect: 100-continue\r\n\r\n2\r\nHe\r\n3\r\nllo\r\n0\r\n\r\n", output = output.writer)
+
+        val stream = request.getBody()!!.asStream()
+
+        val buffer = ByteArray(2)
+
+        // the end of the stream is signalled by -1 on the JVM (0 upstream)
+        while (stream.read(buffer) > 0) { }
+
+        assertEquals(Continue, written(output))
+    }
+
+    @Test
+    fun testContinueIgnoresCase() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse(ExpectingRequest.replace("100-continue", "100-Continue"), output = output.writer)
+
+        request.getBody()!!.asMemory()
+
+        assertEquals(Continue, written(output))
+    }
+
+    @Test
+    fun testNoContinueAfterResponseStarted() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse(ExpectingRequest, output = output.writer)
+
+        val body = request.getBody()!!
+
+        request.responseStarting()
+
+        val memory = body.asMemory()
+
+        assertEquals("Hello", ascii(memory))
+        assertEquals("", written(output))
+    }
+
+    @Test
+    fun testNoContinueWhenSkipped() = test {
+        val output = TestOutput()
+
+        val (request, pipe) = parse(ExpectingRequest + "NEXT", output = output.writer)
+
+        request.responseStarting()
+
+        // the final response, which has not been flushed by the engine yet
+        output.writer.write("HTTP/1.1 200 OK\r\n\r\n".toByteArray(Charsets.US_ASCII))
+
+        assertTrue(request.finish())
+
+        assertEquals("HTTP/1.1 200 OK\r\n\r\n", written(output))
+        assertEquals("NEXT", pipe.rest())
+    }
+
+    @Test
+    fun testNoContinueWhenSkippedAfterContinue() = test {
+        val output = TestOutput()
+
+        val (request, pipe) = parse(ExpectingRequest + "NEXT", output = output.writer)
+
+        val stream = request.getBody()!!.asStream()
+
+        assertEquals(2, stream.read(ByteArray(2)))
+
+        assertTrue(request.finish())
+
+        assertEquals(Continue, written(output))
+        assertEquals("NEXT", pipe.rest())
+    }
+
+    @Test
+    fun testNoContinueForHttp10() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse(ExpectingRequest.replace("HTTP/1.1", "HTTP/1.0"), output = output.writer)
+
+        request.getBody()!!.asMemory()
+
+        assertEquals("", written(output))
+    }
+
+    @Test
+    fun testNoContinueWithoutBody() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse("POST / HTTP/1.1\r\nHost: localhost\r\nExpect: 100-continue\r\n\r\n", output = output.writer)
+
+        assertNull(request.getBody())
+        assertTrue(request.finish())
+
+        assertEquals("", written(output))
+    }
+
+    @Test
+    fun testNoContinueWithoutWriter() = test {
+        val (request, _) = parse(ExpectingRequest)
+
+        val memory = request.getBody()!!.asMemory()
+
+        assertEquals("Hello", ascii(memory))
+    }
+
+    @Test
+    fun testContinueNotCarriedOver() = test {
+        val output = TestOutput()
+
+        val (request, _) = parse(ExpectingRequest, output = output.writer)
+
+        request.responseStarting()
+
+        assertTrue(request.finish())
+
+        request.reset()
+
+        written(output)
+
+        val pipe = TestPipe()
+
+        pipe.write("POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 5\r\n\r\nHello")
+        pipe.complete()
+
+        // the engines consume the header before the request is applied
+        pipe.reader.fill()
+
+        val bytesRead = UltraHardenedParser.tryExtractFullHeader(pipe.reader.peek(), request.source, ParserLimits.Default)
+
+        assertTrue(bytesRead >= 0)
+
+        pipe.reader.consume(bytesRead + 1)
+
+        request.apply(TestServer, TestEndPoint, pipe.reader, null, null, output.writer)
+
+        request.getBody()!!.asMemory()
+
+        assertEquals("", written(output))
+    }
+
+    /**
+     * Returns what has been flushed to the given output so far.
+     */
+    private fun written(output: TestOutput): String = output.take()
+
+    // endregion
+
     // region Without connection
 
     @Test
@@ -315,7 +486,7 @@ class RequestBodyLifecycleTests {
 
     // region Helpers
 
-    private fun parse(raw: String, complete: Boolean = true, validate: Boolean = true): Pair<HttpRequest, TestPipe> {
+    private fun parse(raw: String, complete: Boolean = true, validate: Boolean = true, output: ConnectionWriter? = null): Pair<HttpRequest, TestPipe> {
         val pipe = TestPipe()
 
         pipe.write(raw)
@@ -341,7 +512,7 @@ class RequestBodyLifecycleTests {
 
         pipe.reader.consume(bytesRead + 1)
 
-        request.apply(TestServer, TestEndPoint, pipe.reader, null, null)
+        request.apply(TestServer, TestEndPoint, pipe.reader, null, null, output)
 
         return Pair(request, pipe)
     }
@@ -357,6 +528,51 @@ class RequestBodyLifecycleTests {
 
         override fun close() {
             disposed = true
+        }
+
+    }
+
+    /**
+     * Counterpart of the `Pipe` the upstream tests pass the writer of to the request: the [writer] passes its data
+     * to this target only when it sends it to the connection (on flush or for data exceeding its buffer), so the
+     * output collects what has been flushed so far.
+     */
+    private class TestOutput : WriteTarget {
+
+        private val flushed = ByteArrayOutputStream()
+
+        val writer: ConnectionWriter = ConnectionWriter(this)
+
+        override val isOpen: Boolean
+            get() = true
+
+        override fun rent(capacity: Int): ByteBuffer = ByteBuffer.allocate(capacity)
+
+        override fun send(buffer: ByteBuffer) {
+            write(buffer)
+        }
+
+        override fun release(buffer: ByteBuffer) {
+            // heap buffers are not pooled
+        }
+
+        @Synchronized
+        override fun write(data: ByteBuffer) {
+            while (data.hasRemaining()) {
+                flushed.write(data.get().toInt())
+            }
+        }
+
+        /**
+         * Returns the (ASCII) text flushed so far and removes it from the output.
+         */
+        @Synchronized
+        fun take(): String {
+            val result = flushed.toString(Charsets.US_ASCII)
+
+            flushed.reset()
+
+            return result
         }
 
     }
@@ -412,6 +628,10 @@ class RequestBodyLifecycleTests {
     // endregion
 
     private companion object {
+
+        const val Continue = "HTTP/1.1 100 Continue\r\n\r\n"
+
+        const val ExpectingRequest = "POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 5\r\nExpect: 100-continue\r\n\r\nHello"
 
         fun notNeeded(): Nothing = throw UnsupportedOperationException("Not needed by the test")
 

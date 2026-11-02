@@ -199,7 +199,7 @@ public final class org/genhttp/engine/shared/types/GlyphKeyValueList : org/genht
 public final class org/genhttp/engine/shared/types/HttpRequest : org/genhttp/api/protocol/Request {
 	public fun <init> ()V
 	public final fun apply (Lorg/genhttp/api/infrastructure/Server;)V
-	public final fun apply (Lorg/genhttp/api/infrastructure/Server;Lorg/genhttp/api/infrastructure/EndPoint;Lorg/genhttp/engine/shared/io/ConnectionReader;Ljava/net/InetAddress;Ljava/security/cert/X509Certificate;)V
+	public final fun apply (Lorg/genhttp/api/infrastructure/Server;Lorg/genhttp/api/infrastructure/EndPoint;Lorg/genhttp/engine/shared/io/ConnectionReader;Ljava/net/InetAddress;Ljava/security/cert/X509Certificate;Lorg/genhttp/engine/shared/io/ConnectionWriter;)V
 	public final fun finish (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getBody (Lorg/genhttp/api/protocol/HeaderAccess;)Lorg/genhttp/api/protocol/RequestBody;
 	public fun getClient ()Lorg/genhttp/api/infrastructure/ClientConnection;
@@ -211,6 +211,7 @@ public final class org/genhttp/engine/shared/types/HttpRequest : org/genhttp/api
 	public final fun getSource ()Lorg/genhttp/glyph11/protocol/BinaryRequest;
 	public final fun reset ()V
 	public fun respond ()Lorg/genhttp/api/protocol/ResponseBuilder;
+	public final fun responseStarting ()V
 	public fun upgrade ()Ljava/io/InputStream;
 	public fun wrapBody (Lkotlin/jvm/functions/Function1;)V
 }
@@ -298,7 +299,7 @@ public final class org/genhttp/engine/shared/types/ResponseHandler {
 public final class org/genhttp/engine/shared/types/ResponseSerializer {
 	public static final field INSTANCE Lorg/genhttp/engine/shared/types/ResponseSerializer;
 	public final fun shouldSendBody (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/api/protocol/Response;Z)Z
-	public final fun writeHead (Lorg/genhttp/engine/shared/io/ConnectionWriter;Lorg/genhttp/api/protocol/Response;Z[B[BZ)V
+	public final fun writeHead (Lorg/genhttp/engine/shared/io/ConnectionWriter;Lorg/genhttp/engine/shared/types/HttpRequest;Lorg/genhttp/api/protocol/Response;Z[B[BZ)V
 }
 
 public final class org/genhttp/engine/shared/types/RetainedKeyValueList : org/genhttp/api/protocol/RequestHeaders, org/genhttp/api/protocol/RequestQuery {

@@ -23,7 +23,7 @@ public class ResponseHandler(private val context: ClientContext) {
      */
     public suspend fun handle(request: HttpRequest?, response: Response, version: HttpProtocol, keepAlive: Boolean, headRequest: Boolean): Boolean {
         try {
-            writeHead(response, version, keepAlive)
+            writeHead(request, response, version, keepAlive)
 
             if (ResponseSerializer.shouldSendBody(request, response, headRequest)) {
                 writeBody(response)
@@ -39,8 +39,8 @@ public class ResponseHandler(private val context: ClientContext) {
         }
     }
 
-    private fun writeHead(response: Response, version: HttpProtocol, keepAlive: Boolean) {
-        ResponseSerializer.writeHead(context.writer, response, keepAlive, ServerHeader.getValue(context), DateHeader.getValue(), version == HttpProtocol.Http10)
+    private fun writeHead(request: HttpRequest?, response: Response, version: HttpProtocol, keepAlive: Boolean) {
+        ResponseSerializer.writeHead(context.writer, request, response, keepAlive, ServerHeader.getValue(context), DateHeader.getValue(), version == HttpProtocol.Http10)
     }
 
     private suspend fun writeBody(response: Response) {

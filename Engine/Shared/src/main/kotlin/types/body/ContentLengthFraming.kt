@@ -20,6 +20,8 @@ internal class ContentLengthFraming : BodyFraming {
     // bytes handed out as a view into the buffer of the reader, consumed when the body is skipped
     private var held = 0
 
+    private var expectation: ContinueReader? = null
+
     // region Get-/Setters
 
     override val length: Long?
@@ -35,11 +37,15 @@ internal class ContentLengthFraming : BodyFraming {
 
     // region Initialization
 
-    fun apply(reader: ConnectionReader, length: Long) {
+    /**
+     * @param expectation Sends the 100 (Continue) the client waits for before the body is read, if any
+     */
+    fun apply(reader: ConnectionReader, length: Long, expectation: ContinueReader? = null) {
         _reader = reader
         _length = length
         remaining = length
         held = 0
+        this.expectation = expectation
     }
 
     override fun reset() {
@@ -47,6 +53,7 @@ internal class ContentLengthFraming : BodyFraming {
         _length = 0
         remaining = 0
         held = 0
+        expectation = null
     }
 
     // endregion
@@ -145,7 +152,11 @@ internal class ContentLengthFraming : BodyFraming {
      *
      * @return false, if the input ended without any data being buffered
      */
-    private fun awaitData(reader: ConnectionReader): Boolean = reader.available > 0 || reader.fill() >= 0
+    private fun awaitData(reader: ConnectionReader): Boolean {
+        expectation?.beforeRead()
+
+        return reader.available > 0 || reader.fill() >= 0
+    }
 
     private fun unexpectedEnd(): ProviderException = ProviderException(ResponseStatus.BadRequest, "Unexpected end of body")
 

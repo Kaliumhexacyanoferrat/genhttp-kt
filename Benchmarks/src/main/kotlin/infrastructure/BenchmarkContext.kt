@@ -48,7 +48,7 @@ class BenchmarkContext(request: String, handler: Handler) {
 
         reader.consume(bytesRead + 1)
 
-        context.request.apply(server, BenchmarkEndPoint, reader, context.remoteAddress, null)
+        context.request.apply(server, BenchmarkEndPoint, reader, context.remoteAddress, null, context.writer)
 
         context.clientHandler.handleRequest(context.request)
         context.writer.flush()

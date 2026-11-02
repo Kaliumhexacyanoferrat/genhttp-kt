@@ -11,6 +11,7 @@ import org.genhttp.api.protocol.RequestBody
 import org.genhttp.api.protocol.RequestHeader
 import org.genhttp.api.protocol.ResponseBuilder
 import org.genhttp.engine.shared.io.ConnectionReader
+import org.genhttp.engine.shared.io.ConnectionWriter
 import org.genhttp.glyph11.protocol.BinaryRequest
 
 import java.io.InputStream
@@ -94,8 +95,11 @@ public class HttpRequest : Request {
 
     /**
      * Initializes the request from the request that has just been parsed into [source].
+     *
+     * @param writer The writer of the connection, used to answer a client that expects a 100 (Continue); null, if
+     *               the engine does not support interim responses
      */
-    public fun apply(server: Server, endPoint: EndPoint, reader: ConnectionReader, remoteAddress: InetAddress?, clientCertificate: X509Certificate?) {
+    public fun apply(server: Server, endPoint: EndPoint, reader: ConnectionReader, remoteAddress: InetAddress?, clientCertificate: X509Certificate?, writer: ConnectionWriter?) {
         _server = server
         _endPoint = endPoint
 
@@ -105,7 +109,7 @@ public class HttpRequest : Request {
 
         retainedHeader = null
 
-        body.apply(reader)
+        body.apply(reader, writer)
     }
 
     /**
@@ -132,6 +136,13 @@ public class HttpRequest : Request {
         _client.reset()
 
         resetRequired = true
+    }
+
+    /**
+     * Invoked by the engine right before the final response to this request is written to the connection.
+     */
+    public fun responseStarting() {
+        body.responseStarting()
     }
 
     /**

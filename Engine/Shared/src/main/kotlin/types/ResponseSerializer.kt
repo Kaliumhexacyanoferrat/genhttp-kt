@@ -30,9 +30,13 @@ public object ResponseSerializer {
     }
 
     /**
-     * Writes the status line and the headers of the given response.
+     * Writes the status line and the headers of the final response to the given request.
+     *
+     * @param request The request the response is written for, if any
      */
-    public fun writeHead(writer: ConnectionWriter, response: Response, keepAlive: Boolean, serverHeader: ByteArray, dateHeader: ByteArray, isHttp10: Boolean) {
+    public fun writeHead(writer: ConnectionWriter, request: HttpRequest?, response: Response, keepAlive: Boolean, serverHeader: ByteArray, dateHeader: ByteArray, isHttp10: Boolean) {
+        request?.responseStarting()
+
         writer.write(StatusLine.get(response.status))
 
         writeHeader(writer, response, keepAlive, serverHeader, dateHeader, isHttp10)

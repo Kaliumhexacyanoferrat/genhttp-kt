@@ -32,6 +32,9 @@ public object KnownHeaders {
     /** Transfer-Encoding */
     public val TransferEncoding: ByteString = ByteString("Transfer-Encoding")
 
+    /** Expect */
+    public val Expect: ByteString = ByteString("Expect")
+
     /** Accept */
     public val Accept: ByteString = ByteString("Accept")
 

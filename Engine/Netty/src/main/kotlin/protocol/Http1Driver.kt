@@ -128,13 +128,21 @@ internal class Http1Driver(private val context: ConnectionContext) {
 
                 val headerLength = bytesRead + 1
 
-                request.apply(context.server, context.endPoint, reader, context.remoteAddress, context.clientCertificate)
+                request.apply(context.server, context.endPoint, reader, context.remoteAddress, context.clientCertificate, context.writer)
 
-                if (request.hasBody && !reader.isCompleted && !body.isComplete(into, reader, headerLength)) {
-                    // receiving more data may move the buffered header, so it is parsed again
-                    into.clear()
-                    pending = true
-                    continue
+                var deferred = false
+
+                if (request.hasBody && !reader.isCompleted) {
+                    if (expectsContinue(request)) {
+                        // the client waits for a 100 (Continue) before it sends the body, so the body is read as
+                        // it arrives instead of being buffered before the handler is invoked
+                        deferred = true
+                    } else if (!body.isComplete(into, reader, headerLength)) {
+                        // receiving more data may move the buffered header, so it is parsed again
+                        into.clear()
+                        pending = true
+                        continue
+                    }
                 }
 
                 pending = false
@@ -143,7 +151,7 @@ internal class Http1Driver(private val context: ConnectionContext) {
                 // the request header stays valid in the buffer until the body is read
                 reader.consume(headerLength)
 
-                val status = handleRequest(request)
+                val status = if (deferred) handleDeferred(request) else handleRequest(request)
 
                 if (!context.channel.isActive) {
                     return
@@ -154,7 +162,8 @@ internal class Http1Driver(private val context: ConnectionContext) {
                     return
                 }
 
-                if (status == Connection.Close || !request.finish()) {
+                // deferred requests have been finished on their virtual thread already
+                if (status == Connection.Close || (!deferred && !request.finish())) {
                     context.writer.flush()
                     return
                 }
@@ -244,6 +253,49 @@ internal class Http1Driver(private val context: ConnectionContext) {
         return if (active && keepAlive) Connection.KeepAlive else Connection.Close
     }
 
+    /**
+     * Handles a request whose client waits for a 100 (Continue) before it sends the body.
+     *
+     * The body is read from the blocking stream of the request as it arrives, so the request is handled and finished
+     * on a virtual thread while the event loop delivers the data, like the content of an upgraded connection.
+     */
+    private suspend fun handleDeferred(request: HttpRequest): Connection {
+        val inbound = context.inbound
+
+        inbound.block()
+
+        var status = Connection.Close
+
+        try {
+            status = withContext(UpgradeDispatcher) {
+                val handled = handleRequest(request)
+
+                // the client sends the body after the 100 or the final response, so skipping it may wait for data
+                if (handled == Connection.KeepAlive && !request.finish()) Connection.Close else handled
+            }
+
+            return status
+        } finally {
+            if (status != Connection.Upgrade) {
+                inbound.unblock()
+            }
+        }
+    }
+
+    /**
+     * Checks whether the client waits for a 100 (Continue) before sending the body (ignored for HTTP/1.0 clients,
+     * RFC 9110, section 10.1.1).
+     */
+    private fun expectsContinue(request: HttpRequest): Boolean {
+        val header = request.header
+
+        if (header.protocol == HttpProtocol.Http10) {
+            return false
+        }
+
+        return header.headers.getEntry(KnownHeaders.Expect) == ContinueValue
+    }
+
     private suspend fun sendError(e: Throwable, status: ResponseStatus) {
         try {
             val message = if (context.server.development) e.stackTraceToString() else (e.message ?: e.javaClass.name)
@@ -267,10 +319,13 @@ internal class Http1Driver(private val context: ConnectionContext) {
 
         val KeepAliveValue = ByteString("keep-alive")
 
+        val ContinueValue = ByteString("100-continue")
+
         val Limits: ParserLimits = ParserLimits.Default
 
         /**
-         * Runs the content of upgraded connections, which may block (e.g. websockets reading frames).
+         * Runs the content of upgraded connections, which may block (e.g. websockets reading frames), and requests
+         * whose body is read as it arrives.
          */
         val UpgradeDispatcher: CoroutineDispatcher =
             Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("genhttp-netty-upgrade-", 0).factory()).asCoroutineDispatcher()

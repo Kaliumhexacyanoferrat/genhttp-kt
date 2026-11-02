@@ -25,7 +25,8 @@ import kotlin.coroutines.resume
  * the input). While more than [HighWatermark] bytes are queued, the channel stops reading from the socket.
  *
  * After an upgrade ([upgrade]), the connection is served on a virtual thread that reads the remaining input as a
- * stream: [read] then blocks the virtual thread until the loop delivers data or the connection is closed.
+ * stream: [read] then blocks the virtual thread until the loop delivers data or the connection is closed. Requests
+ * whose body is read as it arrives are served on a virtual thread the same way ([block], [unblock]).
  */
 internal class InboundChannel : ReadableByteChannel {
 
@@ -205,6 +206,22 @@ internal class InboundChannel : ReadableByteChannel {
      */
     fun upgrade() {
         blocking = true
+    }
+
+    /**
+     * Switches to blocking reads while a request is served on a virtual thread (on the event loop), e.g. to receive
+     * the body of a client that waits for a 100 (Continue). [unblock] switches back.
+     */
+    fun block() {
+        blocking = true
+    }
+
+    /**
+     * Switches back to reads on the event loop after [block] (on the event loop, once the virtual thread is done).
+     */
+    fun unblock() {
+        // the lock publishes the state of the queue changed by the virtual thread to the loop
+        lock.withLock { blocking = false }
     }
 
     /**

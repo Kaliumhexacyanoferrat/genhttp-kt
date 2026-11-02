@@ -37,6 +37,8 @@ internal class ChunkedFraming : BodyFraming {
     // the length of the chunk (including its framing), consumed once the payload has been handed out
     private var chunkLength = 0
 
+    private var expectation: ContinueReader? = null
+
     // region Get-/Setters
 
     override val length: Long?
@@ -52,13 +54,18 @@ internal class ChunkedFraming : BodyFraming {
 
     // region Initialization
 
-    fun apply(reader: ConnectionReader) {
+    /**
+     * @param expectation Sends the 100 (Continue) the client waits for before the body is read, if any
+     */
+    fun apply(reader: ConnectionReader, expectation: ContinueReader? = null) {
         _reader = reader
+        this.expectation = expectation
         clear()
     }
 
     override fun reset() {
         _reader = null
+        expectation = null
         clear()
     }
 
@@ -93,6 +100,8 @@ internal class ChunkedFraming : BodyFraming {
 
         try {
             while (!completed) {
+                expectation?.beforeRead()
+
                 if (reader.available > 0) {
                     when (parser.tryReadChunk(reader.peek())) {
                         ChunkResult.Chunk -> {
@@ -164,6 +173,8 @@ internal class ChunkedFraming : BodyFraming {
         val reader = reader
 
         while (!completed) {
+            expectation?.beforeRead()
+
             consumeBuffered(reader, collector)
 
             if (completed) {
