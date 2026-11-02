@@ -4,6 +4,7 @@ import org.genhttp.api.content.Handler
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.Request
 import org.genhttp.modules.functional.*
+import org.genhttp.modules.openapi.ApiDescription
 import org.genhttp.modules.redirects.Redirect
 import org.genhttp.testing.acceptance.MultiEngineTest
 import org.genhttp.testing.acceptance.test
@@ -11,6 +12,7 @@ import org.genhttp.testing.acceptance.test
 import java.io.ByteArrayInputStream
 
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ResponseTests {
@@ -81,6 +83,29 @@ class ResponseTests {
 
         assertEquals(true, op.responses?.containsKey("200"))
         assertEquals(true, op.responses?.getValue("200")?.content?.containsKey("application/json"))
+    }
+
+    @MultiEngineTest
+    fun testInferredResponsesHaveDescription(engine: ServerEngine) = test {
+        val api = Inline.create()
+            .get("formatted") { 42 }
+            .get("serialized") { HashSet<Int>() }
+            .get("binary") { ByteArrayInputStream(ByteArray(0)) }
+            .get("none") { }
+
+        val doc = api.add(ApiDescription.create()).getOpenApi(engine).document!!
+
+        val responses = doc.paths.values.flatMap { it.readOperations() }
+            .flatMap { it.responses!!.values }
+            .toList()
+
+        assertTrue(responses.isNotEmpty())
+
+        for (response in responses) {
+            assertFalse(response.description.isNullOrEmpty())
+        }
+
+        assertEquals("The result of the operation", doc.paths.getValue("/formatted").get?.responses?.getValue("200")?.description)
     }
 
     // endregion

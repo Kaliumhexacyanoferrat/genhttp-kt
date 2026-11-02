@@ -479,13 +479,10 @@ public class MethodHandlerExplorer : ApiExplorer {
         }
 
         if (body != null) {
-            val response = OpenApiResponse().description("")
-
-            if (sink == OperationResultSink.Binary || sink == OperationResultSink.Dynamic) {
-                response.description = resultSummary ?: "A dynamically generated response"
-            } else if (resultSummary != null) {
-                response.description = resultSummary
-            }
+            // the specification requires a description for every response
+            val response = OpenApiResponse().description(
+                resultSummary ?: if (sink == OperationResultSink.Binary || sink == OperationResultSink.Dynamic) "A dynamically generated response" else "The result of the operation"
+            )
 
             addContent(response, body)
 
