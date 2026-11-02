@@ -9,6 +9,8 @@ import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
 import org.genhttp.api.infrastructure.Server as HttpServer
+import org.genhttp.api.protocol.ContentType
+import org.genhttp.api.protocol.KnownHeaders
 import org.genhttp.api.protocol.PathSegment
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.RequestMethod
@@ -51,19 +53,17 @@ public class OpenApiConcern(
 
             if (path != null) {
                 if (path == OpenApiPath) {
-                    val accept = request.header.headers.getEntry("Accept")
+                    val accept = request.header.headers.getEntry(KnownHeaders.Accept)
 
-                    val response = if (accept != null) {
-                        when (accept.lowercase()) {
-                            "application/json", "application/application/vnd.oai.openapi+json" -> getDocument(request, OpenApiFormat.Json)
-                            "application/yaml", "application/application/vnd.oai.openapi+yaml" -> getDocument(request, OpenApiFormat.Yaml)
-                            else -> throw ProviderException(ResponseStatus.BadRequest, "Generating API specifications of format '$accept' is not supported")
-                        }
-                    } else {
-                        getDocument(request, OpenApiFormat.Json)
+                    val format = if (accept != null) getFormat(ContentType(accept.bytes)) else OpenApiFormat.Json
+
+                    if (format == null) {
+                        throw ProviderException(ResponseStatus.BadRequest, "Generating API specifications of format '$accept' is not supported")
                     }
 
-                    response.rebuild().header("Vary", "Accept")
+                    val response = getDocument(request, format)
+
+                    response.rebuild().header(KnownHeaders.Vary, KnownHeaders.Accept)
 
                     return response
                 }
@@ -79,6 +79,18 @@ public class OpenApiConcern(
         }
 
         return content.handle(request)
+    }
+
+    private fun getFormat(accept: ContentType): OpenApiFormat? {
+        if (accept == ContentType.ApplicationJson || accept == ContentType.ApplicationOpenApiJson) {
+            return OpenApiFormat.Json
+        }
+
+        if (accept == ContentType.ApplicationYaml || accept == ContentType.ApplicationOpenApiYaml) {
+            return OpenApiFormat.Yaml
+        }
+
+        return null
     }
 
     private suspend fun getDocument(request: Request, format: OpenApiFormat): Response {

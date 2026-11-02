@@ -88,6 +88,12 @@ public class ContentType : MemoryView {
         /** A YAML file. */
         public val ApplicationYaml: ContentType = ContentType("application/yaml")
 
+        /** An OpenAPI specification in JSON format. */
+        public val ApplicationOpenApiJson: ContentType = ContentType("application/vnd.oai.openapi+json")
+
+        /** An OpenAPI specification in YAML format. */
+        public val ApplicationOpenApiYaml: ContentType = ContentType("application/vnd.oai.openapi+yaml")
+
         /** A PNG image. */
         public val ImagePng: ContentType = ContentType("image/png")
 

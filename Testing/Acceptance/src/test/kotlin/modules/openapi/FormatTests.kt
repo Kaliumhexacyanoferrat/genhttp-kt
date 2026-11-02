@@ -42,6 +42,12 @@ class FormatTests {
     fun testYamlByAccept(engine: ServerEngine) = test { testApi(engine, "/openapi", accept = "application/yaml") }
 
     @MultiEngineTest
+    fun testJsonByVendorAccept(engine: ServerEngine) = test { testApi(engine, "/openapi", "application/json", "application/vnd.oai.openapi+json") }
+
+    @MultiEngineTest
+    fun testYamlByVendorAccept(engine: ServerEngine) = test { testApi(engine, "/openapi", "application/yaml", "application/vnd.oai.openapi+yaml") }
+
+    @MultiEngineTest
     fun testUnsupportedFormat(engine: ServerEngine) = test {
         TestHost.run(getApi(), engine = engine).use { host ->
             val request = host.getRequest("/openapi")

@@ -405,6 +405,8 @@ public final class org/genhttp/api/protocol/ContentType$Companion {
 	public final fun getApplicationOfficeDocumentSheet ()Lorg/genhttp/api/protocol/ContentType;
 	public final fun getApplicationOfficeDocumentSlideshow ()Lorg/genhttp/api/protocol/ContentType;
 	public final fun getApplicationOfficeDocumentWordProcessing ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOpenApiJson ()Lorg/genhttp/api/protocol/ContentType;
+	public final fun getApplicationOpenApiYaml ()Lorg/genhttp/api/protocol/ContentType;
 	public final fun getApplicationPdf ()Lorg/genhttp/api/protocol/ContentType;
 	public final fun getApplicationProtobuf ()Lorg/genhttp/api/protocol/ContentType;
 	public final fun getApplicationRtf ()Lorg/genhttp/api/protocol/ContentType;
