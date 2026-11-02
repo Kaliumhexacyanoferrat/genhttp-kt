@@ -226,9 +226,9 @@ public final class org/genhttp/modules/io/providers/InlineHandlerBuilder : org/g
 	public final fun logic (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/io/providers/InlineHandlerBuilder;
 }
 
-public final class org/genhttp/modules/io/ranges/RangeSupportConcern : org/genhttp/api/content/services/DocumentedConcern {
+public final class org/genhttp/modules/io/ranges/RangeSupportConcern : org/genhttp/api/content/documentation/DocumentedConcern {
 	public fun <init> (Lorg/genhttp/api/content/Handler;)V
-	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

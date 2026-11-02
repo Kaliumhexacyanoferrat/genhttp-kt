@@ -7,10 +7,10 @@ import io.swagger.v3.oas.models.PathItem
 import org.genhttp.api.content.Concern
 import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.ApiRequestHeader
-import org.genhttp.api.content.services.ApiResponse
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.ApiRequestHeader
+import org.genhttp.api.content.documentation.ApiResponse
+import org.genhttp.api.content.documentation.ApiResponseHeader
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.Request
@@ -150,13 +150,11 @@ class HeaderAndConcernDocumentationTests {
             .get("/a") { 42 }
             .post("/b") { 42 }
             .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiRequestHeader("Authorization", "The token", required = true),
-                        ApiResponse(ResponseStatus.Unauthorized, "No token given"),
-                        ApiResponseHeader("WWW-Authenticate", "The supported scheme", arrayOf(ResponseStatus.Unauthorized))
-                    )
-                )
+                DocumentedConcernBuilder({ d ->
+                    d.requestHeader("Authorization", "The token", required = true)
+                        .response(ResponseStatus.Unauthorized, "No token given")
+                        .responseHeader("WWW-Authenticate", "The supported scheme", ResponseStatus.Unauthorized)
+                })
             )
 
         val doc = getDocument(api, engine)
@@ -175,13 +173,7 @@ class HeaderAndConcernDocumentationTests {
     fun testOperationOverridesConcern(engine: ServerEngine) = test {
         val api = Inline.create()
             .get(this@HeaderAndConcernDocumentationTests::overriddenByOperation)
-            .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiResponse(ResponseStatus.Unauthorized, "Declared by the concern")
-                    )
-                )
-            )
+            .add(DocumentedConcernBuilder({ d -> d.response(ResponseStatus.Unauthorized, "Declared by the concern") }))
 
         val op = getOperations(getDocument(api, engine)).single()
 
@@ -193,12 +185,10 @@ class HeaderAndConcernDocumentationTests {
         val api = Layout.create()
             .addService<HeaderService>("service")
             .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiRequestHeader("X-Request-Id", "Declared by the concern"),
-                        ApiResponseHeader("X-Time", "Declared by the concern")
-                    )
-                )
+                DocumentedConcernBuilder({ d ->
+                    d.requestHeader("X-Request-Id", "Declared by the concern")
+                        .responseHeader("X-Time", "Declared by the concern")
+                })
             )
 
         val op = getOperations(getDocument(api, engine)).single()
@@ -212,21 +202,17 @@ class HeaderAndConcernDocumentationTests {
         val api = Inline.create()
             .get { 42 }
             .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiResponse(ResponseStatus.Forbidden, "Inner"),
-                        ApiRequestHeader("X-Inner")
-                    )
-                )
+                DocumentedConcernBuilder({ d ->
+                    d.response(ResponseStatus.Forbidden, "Inner")
+                        .requestHeader("X-Inner")
+                })
             )
             .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiResponse(ResponseStatus.Forbidden, "Outer"),
-                        ApiResponse(ResponseStatus.Unauthorized, "Outer"),
-                        ApiRequestHeader("X-Outer")
-                    )
-                )
+                DocumentedConcernBuilder({ d ->
+                    d.response(ResponseStatus.Forbidden, "Outer")
+                        .response(ResponseStatus.Unauthorized, "Outer")
+                        .requestHeader("X-Outer")
+                })
             )
 
         val op = getOperations(getDocument(api, engine)).single()
@@ -243,12 +229,10 @@ class HeaderAndConcernDocumentationTests {
         val api = Inline.create()
             .get { 42 }
             .add(
-                DocumentedConcernBuilder(
-                    listOf(
-                        ApiResponse(ResponseStatus.BadRequest, "The error", contentType = "application/problem+json"),
-                        ApiResponse(ResponseStatus.BadRequest, contentType = "text/plain")
-                    )
-                )
+                DocumentedConcernBuilder({ d ->
+                    d.response(ResponseStatus.BadRequest, "The error", contentType = "application/problem+json")
+                        .response(ResponseStatus.BadRequest, contentType = "text/plain")
+                })
             )
 
         val op = getOperations(getDocument(api, engine)).single()
@@ -260,7 +244,7 @@ class HeaderAndConcernDocumentationTests {
     @MultiEngineTest
     fun testConcernOnlyAppliesToContent(engine: ServerEngine) = test {
         val api = Layout.create()
-            .add("documented", Inline.create().get { 42 }.add(DocumentedConcernBuilder(listOf(ApiRequestHeader("X-Documented")))))
+            .add("documented", Inline.create().get { 42 }.add(DocumentedConcernBuilder({ d -> d.requestHeader("X-Documented") })))
             .add("plain", Inline.create().get { 42 })
 
         val doc = getDocument(api, engine)
@@ -274,7 +258,7 @@ class HeaderAndConcernDocumentationTests {
         val api = Inline.create()
             .get("/a") { 42 }
             .post("/a") { 42 }
-            .add(DocumentedConcernBuilder(listOf(ApiRequestHeader("X-Read-Only")), RequestMethod.Get))
+            .add(DocumentedConcernBuilder({ d -> d.requestHeader("X-Read-Only") }, RequestMethod.Get))
 
         val doc = getDocument(api, engine)
 
@@ -288,7 +272,7 @@ class HeaderAndConcernDocumentationTests {
     fun testEmptyConcernDocumentation(engine: ServerEngine) = test {
         val api = Inline.create()
             .get { 42 }
-            .add(DocumentedConcernBuilder(emptyList()))
+            .add(DocumentedConcernBuilder({ _ -> }))
 
         val op = getOperations(getDocument(api, engine)).single()
 
@@ -413,20 +397,18 @@ class HeaderAndConcernDocumentationTests {
 
     }
 
-    private class DocumentedConcernBuilder(private val documentation: List<Annotation>, private val method: RequestMethod? = null) : ConcernBuilder {
+    private class DocumentedConcernBuilder(private val documentation: (OperationDocumentation) -> Unit, private val method: RequestMethod? = null) : ConcernBuilder {
 
         override fun build(content: Handler): Concern = DocumentedConcern(content, documentation, method)
 
     }
 
-    private class DocumentedConcern(override val content: Handler, private val documentation: List<Annotation>, private val method: RequestMethod?) :
-        org.genhttp.api.content.services.DocumentedConcern {
+    private class DocumentedConcern(override val content: Handler, private val documentation: (OperationDocumentation) -> Unit, private val method: RequestMethod?) :
+        org.genhttp.api.content.documentation.DocumentedConcern {
 
         override fun addDocumentation(operation: OperationDocumentation) {
             if (method == null || operation.method == method) {
-                for (entry in documentation) {
-                    operation.add(entry)
-                }
+                documentation(operation)
             }
         }
 

@@ -59,6 +59,160 @@ public abstract interface class org/genhttp/api/content/authentication/User {
 	public fun getRoles ()Ljava/util/List;
 }
 
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiRequestBody : java/lang/annotation/Annotation {
+	public abstract fun contentType ()Ljava/lang/String;
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiRequestBody$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/documentation/ApiRequestBody;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiRequestHeader : java/lang/annotation/Annotation {
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun required ()Z
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiRequestHeader$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/documentation/ApiRequestHeader;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiResponse : java/lang/annotation/Annotation {
+	public abstract fun contentType ()Ljava/lang/String;
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun status ()Lorg/genhttp/api/protocol/ResponseStatus;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiResponse$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/documentation/ApiResponse;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiResponseHeader : java/lang/annotation/Annotation {
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun status ()[Lorg/genhttp/api/protocol/ResponseStatus;
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/ApiResponseHeader$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/genhttp/api/content/documentation/ApiResponseHeader;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/Documentation : java/lang/annotation/Annotation {
+}
+
+public final class org/genhttp/api/content/documentation/DocumentationKt {
+	public static final fun isDocumentation (Ljava/lang/annotation/Annotation;)Z
+}
+
+public abstract interface class org/genhttp/api/content/documentation/DocumentedConcern : org/genhttp/api/content/Concern {
+	public abstract fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
+}
+
+public final class org/genhttp/api/content/documentation/OperationDocumentation {
+	public fun <init> (Lorg/genhttp/api/protocol/RequestMethod;)V
+	public final fun getAuthentication ()Ljava/util/List;
+	public final fun getEntries ()Ljava/util/List;
+	public final fun getMethod ()Lorg/genhttp/api/protocol/RequestMethod;
+	public final fun requestHeader (Ljava/lang/String;Ljava/lang/String;ZLkotlin/reflect/KClass;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public static synthetic fun requestHeader$default (Lorg/genhttp/api/content/documentation/OperationDocumentation;Ljava/lang/String;Ljava/lang/String;ZLkotlin/reflect/KClass;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public final fun requireAuthentication ([Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public final fun response (Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public static synthetic fun response$default (Lorg/genhttp/api/content/documentation/OperationDocumentation;Lorg/genhttp/api/protocol/ResponseStatus;Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public final fun responseHeader (Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/ResponseStatus;Lkotlin/reflect/KClass;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+	public static synthetic fun responseHeader$default (Lorg/genhttp/api/content/documentation/OperationDocumentation;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/protocol/ResponseStatus;Lkotlin/reflect/KClass;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/OperationDocumentation;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/Remarks : java/lang/annotation/Annotation {
+	public abstract fun text ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/Summary : java/lang/annotation/Annotation {
+	public abstract fun text ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/genhttp/api/content/documentation/Tag : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/content/documentation/security/ApiKeyLocation : java/lang/Enum {
+	public static final field Cookie Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+	public static final field Header Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+	public static final field Query Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+	public static fun values ()[Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+}
+
+public final class org/genhttp/api/content/documentation/security/ApiKeySecurityScheme : org/genhttp/api/content/documentation/security/SecurityScheme {
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;)Lorg/genhttp/api/content/documentation/security/ApiKeySecurityScheme;
+	public static synthetic fun copy$default (Lorg/genhttp/api/content/documentation/security/ApiKeySecurityScheme;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/ApiKeySecurityScheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDescription ()Ljava/lang/String;
+	public final fun getLocation ()Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;
+	public fun getName ()Ljava/lang/String;
+	public final fun getParameter ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/content/documentation/security/AuthenticationRequirement {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lorg/genhttp/api/content/documentation/security/AuthenticationRequirement;
+	public static synthetic fun copy$default (Lorg/genhttp/api/content/documentation/security/AuthenticationRequirement;Ljava/util/List;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/AuthenticationRequirement;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnyOf ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/content/documentation/security/HttpSecurityScheme : org/genhttp/api/content/documentation/security/SecurityScheme {
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public static synthetic fun copy$default (Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBearerFormat ()Ljava/lang/String;
+	public fun getDescription ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public final fun getScheme ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme : org/genhttp/api/content/documentation/security/SecurityScheme {
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme;
+	public static synthetic fun copy$default (Lorg/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDescription ()Ljava/lang/String;
+	public final fun getDiscoveryUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/genhttp/api/content/documentation/security/SecurityScheme {
+	public static final field Companion Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;
+	public abstract fun getDescription ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+}
+
+public final class org/genhttp/api/content/documentation/security/SecurityScheme$Companion {
+	public final fun apiKey (Ljava/lang/String;Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/ApiKeySecurityScheme;
+	public static synthetic fun apiKey$default (Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;Ljava/lang/String;Lorg/genhttp/api/content/documentation/security/ApiKeyLocation;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/ApiKeySecurityScheme;
+	public final fun basic (Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public static synthetic fun basic$default (Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public final fun bearer (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public static synthetic fun bearer$default (Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public final fun http (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public static synthetic fun http$default (Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/HttpSecurityScheme;
+	public final fun openIdConnect (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme;
+	public static synthetic fun openIdConnect$default (Lorg/genhttp/api/content/documentation/security/SecurityScheme$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/genhttp/api/content/documentation/security/OpenIdConnectSecurityScheme;
+}
+
 public final class org/genhttp/api/content/io/AlgorithmName : org/genhttp/api/MemoryView {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/nio/ByteBuffer;)V
@@ -121,79 +275,6 @@ public abstract interface class org/genhttp/api/content/io/ResourceTree : org/ge
 }
 
 public final class org/genhttp/api/content/io/ResourceTree$Companion {
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiRequestBody : java/lang/annotation/Annotation {
-	public abstract fun contentType ()Ljava/lang/String;
-	public abstract fun description ()Ljava/lang/String;
-	public abstract fun type ()Ljava/lang/Class;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiRequestBody$Container : java/lang/annotation/Annotation {
-	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiRequestBody;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiRequestHeader : java/lang/annotation/Annotation {
-	public abstract fun description ()Ljava/lang/String;
-	public abstract fun name ()Ljava/lang/String;
-	public abstract fun required ()Z
-	public abstract fun type ()Ljava/lang/Class;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiRequestHeader$Container : java/lang/annotation/Annotation {
-	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiRequestHeader;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiResponse : java/lang/annotation/Annotation {
-	public abstract fun contentType ()Ljava/lang/String;
-	public abstract fun description ()Ljava/lang/String;
-	public abstract fun status ()Lorg/genhttp/api/protocol/ResponseStatus;
-	public abstract fun type ()Ljava/lang/Class;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiResponse$Container : java/lang/annotation/Annotation {
-	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiResponse;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiResponseHeader : java/lang/annotation/Annotation {
-	public abstract fun description ()Ljava/lang/String;
-	public abstract fun name ()Ljava/lang/String;
-	public abstract fun status ()[Lorg/genhttp/api/protocol/ResponseStatus;
-	public abstract fun type ()Ljava/lang/Class;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/ApiResponseHeader$Container : java/lang/annotation/Annotation {
-	public abstract fun value ()[Lorg/genhttp/api/content/services/ApiResponseHeader;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/Documentation : java/lang/annotation/Annotation {
-}
-
-public final class org/genhttp/api/content/services/DocumentationKt {
-	public static final fun isDocumentation (Ljava/lang/annotation/Annotation;)Z
-}
-
-public abstract interface class org/genhttp/api/content/services/DocumentedConcern : org/genhttp/api/content/Concern {
-	public abstract fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
-}
-
-public final class org/genhttp/api/content/services/OperationDocumentation {
-	public fun <init> (Lorg/genhttp/api/protocol/RequestMethod;)V
-	public final fun add (Ljava/lang/annotation/Annotation;)Lorg/genhttp/api/content/services/OperationDocumentation;
-	public final fun getEntries ()Ljava/util/List;
-	public final fun getMethod ()Lorg/genhttp/api/protocol/RequestMethod;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/Remarks : java/lang/annotation/Annotation {
-	public abstract fun text ()Ljava/lang/String;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/Summary : java/lang/annotation/Annotation {
-	public abstract fun text ()Ljava/lang/String;
-}
-
-public abstract interface annotation class org/genhttp/api/content/services/Tag : java/lang/annotation/Annotation {
-	public abstract fun name ()Ljava/lang/String;
 }
 
 public final class org/genhttp/api/infrastructure/BufferSize {

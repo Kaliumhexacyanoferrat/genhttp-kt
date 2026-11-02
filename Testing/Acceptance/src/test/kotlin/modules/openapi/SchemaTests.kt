@@ -3,7 +3,7 @@ package org.genhttp.testing.acceptance.modules.openapi
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
-import org.genhttp.api.content.services.Summary
+import org.genhttp.api.content.documentation.Summary
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.conversion.Serialization

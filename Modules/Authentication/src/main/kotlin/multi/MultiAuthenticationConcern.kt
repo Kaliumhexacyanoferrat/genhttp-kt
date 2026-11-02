@@ -3,6 +3,12 @@ package org.genhttp.modules.authentication.multi
 import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
+import org.genhttp.api.content.documentation.ApiRequestHeader
+import org.genhttp.api.content.documentation.ApiResponse
+import org.genhttp.api.content.documentation.ApiResponseHeader
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
@@ -18,7 +24,7 @@ import org.genhttp.api.protocol.ResponseStatus
 public class MultiAuthenticationConcern(
     override val content: Handler,
     private val delegatingConcerns: List<Concern>
-) : Concern {
+) : DocumentedConcern {
 
     // region Functionality
 
@@ -45,6 +51,35 @@ public class MultiAuthenticationConcern(
 
     override suspend fun prepare(server: Server) {
         content.prepare(server)
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        val schemes = mutableListOf<SecurityScheme>()
+
+        val entries = mutableListOf<Annotation>()
+
+        for (concern in delegatingConcerns.filterIsInstance<DocumentedConcern>()) {
+            val child = OperationDocumentation(operation.method)
+
+            concern.addDocumentation(child)
+
+            schemes.addAll(child.authentication.flatMap { it.anyOf })
+            entries.addAll(child.entries)
+        }
+
+        if (schemes.isNotEmpty()) {
+            operation.requireAuthentication(*schemes.distinct().toTypedArray())
+        }
+
+        operation.response(ResponseStatus.Unauthorized, "The request could not be authenticated with any of the supported methods")
+
+        for (entry in entries) {
+            when (entry) {
+                is ApiResponse -> operation.response(entry.status, entry.description.ifEmpty { null }, entry.type.takeIf { it != Nothing::class }, entry.contentType.ifEmpty { null })
+                is ApiResponseHeader -> operation.responseHeader(entry.name, entry.description.ifEmpty { null }, entry.status.firstOrNull(), entry.type.takeIf { it != Nothing::class })
+                is ApiRequestHeader -> operation.requestHeader(entry.name, entry.description.ifEmpty { null }, false, entry.type.takeIf { it != Nothing::class })
+            }
+        }
     }
 
     // endregion

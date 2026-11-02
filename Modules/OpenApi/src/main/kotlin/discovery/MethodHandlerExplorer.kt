@@ -18,16 +18,18 @@ import io.swagger.v3.oas.models.tags.Tag as OpenApiTag
 import io.swagger.v3.oas.models.Operation as OpenApiOperation
 
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.ApiRequestBody
-import org.genhttp.api.content.services.ApiRequestHeader
-import org.genhttp.api.content.services.ApiResponse
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.OperationDocumentation
-import org.genhttp.api.content.services.Tag
+import org.genhttp.api.content.documentation.ApiRequestBody
+import org.genhttp.api.content.documentation.ApiRequestHeader
+import org.genhttp.api.content.documentation.ApiResponse
+import org.genhttp.api.content.documentation.ApiResponseHeader
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.Tag
+import org.genhttp.api.content.documentation.security.AuthenticationRequirement
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.RequestMethod
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.openapi.ApiExplorer
+import org.genhttp.modules.reflection.DocumentedInterceptor
 import org.genhttp.modules.reflection.MethodHandler
 import org.genhttp.modules.reflection.MethodRegistry
 import org.genhttp.modules.reflection.ResultWrapper
@@ -88,7 +90,7 @@ public class MethodHandlerExplorer : ApiExplorer {
                 // OpenAPI cannot describe other verbs (e.g. CONNECT)
                 val verb = getVerb(requestMethod) ?: continue
 
-                val inherited = documentation.getDocumentation(requestMethod)
+                val shared = SharedDocumentation(getInterceptorDocumentation(source, requestMethod), documentation.getDocumentation(requestMethod))
 
                 val operation = OpenApiOperation()
 
@@ -146,7 +148,7 @@ public class MethodHandlerExplorer : ApiExplorer {
                     applyDeclaredRequestBody(operation, method, schemata, handler.registry)
                 }
 
-                addRequestHeaders(operation, source, inherited, schemata)
+                addRequestHeaders(operation, source, shared, schemata)
 
                 if (source.route.isWildcard) {
                     val param = PathParameter()
@@ -161,13 +163,15 @@ public class MethodHandlerExplorer : ApiExplorer {
 
                 val responses = ApiResponses()
 
-                for ((key, value) in getResponses(source, schemata, handler.registry, inherited)) {
+                for ((key, value) in getResponses(source, schemata, handler.registry, shared)) {
                     responses.addApiResponse(key, value)
                 }
 
                 operation.responses = responses
 
-                addResponseHeaders(operation, source, inherited, schemata)
+                addResponseHeaders(operation, source, shared, schemata)
+
+                addSecurity(operation, document, shared)
 
                 pathItem.operation(verb, operation)
             }
@@ -194,8 +198,8 @@ public class MethodHandlerExplorer : ApiExplorer {
     private fun isDeprecated(method: KFunction<*>): Boolean =
         method.annotations.any { it is Deprecated || it.annotationClass.qualifiedName == "java.lang.Deprecated" }
 
-    private fun addRequestHeaders(operation: OpenApiOperation, source: Operation, inherited: List<OperationDocumentation>, schemata: SchemaManager) {
-        for (header in getDocumentation<ApiRequestHeader>(source, inherited)) {
+    private fun addRequestHeaders(operation: OpenApiOperation, source: Operation, shared: SharedDocumentation, schemata: SchemaManager) {
+        for (header in getDocumentation<ApiRequestHeader>(source, shared)) {
             if (operation.parameters?.any { it is HeaderParameter && it.name.equals(header.name, ignoreCase = true) } == true) {
                 continue
             }
@@ -215,14 +219,14 @@ public class MethodHandlerExplorer : ApiExplorer {
 
     /**
      * Collects the documentation of the given kind that applies to the operation, the most specific
-     * first: the method, the service and the concerns from the innermost to the outermost.
+     * first: the method, its interceptors, the service and the concerns from the innermost to the outermost.
      */
-    private inline fun <reified T : Annotation> getDocumentation(operation: Operation, inherited: List<OperationDocumentation>): List<T> {
+    private inline fun <reified T : Annotation> getDocumentation(operation: Operation, shared: SharedDocumentation): List<T> {
         val result = mutableListOf<T>()
 
         result.addAll(getFunctionAnnotations<T>(operation.method))
 
-        for (level in getSharedLevels(operation, inherited)) {
+        for (level in getSharedLevels(operation, shared)) {
             result.addAll(level.filterIsInstance<T>())
         }
 
@@ -230,16 +234,45 @@ public class MethodHandlerExplorer : ApiExplorer {
     }
 
     /**
-     * The documentation shared by multiple operations (declared on the service or provided by
-     * concerns), grouped by the level it has been declared on, the most specific first.
+     * The documentation not declared on the method itself (provided by interceptors, declared on the
+     * service or provided by concerns), grouped by the level it has been declared on, the most specific first.
      */
-    private fun getSharedLevels(operation: Operation, inherited: List<OperationDocumentation>): List<List<Annotation>> {
+    private fun getSharedLevels(operation: Operation, shared: SharedDocumentation): List<List<Annotation>> {
         val result = mutableListOf<List<Annotation>>()
+
+        for (level in shared.interceptors) {
+            result.add(level.entries)
+        }
 
         getDeclaringClass(operation)?.let { result.add(getClassDocumentation(it)) }
 
-        for (level in inherited) {
+        for (level in shared.concerns) {
             result.add(level.entries)
+        }
+
+        return result
+    }
+
+    /**
+     * The documentation provided by the interceptors of the operation and the concerns
+     * wrapping it, the most specific first.
+     */
+    private class SharedDocumentation(val interceptors: List<OperationDocumentation>, val concerns: List<OperationDocumentation>) {
+
+        val authentication: List<AuthenticationRequirement>
+            get() = (interceptors + concerns).flatMap { it.authentication }
+
+    }
+
+    private fun getInterceptorDocumentation(operation: Operation, method: RequestMethod): List<OperationDocumentation> {
+        val result = mutableListOf<OperationDocumentation>()
+
+        for (interceptor in operation.interceptors.filterIsInstance<DocumentedInterceptor>()) {
+            val documentation = OperationDocumentation(method)
+
+            interceptor.addDocumentation(documentation)
+
+            result.add(documentation)
         }
 
         return result
@@ -306,6 +339,18 @@ public class MethodHandlerExplorer : ApiExplorer {
         }
 
         return runCatching { type.kotlin }.getOrNull()
+    }
+
+    // endregion
+
+    // region Security
+
+    private fun addSecurity(operation: OpenApiOperation, document: OpenAPI, shared: SharedDocumentation) {
+        val requirements = shared.authentication
+
+        if (requirements.isNotEmpty()) {
+            operation.security = SecurityDocumentation.getRequirements(document, requirements)
+        }
     }
 
     // endregion
@@ -417,7 +462,7 @@ public class MethodHandlerExplorer : ApiExplorer {
 
     // region Responses
 
-    private fun getResponses(operation: Operation, schemata: SchemaManager, registry: MethodRegistry, inherited: List<OperationDocumentation>): Map<String, OpenApiResponse> {
+    private fun getResponses(operation: Operation, schemata: SchemaManager, registry: MethodRegistry, shared: SharedDocumentation): Map<String, OpenApiResponse> {
         val result = LinkedHashMap<String, OpenApiResponse>()
 
         val method = operation.method
@@ -436,8 +481,8 @@ public class MethodHandlerExplorer : ApiExplorer {
             result[getKey(status)] = getDeclaredResponse(status, group, inferred, resultSummary, schemata, registry)
         }
 
-        // responses shared by the service or declared by concerns, the most specific level wins
-        for (level in getSharedLevels(operation, inherited)) {
+        // responses declared by interceptors, the service or concerns, the most specific level wins
+        for (level in getSharedLevels(operation, shared)) {
             for ((status, group) in level.filterIsInstance<ApiResponse>().groupBy { it.status }) {
                 result.putIfAbsent(getKey(status), getDeclaredResponse(status, group, null, null, schemata, registry))
             }
@@ -446,8 +491,8 @@ public class MethodHandlerExplorer : ApiExplorer {
         return result
     }
 
-    private fun addResponseHeaders(operation: OpenApiOperation, source: Operation, inherited: List<OperationDocumentation>, schemata: SchemaManager) {
-        for (header in getDocumentation<ApiResponseHeader>(source, inherited)) {
+    private fun addResponseHeaders(operation: OpenApiOperation, source: Operation, shared: SharedDocumentation, schemata: SchemaManager) {
+        for (header in getDocumentation<ApiResponseHeader>(source, shared)) {
             val status = header.status.firstOrNull()
 
             val targets: List<OpenApiResponse> = if (status != null) {

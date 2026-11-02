@@ -2,26 +2,40 @@ package org.genhttp.modules.authentication.roles
 
 import org.genhttp.api.content.ProviderException
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.ResponseStatus
 import org.genhttp.modules.authentication.RequireRole
 import org.genhttp.modules.authentication.getUser
 import org.genhttp.modules.reflection.InterceptionResult
-import org.genhttp.modules.reflection.OperationInterceptor
+import org.genhttp.modules.reflection.DocumentedInterceptor
 import org.genhttp.modules.reflection.operations.Operation
 
 /**
  * Denies access to service methods annotated with [RequireRole] if the authenticated user does not have the
  * required roles.
  */
-public class RoleInterceptor : OperationInterceptor {
+public class RoleInterceptor : DocumentedInterceptor {
 
     private var roles: Array<out String>? = null
 
     override fun configure(attribute: Annotation) {
         if (attribute is RequireRole) {
             roles = attribute.roles
+        }
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        val roles = roles
+
+        if (roles != null && roles.isNotEmpty()) {
+            val joined = roles.joinToString(", ")
+
+            val description = if (roles.size == 1) "The user does not have the required role: $joined" else "The user does not have all of the required roles: $joined"
+
+            operation.response(ResponseStatus.Unauthorized, "Authentication is required to access this operation")
+                .response(ResponseStatus.Forbidden, description)
         }
     }
 

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.models.OpenAPI
 
 import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.DocumentedConcern
+import org.genhttp.api.content.documentation.DocumentedConcern
 import org.genhttp.api.protocol.Request
 import org.genhttp.modules.openapi.ApiExplorer
 

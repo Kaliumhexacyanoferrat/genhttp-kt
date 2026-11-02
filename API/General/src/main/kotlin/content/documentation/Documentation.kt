@@ -1,12 +1,12 @@
-package org.genhttp.api.content.services
+package org.genhttp.api.content.documentation
 
 /**
  * Marks the annotations that document an API, so it can be presented to its consumers (e.g. in a generated
  * OpenAPI specification). This replaces the `DocumentationAttribute` base class of GenHTTP, as annotations
  * cannot inherit from each other in Kotlin.
  *
- * Besides being placed on services and their methods, instances of these annotations can also be created at
- * runtime by concerns to document the functionality they add to the content they wrap (see [DocumentedConcern]).
+ * Concerns document the functionality they add to the content they wrap via [OperationDocumentation], which
+ * creates instances of these annotations at runtime (see [DocumentedConcern]).
  *
  * The documentation annotations are [Summary], [Remarks], [Tag], [ApiRequestBody], [ApiRequestHeader], [ApiResponse]
  * and [ApiResponseHeader] (`RequestBodyAttribute`, `RequestHeaderAttribute`, `ResponseAttribute` and

@@ -75,6 +75,38 @@ class ApiKeyAuthenticationTests {
     }
 
     @MultiEngineTest
+    fun testValidKeyFromCookie(engine: ServerEngine) = test {
+        val auth = ApiKeyAuthentication.create()
+            .withCookie("session")
+            .keys("123")
+
+        getRunnerWithAuth(auth, engine).use { runner ->
+            val request = runner.getRequest()
+            request.header("Cookie", "theme=dark; session=123")
+
+            val response = runner.getResponse(request)
+
+            response.assertStatus(ResponseStatus.Ok)
+        }
+    }
+
+    @MultiEngineTest
+    fun testMissingCookie(engine: ServerEngine) = test {
+        val auth = ApiKeyAuthentication.create()
+            .withCookie("session")
+            .keys("123")
+
+        getRunnerWithAuth(auth, engine).use { runner ->
+            val request = runner.getRequest()
+            request.header("Cookie", "theme=dark")
+
+            val response = runner.getResponse(request)
+
+            response.assertStatus(ResponseStatus.Unauthorized)
+        }
+    }
+
+    @MultiEngineTest
     fun testValidKeyFromHeader(engine: ServerEngine) = test {
         val auth = ApiKeyAuthentication.create()
             .withHeader("key")

@@ -41,7 +41,7 @@ public final class org/genhttp/modules/openapi/discovery/ConcernExplorer : org/g
 public final class org/genhttp/modules/openapi/discovery/InheritedDocumentation {
 	public static final field Companion Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation$Companion;
 	public final fun getDocumentation (Lorg/genhttp/api/protocol/RequestMethod;)Ljava/util/List;
-	public final fun push (Lorg/genhttp/api/content/services/DocumentedConcern;)Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;
+	public final fun push (Lorg/genhttp/api/content/documentation/DocumentedConcern;)Lorg/genhttp/modules/openapi/discovery/InheritedDocumentation;
 }
 
 public final class org/genhttp/modules/openapi/discovery/InheritedDocumentation$Companion {
@@ -99,6 +99,7 @@ public final class org/genhttp/modules/openapi/handler/OpenApiConcernBuilder : o
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
 	public final fun caching (Z)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
 	public final fun postProcessor (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
+	public final fun security ([Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
 	public final fun title (Ljava/lang/String;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
 	public final fun version (Ljava/lang/String;)Lorg/genhttp/modules/openapi/handler/OpenApiConcernBuilder;
 }

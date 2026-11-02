@@ -6,11 +6,11 @@ import io.swagger.v3.oas.models.media.Schema
 
 import kotlinx.coroutines.yield
 
-import org.genhttp.api.content.services.ApiRequestBody
-import org.genhttp.api.content.services.ApiResponse
-import org.genhttp.api.content.services.Remarks
-import org.genhttp.api.content.services.Summary
-import org.genhttp.api.content.services.Tag
+import org.genhttp.api.content.documentation.ApiRequestBody
+import org.genhttp.api.content.documentation.ApiResponse
+import org.genhttp.api.content.documentation.Remarks
+import org.genhttp.api.content.documentation.Summary
+import org.genhttp.api.content.documentation.Tag
 import org.genhttp.api.infrastructure.ServerEngine
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response

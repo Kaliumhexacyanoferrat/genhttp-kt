@@ -1,7 +1,7 @@
 package org.genhttp.modules.openapi.discovery
 
-import org.genhttp.api.content.services.Remarks
-import org.genhttp.api.content.services.Summary
+import org.genhttp.api.content.documentation.Remarks
+import org.genhttp.api.content.documentation.Summary
 
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KFunction

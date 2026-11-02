@@ -86,9 +86,9 @@ public final class org/genhttp/modules/compression/providers/DecompressedBody : 
 	public fun close ()V
 }
 
-public final class org/genhttp/modules/compression/providers/DecompressionConcern : org/genhttp/api/content/services/DocumentedConcern {
+public final class org/genhttp/modules/compression/providers/DecompressionConcern : org/genhttp/api/content/documentation/DocumentedConcern {
 	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/Map;)V
-	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -1,8 +1,10 @@
 package org.genhttp.modules.authentication.basic
 
-import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
@@ -18,17 +20,27 @@ import java.util.Base64
  * @param content The handler to be wrapped by this concern
  * @param realm The name of the realm returned to the client
  * @param authenticator The logic used to check the credentials and to determine the user (receives the user name and the password)
+ * @param scheme The security scheme the concern is documented with (basic authentication by default)
  */
 public class BasicAuthenticationConcern(
     override val content: Handler,
     private val realm: String,
-    private val authenticator: suspend (String, String) -> User?
-) : Concern {
+    private val authenticator: suspend (String, String) -> User?,
+    scheme: SecurityScheme? = null
+) : DocumentedConcern {
+
+    private val scheme: SecurityScheme = scheme ?: SecurityScheme.basic()
 
     // region Functionality
 
     override suspend fun prepare(server: Server) {
         content.prepare(server)
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        operation.requireAuthentication(scheme)
+            .response(ResponseStatus.Unauthorized, "No or invalid credentials have been sent with the request")
+            .responseHeader("WWW-Authenticate", "Requests the client to authenticate with the given scheme and realm", ResponseStatus.Unauthorized)
     }
 
     override suspend fun handle(request: Request): Response? {

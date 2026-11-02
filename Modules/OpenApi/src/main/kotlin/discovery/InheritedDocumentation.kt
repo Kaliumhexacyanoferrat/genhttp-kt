@@ -1,7 +1,7 @@
 package org.genhttp.modules.openapi.discovery
 
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.protocol.RequestMethod
 
 /**
@@ -60,7 +60,7 @@ public class InheritedDocumentation private constructor(
 
             concern.addDocumentation(operation)
 
-            if (operation.entries.isNotEmpty()) {
+            if (operation.entries.isNotEmpty() || operation.authentication.isNotEmpty()) {
                 result.add(operation)
             }
 

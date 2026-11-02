@@ -1,15 +1,19 @@
 package org.genhttp.modules.authentication.basic
 
 import org.genhttp.api.content.Concern
-import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.BuilderMissingPropertyException
+import org.genhttp.modules.authentication.AuthenticationBuilder
+import org.genhttp.modules.authentication.documentation.SchemeDocumentation
 
 /**
  * Configures a concern that checks credentials sent via basic authentication.
  */
-public class BasicAuthenticationConcernBuilder : ConcernBuilder {
+public class BasicAuthenticationConcernBuilder : AuthenticationBuilder<BasicAuthenticationConcernBuilder> {
+
+    private val schemeDocumentation = SchemeDocumentation()
 
     private var handler: (suspend (String, String) -> User?)? = null
 
@@ -37,12 +41,22 @@ public class BasicAuthenticationConcernBuilder : ConcernBuilder {
         return this
     }
 
+    override fun documentation(description: String): BasicAuthenticationConcernBuilder {
+        schemeDocumentation.description = description
+        return this
+    }
+
+    override fun documentation(scheme: SecurityScheme): BasicAuthenticationConcernBuilder {
+        schemeDocumentation.scheme = scheme
+        return this
+    }
+
     override fun build(content: Handler): Concern {
         val realm = realm ?: throw BuilderMissingPropertyException("Realm")
 
         val handler = handler ?: throw BuilderMissingPropertyException("Handler")
 
-        return BasicAuthenticationConcern(content, realm, handler)
+        return BasicAuthenticationConcern(content, realm, handler, schemeDocumentation.resolve(SecurityScheme.basic()))
     }
 
     // endregion

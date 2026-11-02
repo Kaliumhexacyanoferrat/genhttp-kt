@@ -1,19 +1,28 @@
 package org.genhttp.modules.authentication.clientcertificate
 
 import org.genhttp.api.content.Concern
-import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.protocol.Request
+import org.genhttp.modules.authentication.AuthenticationBuilder
+import org.genhttp.modules.authentication.documentation.SchemeDocumentation
 
 import java.security.cert.X509Certificate
 
 /**
- * Configures a concern that grants access based on the certificate presented by the client.
+ * Configures a concern that grants access based on the certificate presented by the client during the TLS
+ * handshake.
+ *
+ * Client certificates are not documented as a security scheme by default, as the OpenAPI specification generated
+ * by the framework (version 3.0) does not support them. To document the mechanism, pass a scheme to
+ * [documentation], which is also required for a description passed to [documentation] to be shown.
  */
-public class ClientCertificateAuthenticationBuilder : ConcernBuilder {
+public class ClientCertificateAuthenticationBuilder : AuthenticationBuilder<ClientCertificateAuthenticationBuilder> {
 
     private val options = ClientCertificateAuthenticationOptions()
+
+    private val schemeDocumentation = SchemeDocumentation()
 
     // region Functionality
 
@@ -39,7 +48,17 @@ public class ClientCertificateAuthenticationBuilder : ConcernBuilder {
         return this
     }
 
-    override fun build(content: Handler): Concern = ClientCertificateAuthenticationConcern(content, options)
+    override fun documentation(description: String): ClientCertificateAuthenticationBuilder {
+        schemeDocumentation.description = description
+        return this
+    }
+
+    override fun documentation(scheme: SecurityScheme): ClientCertificateAuthenticationBuilder {
+        schemeDocumentation.scheme = scheme
+        return this
+    }
+
+    override fun build(content: Handler): Concern = ClientCertificateAuthenticationConcern(content, options, schemeDocumentation.resolveOptional(null))
 
     // endregion
 

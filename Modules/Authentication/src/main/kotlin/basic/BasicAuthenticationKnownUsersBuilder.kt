@@ -1,9 +1,12 @@
 package org.genhttp.modules.authentication.basic
 
 import org.genhttp.api.content.Concern
-import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
+import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.BuilderMissingPropertyException
+import org.genhttp.modules.authentication.AuthenticationBuilder
+import org.genhttp.modules.authentication.documentation.SchemeDocumentation
 
 import java.security.MessageDigest
 import java.util.TreeMap
@@ -12,7 +15,9 @@ import java.util.TreeMap
  * Configures a concern that checks credentials sent via basic authentication against a list of users
  * kept in memory (for development purposes).
  */
-public class BasicAuthenticationKnownUsersBuilder : ConcernBuilder {
+public class BasicAuthenticationKnownUsersBuilder : AuthenticationBuilder<BasicAuthenticationKnownUsersBuilder> {
+
+    private val schemeDocumentation = SchemeDocumentation()
 
     private val users = TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER)
 
@@ -44,10 +49,20 @@ public class BasicAuthenticationKnownUsersBuilder : ConcernBuilder {
         return this
     }
 
+    override fun documentation(description: String): BasicAuthenticationKnownUsersBuilder {
+        schemeDocumentation.description = description
+        return this
+    }
+
+    override fun documentation(scheme: SecurityScheme): BasicAuthenticationKnownUsersBuilder {
+        schemeDocumentation.scheme = scheme
+        return this
+    }
+
     override fun build(content: Handler): Concern {
         val realm = realm ?: throw BuilderMissingPropertyException("Realm")
 
-        return BasicAuthenticationConcern(content, realm) { user, password ->
+        val authenticator: suspend (String, String) -> User? = { user, password ->
             val expected = users[user]
 
             if (expected != null && MessageDigest.isEqual(password.toByteArray(Charsets.UTF_8), expected.toByteArray(Charsets.UTF_8))) {
@@ -56,6 +71,8 @@ public class BasicAuthenticationKnownUsersBuilder : ConcernBuilder {
                 null
             }
         }
+
+        return BasicAuthenticationConcern(content, realm, authenticator, schemeDocumentation.resolve(SecurityScheme.basic()))
     }
 
     // endregion

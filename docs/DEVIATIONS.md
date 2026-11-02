@@ -30,6 +30,7 @@ Every place where genhttp-kt differs from GenHTTP *in spirit or behavior* is lis
 | API | `Forwarding.For` → `Forwarding.forAddress` | `for` is a hard keyword in Kotlin |
 | API | `DocumentationAttribute` base class → `@Documentation` meta-annotation; `OperationDocumentation.entries` is a `List<Annotation>` | Kotlin annotations cannot inherit |
 | API | `RequestBodyAttribute`, `RequestHeaderAttribute`, `ResponseAttribute`, `ResponseHeaderAttribute` → `@ApiRequestBody`, `@ApiRequestHeader`, `@ApiResponse`, `@ApiResponseHeader` | Avoid clashes with `RequestBody`, `RequestHeader`, `Response` |
+| API | The security schemes (`ApiKeySecurityScheme`, `HttpSecurityScheme`, `OpenIdConnectSecurityScheme`) are classes with value equality and a `copy(...)` function instead of records (`scheme with { Name = "x" }` → `scheme.copy(name = "x")`) | Kotlin has no records; data classes with internal constructors cannot expose `copy` (KT-11914) |
 | API | Optional annotation parameters use `""` / `Nothing::class` instead of `null`; `ResponseHeaderAttribute.Status` is an array with at most one entry | Annotation parameters cannot be nullable |
 | API | `SslProtocols`, `SslPolicyErrors`, `X509RevocationMode`, `CompressionLevel` are small enums in the API; flags become `Set<E>` | No JDK equivalents |
 | API | `HttpProtocols` keeps its combined members and gains `hasFlag`, `plus`, `minus` | Replaces `[Flags]` arithmetic |

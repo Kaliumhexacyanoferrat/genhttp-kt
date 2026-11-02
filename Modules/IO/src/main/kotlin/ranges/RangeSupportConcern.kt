@@ -2,11 +2,8 @@ package org.genhttp.modules.io.ranges
 
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.io.Resource
-import org.genhttp.api.content.services.ApiRequestHeader
-import org.genhttp.api.content.services.ApiResponse
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.ContentType
@@ -32,12 +29,12 @@ public class RangeSupportConcern(override val content: Handler) : DocumentedConc
 
     override fun addDocumentation(operation: OperationDocumentation) {
         if (operation.method == RequestMethod.Get || operation.method == RequestMethod.Head) {
-            operation.add(ApiRequestHeader(name = "Range", description = "Requests a part of the content (e.g. bytes=0-1023), supported if the length of the content is known"))
-                .add(ApiResponse(status = ResponseStatus.PartialContent, description = "The requested part of the content"))
-                .add(ApiResponse(status = ResponseStatus.RequestedRangeNotSatisfiable, description = "The requested range is not within the content", contentType = "text/plain"))
-                .add(ApiResponseHeader(name = "Accept-Ranges", description = "Set to 'bytes' if parts of the content can be requested", status = arrayOf(ResponseStatus.Ok)))
-                .add(ApiResponseHeader(name = "Content-Range", description = "The part of the content contained in the response (e.g. bytes 0-1023/4096)", status = arrayOf(ResponseStatus.PartialContent)))
-                .add(ApiResponseHeader(name = "Content-Range", description = "The total length of the content (e.g. bytes */4096)", status = arrayOf(ResponseStatus.RequestedRangeNotSatisfiable)))
+            operation.requestHeader("Range", "Requests a part of the content (e.g. bytes=0-1023), supported if the length of the content is known")
+                .response(ResponseStatus.PartialContent, "The requested part of the content")
+                .response(ResponseStatus.RequestedRangeNotSatisfiable, "The requested range is not within the content", contentType = "text/plain")
+                .responseHeader("Accept-Ranges", "Set to 'bytes' if parts of the content can be requested", ResponseStatus.Ok)
+                .responseHeader("Content-Range", "The part of the content contained in the response (e.g. bytes 0-1023/4096)", ResponseStatus.PartialContent)
+                .responseHeader("Content-Range", "The total length of the content (e.g. bytes */4096)", ResponseStatus.RequestedRangeNotSatisfiable)
         }
     }
 

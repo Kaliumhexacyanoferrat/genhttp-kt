@@ -3,20 +3,24 @@ package org.genhttp.modules.authentication.bearer
 import com.nimbusds.jwt.SignedJWT
 
 import org.genhttp.api.content.Concern
-import org.genhttp.api.content.ConcernBuilder
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.protocol.Request
+import org.genhttp.modules.authentication.AuthenticationBuilder
+import org.genhttp.modules.authentication.documentation.SchemeDocumentation
 
 import java.security.Key
 
 /**
  * Configures a concern that validates JWT bearer tokens sent by the client.
  */
-public class BearerAuthenticationConcernBuilder : ConcernBuilder {
+public class BearerAuthenticationConcernBuilder : AuthenticationBuilder<BearerAuthenticationConcernBuilder> {
 
     private val options = TokenValidationOptions()
+
+    private val schemeDocumentation = SchemeDocumentation()
 
     // region Functionality
 
@@ -90,7 +94,17 @@ public class BearerAuthenticationConcernBuilder : ConcernBuilder {
         return this
     }
 
-    override fun build(content: Handler): Concern = BearerAuthenticationConcern(content, options)
+    override fun documentation(description: String): BearerAuthenticationConcernBuilder {
+        schemeDocumentation.description = description
+        return this
+    }
+
+    override fun documentation(scheme: SecurityScheme): BearerAuthenticationConcernBuilder {
+        schemeDocumentation.scheme = scheme
+        return this
+    }
+
+    override fun build(content: Handler): Concern = BearerAuthenticationConcern(content, options, schemeDocumentation.resolve(SecurityScheme.bearer("JWT")))
 
     // endregion
 

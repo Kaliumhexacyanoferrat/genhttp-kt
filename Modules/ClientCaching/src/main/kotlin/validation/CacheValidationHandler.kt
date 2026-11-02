@@ -1,11 +1,8 @@
 package org.genhttp.modules.clientcaching.validation
 
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.ApiRequestHeader
-import org.genhttp.api.content.services.ApiResponse
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.Connection
@@ -65,10 +62,10 @@ public class CacheValidationHandler(override val content: Handler) : DocumentedC
 
     override fun addDocumentation(operation: OperationDocumentation) {
         if (operation.method == RequestMethod.Get || operation.method == RequestMethod.Head) {
-            operation.add(ApiRequestHeader(name = "If-None-Match", description = "The ETag of a previously received response, to check whether the content has changed since"))
-                .add(ApiResponse(status = ResponseStatus.NotModified, description = "The content has not changed since it has been received with the given ETag"))
-                .add(ApiResponseHeader(name = "ETag", description = "Identifies the version of the returned content", status = arrayOf(ResponseStatus.Ok)))
-                .add(ApiResponseHeader(name = "ETag", description = "Identifies the version of the content", status = arrayOf(ResponseStatus.NotModified)))
+            operation.requestHeader("If-None-Match", "The ETag of a previously received response, to check whether the content has changed since")
+                .response(ResponseStatus.NotModified, "The content has not changed since it has been received with the given ETag")
+                .responseHeader("ETag", "Identifies the version of the returned content", ResponseStatus.Ok)
+                .responseHeader("ETag", "Identifies the version of the content", ResponseStatus.NotModified)
         }
     }
 

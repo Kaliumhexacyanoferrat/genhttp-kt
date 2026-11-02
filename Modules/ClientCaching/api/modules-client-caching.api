@@ -16,9 +16,9 @@ public final class org/genhttp/modules/clientcaching/policy/CachePolicyBuilder :
 	public final fun predicate (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/clientcaching/policy/CachePolicyBuilder;
 }
 
-public final class org/genhttp/modules/clientcaching/policy/CachePolicyConcern : org/genhttp/api/content/services/DocumentedConcern {
+public final class org/genhttp/modules/clientcaching/policy/CachePolicyConcern : org/genhttp/api/content/documentation/DocumentedConcern {
 	public synthetic fun <init> (Lorg/genhttp/api/content/Handler;JLkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -29,9 +29,9 @@ public final class org/genhttp/modules/clientcaching/validation/CacheValidationB
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
 }
 
-public final class org/genhttp/modules/clientcaching/validation/CacheValidationHandler : org/genhttp/api/content/services/DocumentedConcern {
+public final class org/genhttp/modules/clientcaching/validation/CacheValidationHandler : org/genhttp/api/content/documentation/DocumentedConcern {
 	public fun <init> (Lorg/genhttp/api/content/Handler;)V
-	public fun addDocumentation (Lorg/genhttp/api/content/services/OperationDocumentation;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

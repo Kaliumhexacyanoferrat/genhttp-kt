@@ -3,9 +3,8 @@ package org.genhttp.modules.compression.providers
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.io.AlgorithmName
 import org.genhttp.api.content.io.CompressionAlgorithm
-import org.genhttp.api.content.services.ApiRequestHeader
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.KnownHeaders
 import org.genhttp.api.protocol.Request
@@ -49,7 +48,7 @@ public class DecompressionConcern(
         if (operation.method != RequestMethod.Get && operation.method != RequestMethod.Head) {
             val supported = algorithms.keys.joinToString(", ") { it.toString() }
 
-            operation.add(ApiRequestHeader(name = "Content-Encoding", description = "Allows to send a compressed request body (supported: $supported)"))
+            operation.requestHeader("Content-Encoding", "Allows to send a compressed request body (supported: $supported)")
         }
     }
 

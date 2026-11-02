@@ -11,9 +11,11 @@ import com.nimbusds.jwt.SignedJWT
 
 import kotlinx.coroutines.future.await
 
-import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
@@ -61,8 +63,9 @@ internal class TokenValidationException(message: String) : Exception(message)
 
 internal class BearerAuthenticationConcern(
     override val content: Handler,
-    private val validationOptions: TokenValidationOptions
-) : Concern {
+    private val validationOptions: TokenValidationOptions,
+    private val scheme: SecurityScheme
+) : DocumentedConcern {
 
     private val issuerKeys = AtomicReference<Collection<Key>?>(null)
 
@@ -70,6 +73,16 @@ internal class BearerAuthenticationConcern(
 
     override suspend fun prepare(server: Server) {
         content.prepare(server)
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        operation.requireAuthentication(scheme)
+            .response(ResponseStatus.Unauthorized, "No valid access token has been sent with the request")
+            .response(ResponseStatus.BadRequest, "The access token sent with the request is malformed")
+
+        if (validationOptions.customValidator != null) {
+            operation.response(ResponseStatus.Forbidden, "The access token has been rejected")
+        }
     }
 
     override suspend fun handle(request: Request): Response? {

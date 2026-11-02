@@ -1,4 +1,4 @@
-package org.genhttp.api.content.services
+package org.genhttp.api.content.documentation
 
 import kotlin.reflect.KClass
 

@@ -1,8 +1,10 @@
 package org.genhttp.modules.authentication.clientcertificate
 
-import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.ProviderException
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
@@ -14,13 +16,24 @@ import org.genhttp.modules.authentication.setUser
  */
 public class ClientCertificateAuthenticationConcern internal constructor(
     override val content: Handler,
-    private val options: ClientCertificateAuthenticationOptions
-) : Concern {
+    private val options: ClientCertificateAuthenticationOptions,
+    private val scheme: SecurityScheme?
+) : DocumentedConcern {
 
     // region Functionality
 
     override suspend fun prepare(server: Server) {
         content.prepare(server)
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        if (scheme != null) {
+            operation.requireAuthentication(scheme)
+        }
+
+        if (options.authorizer != null) {
+            operation.response(ResponseStatus.Forbidden, "The client certificate is not allowed to access this resource")
+        }
     }
 
     override suspend fun handle(request: Request): Response? {

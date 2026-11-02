@@ -1,9 +1,8 @@
 package org.genhttp.modules.clientcaching.policy
 
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.ByteString
 import org.genhttp.api.protocol.KnownHeaders
@@ -59,7 +58,7 @@ public class CachePolicyConcern(
 
     override fun addDocumentation(operation: OperationDocumentation) {
         if (operation.method == RequestMethod.Get) {
-            operation.add(ApiResponseHeader(name = "Expires", description = "Until when the client may cache the response", status = arrayOf(ResponseStatus.Ok)))
+            operation.responseHeader("Expires", "Until when the client may cache the response", ResponseStatus.Ok)
         }
     }
 

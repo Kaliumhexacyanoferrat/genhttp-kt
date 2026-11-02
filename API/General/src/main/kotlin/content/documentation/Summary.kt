@@ -1,4 +1,4 @@
-package org.genhttp.api.content.services
+package org.genhttp.api.content.documentation
 
 /**
  * Briefly describes an element of a service, so it can be presented to the consumers of the API

@@ -1,4 +1,4 @@
-package org.genhttp.api.content.services
+package org.genhttp.api.content.documentation
 
 /**
  * Specifies the group the operations of a service are listed under when presented to the consumers of the API.

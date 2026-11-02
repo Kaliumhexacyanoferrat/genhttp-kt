@@ -1,8 +1,10 @@
 package org.genhttp.modules.authentication.apikey
 
-import org.genhttp.api.content.Concern
 import org.genhttp.api.content.Handler
 import org.genhttp.api.content.authentication.User
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
+import org.genhttp.api.content.documentation.security.SecurityScheme
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.protocol.Request
 import org.genhttp.api.protocol.Response
@@ -15,12 +17,14 @@ import org.genhttp.modules.authentication.setUser
  * @param content The handler to be wrapped by this concern
  * @param keyExtractor The logic used to read the API key from a request
  * @param authenticator The logic used to check the key and to determine the user
+ * @param scheme The security scheme the concern is documented with, if known
  */
 public class ApiKeyConcern(
     override val content: Handler,
     private val keyExtractor: (Request) -> String?,
-    private val authenticator: suspend (Request, String) -> User?
-) : Concern {
+    private val authenticator: suspend (Request, String) -> User?,
+    private val scheme: SecurityScheme? = null
+) : DocumentedConcern {
 
     // region Functionality
 
@@ -48,6 +52,15 @@ public class ApiKeyConcern(
 
     override suspend fun prepare(server: Server) {
         content.prepare(server)
+    }
+
+    override fun addDocumentation(operation: OperationDocumentation) {
+        if (scheme != null) {
+            operation.requireAuthentication(scheme)
+        }
+
+        operation.response(ResponseStatus.Unauthorized, "No API key has been sent with the request")
+            .response(ResponseStatus.Forbidden, "The API key sent with the request is not valid")
     }
 
     // endregion

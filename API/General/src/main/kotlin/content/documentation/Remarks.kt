@@ -1,4 +1,4 @@
-package org.genhttp.api.content.services
+package org.genhttp.api.content.documentation
 
 /**
  * Adds a detailed explanation to an element of a service that goes beyond the short text provided by the

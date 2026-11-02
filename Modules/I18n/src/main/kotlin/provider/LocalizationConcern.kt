@@ -4,9 +4,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
 import org.genhttp.api.content.Handler
-import org.genhttp.api.content.services.ApiResponseHeader
-import org.genhttp.api.content.services.DocumentedConcern
-import org.genhttp.api.content.services.OperationDocumentation
+import org.genhttp.api.content.documentation.DocumentedConcern
+import org.genhttp.api.content.documentation.OperationDocumentation
 import org.genhttp.api.infrastructure.Server
 import org.genhttp.api.infrastructure.tryGet
 import org.genhttp.api.protocol.Request
@@ -40,7 +39,7 @@ public class LocalizationConcern(
     }
 
     override fun addDocumentation(operation: OperationDocumentation) {
-        operation.add(ApiResponseHeader("Content-Language", "The language of the returned content"))
+        operation.responseHeader("Content-Language", "The language of the returned content")
     }
 
     override suspend fun handle(request: Request): Response? {

@@ -8,6 +8,11 @@ public final class org/genhttp/modules/authentication/ApiKeyAuthenticationExtens
 	public static final fun authentication (Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;)Lorg/genhttp/api/content/HandlerBuilder$WithConcerns;
 }
 
+public abstract interface class org/genhttp/modules/authentication/AuthenticationBuilder : org/genhttp/api/content/ConcernBuilder {
+	public abstract fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public abstract fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+}
+
 public final class org/genhttp/modules/authentication/BasicAuthentication {
 	public static final field INSTANCE Lorg/genhttp/modules/authentication/BasicAuthentication;
 	public final fun create (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
@@ -52,19 +57,26 @@ public abstract interface annotation class org/genhttp/modules/authentication/Re
 	public abstract fun value ()[Lorg/genhttp/modules/authentication/RequireRole;
 }
 
-public final class org/genhttp/modules/authentication/apikey/ApiKeyConcern : org/genhttp/api/content/Concern {
-	public fun <init> (Lorg/genhttp/api/content/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;)V
+public final class org/genhttp/modules/authentication/apikey/ApiKeyConcern : org/genhttp/api/content/documentation/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lorg/genhttp/api/content/documentation/security/SecurityScheme;)V
+	public synthetic fun <init> (Lorg/genhttp/api/content/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lorg/genhttp/api/content/documentation/security/SecurityScheme;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class org/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+public final class org/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder : org/genhttp/modules/authentication/AuthenticationBuilder {
 	public fun <init> ()V
 	public final fun authenticator (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public synthetic fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public synthetic fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 	public final fun extractor (Lkotlin/jvm/functions/Function1;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 	public final fun keys ([Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
+	public final fun withCookie (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 	public final fun withHeader (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 	public final fun withQueryParameter (Ljava/lang/String;)Lorg/genhttp/modules/authentication/apikey/ApiKeyConcernBuilder;
 }
@@ -76,24 +88,34 @@ public final class org/genhttp/modules/authentication/apikey/ApiKeyUser : org/ge
 	public fun getRoles ()Ljava/util/List;
 }
 
-public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcern : org/genhttp/api/content/Concern {
-	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/lang/String;Lkotlin/jvm/functions/Function3;)V
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcern : org/genhttp/api/content/documentation/DocumentedConcern {
+	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Lorg/genhttp/api/content/documentation/security/SecurityScheme;)V
+	public synthetic fun <init> (Lorg/genhttp/api/content/Handler;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Lorg/genhttp/api/content/documentation/security/SecurityScheme;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder : org/genhttp/modules/authentication/AuthenticationBuilder {
 	public fun <init> ()V
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public synthetic fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
+	public synthetic fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
 	public final fun handler (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
 	public final fun realm (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationConcernBuilder;
 }
 
-public final class org/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder : org/genhttp/api/content/ConcernBuilder {
+public final class org/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder : org/genhttp/modules/authentication/AuthenticationBuilder {
 	public fun <init> ()V
 	public final fun add (Ljava/lang/String;Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public synthetic fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
+	public synthetic fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
 	public final fun realm (Ljava/lang/String;)Lorg/genhttp/modules/authentication/basic/BasicAuthenticationKnownUsersBuilder;
 }
 
@@ -112,25 +134,34 @@ public final class org/genhttp/modules/authentication/basic/BasicAuthenticationU
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder : org/genhttp/api/content/ConcernBuilder {
+public final class org/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder : org/genhttp/modules/authentication/AuthenticationBuilder {
 	public fun <init> ()V
 	public final fun allowExpired ()Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public final fun audience (Ljava/lang/String;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public synthetic fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
+	public synthetic fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public final fun issuer (Ljava/lang/String;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public final fun keyResolver (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public final fun userMapping (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 	public final fun validation (Lkotlin/jvm/functions/Function2;)Lorg/genhttp/modules/authentication/bearer/BearerAuthenticationConcernBuilder;
 }
 
-public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder : org/genhttp/api/content/ConcernBuilder {
+public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder : org/genhttp/modules/authentication/AuthenticationBuilder {
 	public fun <init> ()V
 	public final fun authorization (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
+	public synthetic fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Ljava/lang/String;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
+	public synthetic fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/AuthenticationBuilder;
+	public fun documentation (Lorg/genhttp/api/content/documentation/security/SecurityScheme;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
 	public final fun userMapping (Lkotlin/jvm/functions/Function3;)Lorg/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationBuilder;
 }
 
-public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationConcern : org/genhttp/api/content/Concern {
+public final class org/genhttp/modules/authentication/clientcertificate/ClientCertificateAuthenticationConcern : org/genhttp/api/content/documentation/DocumentedConcern {
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -143,8 +174,9 @@ public final class org/genhttp/modules/authentication/clientcertificate/ClientCe
 	public fun getRoles ()Ljava/util/List;
 }
 
-public final class org/genhttp/modules/authentication/multi/MultiAuthenticationConcern : org/genhttp/api/content/Concern {
+public final class org/genhttp/modules/authentication/multi/MultiAuthenticationConcern : org/genhttp/api/content/documentation/DocumentedConcern {
 	public fun <init> (Lorg/genhttp/api/content/Handler;Ljava/util/List;)V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun getContent ()Lorg/genhttp/api/content/Handler;
 	public fun handle (Lorg/genhttp/api/protocol/Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun prepare (Lorg/genhttp/api/infrastructure/Server;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -160,8 +192,9 @@ public final class org/genhttp/modules/authentication/multi/MultiAuthenticationC
 	public fun build (Lorg/genhttp/api/content/Handler;)Lorg/genhttp/api/content/Concern;
 }
 
-public final class org/genhttp/modules/authentication/roles/RoleInterceptor : org/genhttp/modules/reflection/OperationInterceptor {
+public final class org/genhttp/modules/authentication/roles/RoleInterceptor : org/genhttp/modules/reflection/DocumentedInterceptor {
 	public fun <init> ()V
+	public fun addDocumentation (Lorg/genhttp/api/content/documentation/OperationDocumentation;)V
 	public fun configure (Ljava/lang/annotation/Annotation;)V
 	public fun intercept (Lorg/genhttp/api/protocol/Request;Lorg/genhttp/modules/reflection/operations/Operation;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
