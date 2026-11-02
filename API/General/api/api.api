@@ -674,6 +674,7 @@ public final class org/genhttp/api/protocol/PathSegment : org/genhttp/api/Memory
 	public fun <init> (Ljava/nio/ByteBuffer;)V
 	public fun <init> ([B)V
 	public final fun decode ()Ljava/lang/String;
+	public final fun decode (Ljava/nio/CharBuffer;)I
 }
 
 public final class org/genhttp/api/protocol/PercentEncoding {

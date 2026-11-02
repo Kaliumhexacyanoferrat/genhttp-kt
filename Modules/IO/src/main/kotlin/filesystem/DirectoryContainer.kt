@@ -69,7 +69,8 @@ internal open class DirectoryContainer(protected val directory: Path) : Resource
     }
 
     /**
-     * Resolves the segment within the directory, ensuring that the result cannot leave it.
+     * Resolves the segment within the directory, which only resolves direct children of the directory (so the
+     * result cannot leave it, e.g. via encoded separators or drive-relative segments).
      */
     private fun resolve(segment: PathSegment): Path? {
         try {
@@ -77,7 +78,7 @@ internal open class DirectoryContainer(protected val directory: Path) : Resource
 
             val resolved = root.resolve(segment.decode()).normalize()
 
-            return if (resolved.startsWith(root)) resolved else null
+            return if (resolved.parent == root) resolved else null
         } catch (_: InvalidPathException) {
             return null
         }

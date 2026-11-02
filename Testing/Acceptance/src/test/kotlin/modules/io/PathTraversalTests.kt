@@ -2,6 +2,7 @@ package org.genhttp.testing.acceptance.modules.io
 
 import org.genhttp.api.content.io.ResourceTree
 import org.genhttp.api.infrastructure.ServerEngine
+import org.genhttp.api.protocol.PathSegment
 import org.genhttp.modules.directorybrowsing.Listing
 import org.genhttp.modules.files.Assets
 import org.genhttp.modules.io.fromDirectory
@@ -12,11 +13,17 @@ import org.genhttp.testing.acceptance.Constants
 import org.genhttp.testing.acceptance.MultiEngineTest
 import org.genhttp.testing.acceptance.test
 
+import org.junit.jupiter.api.Test
+
 import java.net.Socket
+import java.net.URLEncoder
 import java.nio.file.Files
+import java.nio.file.Path
 
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.fail
 
 /**
@@ -116,10 +123,116 @@ class PathTraversalTests {
 
     // endregion
 
+    // region Encoded separators
+
+    @MultiEngineTest
+    fun testAssetsDirectoryDeniesEncodedSlash(engine: ServerEngine) = test {
+        TestHost.run(Assets.from(createJail()), engine = engine).use { runner ->
+            val response = getForged(runner, "/..%2fsecret.txt")
+
+            assertStatus(response, 400)
+        }
+    }
+
+    @MultiEngineTest
+    fun testAssetsTreeDeniesFullyEncodedTraversal(engine: ServerEngine) = test {
+        TestHost.run(Assets.from(ResourceTree.fromDirectory(createJail())), engine = engine).use { runner ->
+            val response = getForged(runner, "/%2e%2e%2Fsecret.txt")
+
+            assertStatus(response, 400)
+        }
+    }
+
+    @MultiEngineTest
+    fun testStaticWebsiteDeniesEncodedBackslash(engine: ServerEngine) = test {
+        TestHost.run(StaticWebsite.from(ResourceTree.fromDirectory(createJail())), engine = engine).use { runner ->
+            val response = getForged(runner, "/..%5Csecret.txt")
+
+            assertStatus(response, 400)
+        }
+    }
+
+    @MultiEngineTest
+    fun testAssetsDeniesLiteralBackslash(engine: ServerEngine) = test {
+        TestHost.run(Assets.from(createJail()), engine = engine).use { runner ->
+            val response = getForged(runner, "/sub\\file.txt")
+
+            assertStatus(response, 400)
+        }
+    }
+
+    @MultiEngineTest
+    fun testSinglePageDeniesNullByte(engine: ServerEngine) = test {
+        TestHost.run(SinglePageApplication.from(ResourceTree.fromDirectory(createJail())), engine = engine).use { runner ->
+            val response = getForged(runner, "/file.txt%00.html")
+
+            assertStatus(response, 400)
+        }
+    }
+
+    @MultiEngineTest
+    fun testListingDoesNotFollowDriveRelativeSegment(engine: ServerEngine) = test {
+        TestHost.run(Listing.from(ResourceTree.fromDirectory(createJail())), engine = engine).use { runner ->
+            val response = getForged(runner, "/C:/")
+
+            assertStatus(response, 404)
+        }
+    }
+
+    // endregion
+
+    // region Directory tree containment
+
+    @Test
+    fun testTreeResolvesDirectChildren() = test {
+        val tree = ResourceTree.fromDirectory(createJail()).build()
+
+        assertNotNull(tree.tryGetResource(PathSegment("file.txt")))
+        assertNotNull(tree.tryGetNode(PathSegment("sub")))
+    }
+
+    @Test
+    fun testTreeDoesNotResolveOutsideOfRoot() = test {
+        val root = createJail()
+
+        val tree = ResourceTree.fromDirectory(root).build()
+
+        val secret = Path.of(root).parent.resolve("secret.txt").toString()
+
+        assertNull(tree.tryGetResource(PathSegment("..%2fsecret.txt")))
+        assertNull(tree.tryGetResource(PathSegment("..%5csecret.txt")))
+        assertNull(tree.tryGetResource(PathSegment(URLEncoder.encode(secret, Charsets.UTF_8))))
+
+        assertNull(tree.tryGetNode(PathSegment("..")))
+        assertNull(tree.tryGetNode(PathSegment(".")))
+        assertNull(tree.tryGetNode(PathSegment("sub%2f..%2f..")))
+        assertNull(tree.tryGetNode(PathSegment("C:")))
+    }
+
+    // endregion
+
     // region Helpers
 
     private fun createRoot(): String {
         val root = Files.createTempDirectory("genhttp")
+
+        Files.writeString(root.resolve("file.txt"), "This is a file")
+
+        Files.createDirectory(root.resolve("sub"))
+
+        return root.toAbsolutePath().toString()
+    }
+
+    /**
+     * Creates a served root with a secret file placed next to it, which
+     * must never be reachable through the root.
+     */
+    private fun createJail(): String {
+        val outer = Files.createTempDirectory("genhttp")
+
+        Files.writeString(outer.resolve("secret.txt"), "This is a secret")
+
+        val root = Files.createDirectory(outer.resolve("www"))
 
         Files.writeString(root.resolve("file.txt"), "This is a file")
 
