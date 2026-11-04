@@ -49,7 +49,7 @@ nimbus-jose = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus-j
 swagger-core = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }
 pebble = { module = "io.pebbletemplates:pebble", version.ref = "pebble" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.1.1" }
 bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
 netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }
 netty-transport = { module = "io.netty:netty-transport" }
