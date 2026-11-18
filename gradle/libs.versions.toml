@@ -16,7 +16,7 @@ nimbus-jose = "10.10"
 swagger = "2.2.55"
 pebble = "4.1.2"
 koin = "4.2.2"
-bouncycastle = "1.86"
+bouncycastle = "1.87"
 kotlinx-benchmark = "0.5.0"
 netty = "4.2.20.Final"
 
